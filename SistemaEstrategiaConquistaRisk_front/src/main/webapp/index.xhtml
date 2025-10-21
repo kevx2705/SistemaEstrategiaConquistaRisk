@@ -2,18 +2,43 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-  xmlns:h="http://xmlns.jcp.org/jsf/html"
-  xmlns:f="http://xmlns.jcp.org/jsf/core"
-  xmlns:p="http://primefaces.org/ui">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"> <ui:composition
+	template="template/template.xhtml">
 
-<ui:composition template="template/template.xhtml">
+	<ui:define name="content">
+		<div
+			class="risk-background d-flex flex-column align-items-center justify-content-center">
 
-  <ui:define name="content">
-    <div class="risk-background d-flex flex-column align-items-center justify-content-center">
-   
-    </div>
-  </ui:define>
+		<h:form class="login-box" rendered="#{loginbean.sesionIniciada}"
+			style="margin-top: 80px;">
+			<h2 class="login-title">Sesion Iniciada!</h2>
 
-</ui:composition>
-</html>
+			<h:panelGroup rendered="#{loginbean.sesionIniciada}"
+				styleClass="welcome-box">
+				<h2>👋 Bienvenido, #{loginbean.user}</h2>
+				<p>A jugar.</p>
+			</h:panelGroup>
+		</h:form> <h:form class="login-box" rendered="#{!loginbean.sesionIniciada}"
+			style="margin-top: 80px;">
+			<h2 class="login-title">Login</h2>
+			<span class="input-span"> <label for="email" class="label">Usuario</label>
+			<p:inputText id="email" value="#{loginbean.user}" required="true"
+				autocomplete="off" /> </span>
+			<span class="input-span"> <label for="password" class="label">Password</label>
+			<p:password id="password" value="#{loginbean.password}"
+				feedback="false" toggleMask="true" required="true"
+				autocomplete="off" /> </span>
+
+			<div class="signin-actions" style="margin-top: 20px;"> <p:commandButton
+				value="Iniciar Sesion" action="#{loginbean.iniciarSesion}"
+				process="@form" update="@all" styleClass="signin-btn" /> </div>
+
+			<span class="span">No tienes cuenta? <a href="registrar.xhtml">Crea
+			una</a></span>
+		</h:form> </div>
+	</ui:define>
+
+</ui:composition> </html>

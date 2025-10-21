@@ -1,9 +1,9 @@
 @charset "UTF-8";
 
 html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 .risk-background {
@@ -50,4 +50,8 @@ html, body {
 .btn-text {
 	color: #ffffff !important;
 	margin-bottom: 0 !important;
+}
+
+.txtBlack {
+	color: black;
 }
