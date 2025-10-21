@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<nav class="navbar navbar-expand">
+		<div style="padding-left: 10%; padding-right: 10%;"
+			class="container-fluid">
+			<a class="navbar-brand" href="index.xhtml"> <img
+				src="https://p7.hiclipart.com/preview/1019/47/591/risk-playstation-4-board-game-hasbro-risk.jpg" width="180" height="65" class="rounded-3"
+				alt="Logo" />
+			</a>
+			BUSCAR IMG NO PIXELEADAS JAAA UN MEJOR LOGITO
+			<button class="navbar-toggler border-0" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<h:form id="cerrar" rendered="#{loginbean.sesionIniciada}">
+				<h:commandButton value="Cerrar Sesión"
+					action="#{loginbean.cerrarSesion}"
+					styleClass="btn btn-admin bold-comic" />
+			</h:form>
+
+			<h:panelGroup rendered="#{loginbean.adminIniciada}">
+				<h:button outcome="usuarios.xhtml" value="Administrar Usuarios"
+					styleClass="btn btn-admin bold-comic" />
+			</h:panelGroup>
+
+		</div>
+	</nav>
+
+</ui:composition>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
