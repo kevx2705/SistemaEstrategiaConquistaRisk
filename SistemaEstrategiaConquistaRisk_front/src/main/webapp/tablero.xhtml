@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"> <ui:composition
+	template="template/template.xhtml">
+	<ui:define name="content">
+
+		<div class="risk-background"> <div class="game-wrapper"> <h1
+			class="game-title">Conquista</h1> <div class="game-layout"> <div
+			class="game-board"> <ui:repeat value="#{gameBean.territorios}"
+			var="territorio">
+			<div class="territory-box"
+				style="top: #{territorio.posY}px; left: #{territorio.posX}px;"
+				onclick="#{gameBean.seleccionarTerritorio(territorio)}; PF('territoryDialog').show()">
+			<p class="territory-name">#{territorio.nombre}</p> <p
+				class="territory-owner">#{territorio.jugador}</p> <p
+				class="territory-tropas">Tropas: #{territorio.tropas}</p> </div>
+		</ui:repeat> <p:dialog widgetVar="territoryDialog" modal="true"
+			header="Acciones en territorio" styleClass="dialog-risk"
+			responsive="true" closable="true" width="400">
+
+			<h:panelGrid columns="1" styleClass="territory-dialog-content">
+				<div class="territory-info"> <h:outputText
+					value="Territorio: #{gameBean.territorioSeleccionado.nombre}"
+					styleClass="territory-label" /> <h:outputText
+					value="Dueño: #{gameBean.territorioSeleccionado.jugador}"
+					styleClass="territory-label" /> <h:outputText
+					value="Tropas: #{gameBean.territorioSeleccionado.tropas}"
+					styleClass="territory-label" /> </div>
+
+				<p:separator />
+
+				<div class="dialog-options"> <p:commandButton value="Atacar"
+					icon="pi pi-bolt"
+					action="#{gameBean.atacarDesde(gameBean.territorioSeleccionado)}"
+					styleClass="play-button"
+					rendered="#{gameBean.puedeAtacar(gameBean.territorioSeleccionado)}" />
+
+				<p:commandButton value="Mover tropas" icon="pi pi-arrow-right"
+					action="#{gameBean.moverTropasDesde(gameBean.territorioSeleccionado)}"
+					styleClass="play-button"
+					rendered="#{gameBean.puedeMover(gameBean.territorioSeleccionado)}" />
+
+				<p:commandButton value="Reforzar" icon="pi pi-plus"
+					action="#{gameBean.reforzar(gameBean.territorioSeleccionado)}"
+					styleClass="play-button"
+					rendered="#{gameBean.puedeReforzar(gameBean.territorioSeleccionado)}" />
+				</div>
+			</h:panelGrid>
+		</p:dialog> </div> <div class="status-columns"> <div class="players-panel">
+		<h2 class="panel-title bordered-title">Jugadores en partida</h2> <div
+			class="player-cards-row"> <ui:repeat
+			value="#{gameBean.jugadores}" var="jugador">
+			<div
+				class="player-card #{jugador.turnoActual ? 'active-player' : ''}">
+			<div class="player-avatar"> <img src="assets/#{jugador.avatar}"
+				alt="#{jugador.nombre}" /> </div> <div class="player-info"> <p
+				class="player-name">#{jugador.nombre}</p> <p class="player-color">Color:
+			#{jugador.color}</p> <p class="player-territories">Territorios:
+			#{jugador.territorios}</p> <p class="player-troops">Tropas:
+			#{jugador.tropas}</p> </div> </div>
+		</ui:repeat> </div> </div> <div class="turn-panel"> <h2
+			class="panel-title bordered-title">Turno actual</h2> <div
+			class="turn-info"> <p>
+		<strong>Jugador:</strong> #{gameBean.jugadorActual}</p> <p>
+		<strong>Territorios controlados:</strong>
+		#{gameBean.territoriosControlados}</p> <p>
+		<strong>Tropas disponibles:</strong> #{gameBean.tropasDisponibles}</p> <p:commandButton
+			value="Terminar turno" action="#{gameBean.terminarTurno}"
+			styleClass="signin-btn btn-text" /> </div> </div> </div> </div> </div> </div>
+
+	</ui:define>
+</ui:composition> </html>

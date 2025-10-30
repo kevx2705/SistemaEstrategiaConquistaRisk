@@ -4,47 +4,197 @@ html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+	font-family: 'Segoe UI', sans-serif;
 }
 
 .risk-background {
-	background-image:
-		url("https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1128810/capsule_616x353.jpg?t=1759276866");
+	background-image: url("../assets/fondoRisk.png");
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
-	height: 100vh;
-	width: 100vw;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
+	min-height: 100vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 20px;
+	box-sizing: border-box;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
-.temufooter {
+.index-wrapper {
+	background-color: rgba(192, 57, 43, 0.85) !important;
+	padding: 40px !important;
+	border-radius: 12px !important;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.6) !important;
+	text-align: center !important;
+	width: 90% !important;
+	max-width: 500px !important;
+}
+
+.index-title {
+	font-size: 3em !important;
+	color: #fce3d4 !important;
+	text-shadow: 2px 2px 6px #000 !important;
+	margin-bottom: 30px !important;
+	font-weight: bold !important;
+}
+
+.login-container {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-height: 100vh !important;
+	width: 100% !important;
+}
+
+.login-box {
+	background-color: transparent !important;
+	padding: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	text-align: center !important;
+}
+
+.signin-form {
+	width: 100% !important;
+}
+
+.login-title {
+	font-size: 2em !important;
+	margin-bottom: 20px !important;
+	color: #fce3d4 !important;
+}
+
+.form-grid {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 20px !important;
+	margin-top: 20px !important;
+}
+
+.form-input, .ui-inputfield, .ui-password, .ui-selectonemenu,
+	.ui-selectonemenu-label {
+	background-color: #fce3d4 !important;
+	color: #2c3e50 !important;
+	border: 2px solid #540f07 !important;
+	border-radius: 6px !important;
+	padding: 10px !important;
+	font-size: 1em !important;
+	width: 100% !important;
+}
+
+::placeholder {
+	color: #540f07 !important;
+	opacity: 1 !important;
+}
+
+.signin-btn {
+	background-color: #6f1a10 !important;
+	color: white !important;
+	border: none !important;
+	padding: 12px 20px !important;
+	border-radius: 6px !important;
+	font-size: 1em !important;
+	cursor: pointer !important;
+	font-weight: bold !important;
+	transition: background-color 0.3s ease !important;
+}
+
+.signin-btn:hover {
+	background-color: #922b21 !important;
+}
+
+.play-button {
+	background-color: #6f1a10 !important;
+	color: white !important;
+	border: none !important;
+	padding: 15px 30px !important;
+	font-size: 1.2em !important;
+	border-radius: 8px !important;
+	cursor: pointer !important;
+	font-weight: bold !important;
+	transition: background-color 0.3s ease !important;
+}
+
+.play-button:hover {
+	background-color: #922b21 !important;
+}
+
+.dialog-options {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 15px !important;
+	margin-top: 20px !important;
+	align-items: center !important;
+}
+
+.temufooter footer {
 	background-color: #540f07 !important;
-	margin: 0px;
-	width: 100vw;
+	text-align: center !important;
+	padding: 40px 20px !important;
+	color: white !important;
+}
+
+.temufooter footer p, .temufooter footer .nav-link {
+	color: white !important;
+}
+
+.developer-list {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	justify-content: center !important;
+	gap: 20px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	list-style: none !important;
+}
+
+.developer-avatar {
+	width: 40px !important;
+	height: 40px !important;
+	overflow: hidden !important;
+	border-radius: 50% !important;
+	border: 2px solid #ffffff !important;
+}
+
+.developer-avatar img {
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
+}
+
+@media screen and (max-width: 600px) {
+	.developer-list {
+		flex-direction: column !important;
+		align-items: center !important;
+	}
 }
 
 .navbar {
 	--bs-bg-opacity: 1;
-	border-bottom: 1px solid gray;
+	border-bottom: 1px solid gray !important;
 	background-color: #540f07 !important;
-	padding: 15px;
-	border-radius: 10px;
+	padding: 15px !important;
+	border-radius: 10px !important;
 }
 
 .developer-avatar {
-	width: 40px;
-	height: 40px;
-	overflow: hidden;
-	border-radius: 50%;
-	border: 2px solid #ffffff;
+	width: 40px !important;
+	height: 40px !important;
+	overflow: hidden !important;
+	border-radius: 50% !important;
+	border: 2px solid #ffffff !important;
 }
 
 .developer-avatar img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+	width: 100% !important;
+	height: 100% !important;
+	object-fit: cover !important;
 }
 
 .btn-text {
@@ -53,5 +203,333 @@ html, body {
 }
 
 .txtBlack {
-	color: black;
+	color: #2c3e50 !important;
+}
+
+.dialog-risk .ui-dialog-content {
+	background-color: #540f07 !important;
+	color: white !important;
+	padding: 30px !important;
+	border-radius: 0 0 12px 12px !important;
+	text-align: center !important;
+}
+
+.dialog-risk .ui-dialog-titlebar {
+	background-color: #c0392b !important;
+	color: white !important;
+	border-radius: 12px 12px 0 0 !important;
+	font-weight: bold !important;
+	text-align: center !important;
+}
+
+.dialog-options-horizontal {
+	display: flex !important;
+	flex-direction: row !important;
+	justify-content: center !important;
+	gap: 20px !important;
+	margin-top: 20px !important;
+}
+
+.dialog-options-horizontal .play-button {
+	background-color: #f39c12 !important;
+	color: #2c3e50 !important;
+	border: none !important;
+	padding: 15px 30px !important;
+	font-size: 1.2em !important;
+	border-radius: 8px !important;
+	cursor: pointer !important;
+	font-weight: bold !important;
+	transition: background-color 0.3s ease !important;
+}
+
+.dialog-options-horizontal .play-button:hover {
+	background-color: #d35400 !important;
+}
+
+.login-link {
+	color: #fce3d4 !important;
+	text-decoration: underline !important;
+	font-size: 1em !important;
+	transition: color 0.3s ease !important;
+}
+
+.login-link:hover {
+	color: #ffffff !important;
+}
+
+.login-link {
+	color: #fce3d4 !important;
+	text-decoration: underline !important;
+	font-size: 1em !important;
+	transition: color 0.3s ease !important;
+}
+
+.login-link:hover {
+	color: #ffffff !important;
+}
+
+.game-wrapper {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	text-align: center;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.game-title {
+	color: #fce3d4;
+	font-size: 2.5em;
+	text-shadow: 2px 2px 6px #000;
+	margin-bottom: 30px;
+}
+
+.game-board {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16/9;
+	background-image: url("assets/mapaRisk.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	border: 4px solid #540f07;
+	border-radius: 12px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+	overflow: hidden;
+}
+
+.territory-box {
+	position: absolute;
+	background-color: rgba(192, 57, 43, 0.9);
+	color: white;
+	padding: 8px;
+	border-radius: 8px;
+	text-align: center;
+	cursor: pointer;
+	width: 120px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+	transition: transform 0.2s ease;
+	font-size: 0.9em;
+}
+
+.territory-box:hover {
+	transform: scale(1.1);
+	background-color: #922b21;
+}
+
+.territory-name {
+	font-weight: bold;
+	font-size: 1em;
+	margin-bottom: 4px;
+}
+
+.territory-owner, .territory-tropas {
+	font-size: 0.9em;
+}
+
+.player-panel {
+	margin-top: 40px;
+	background-color: #540f07;
+	color: white;
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.panel-title {
+	font-size: 1.5em;
+	margin-bottom: 10px;
+}
+
+.panel-info {
+	font-size: 1em;
+	margin-bottom: 8px;
+}
+
+@media screen and (max-width: 768px) {
+	.game-title {
+		font-size: 2em;
+	}
+	.territory-box {
+		width: 90px;
+		font-size: 0.8em;
+	}
+	.player-panel {
+		padding: 15px;
+	}
+	.panel-title {
+		font-size: 1.2em;
+	}
+	.panel-info {
+		font-size: 0.9em;
+	}
+}
+
+.players-panel {
+	margin-top: 40px;
+	background-color: #540f07;
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+	color: white;
+	text-align: center;
+}
+
+.player-card {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 20px;
+	background-color: rgba(192, 57, 43, 0.85);
+	padding: 15px;
+	border-radius: 10px;
+	margin-bottom: 15px;
+	transition: transform 0.3s ease;
+}
+
+.player-card:hover {
+	transform: scale(1.02);
+}
+
+.active-player {
+	border: 2px solid #fce3d4;
+	box-shadow: 0 0 10px #fce3d4;
+}
+
+.player-avatar img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	border: 2px solid white;
+	object-fit: cover;
+}
+
+.player-info p {
+	margin: 4px 0;
+	font-size: 0.95em;
+}
+
+.bordered-title {
+	border-bottom: 2px solid #fce3d4;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	font-size: 1.6em;
+	color: #fce3d4;
+	text-align: center;
+}
+
+.player-cards-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+	margin-bottom: 30px;
+}
+
+.player-card {
+	width: 180px;
+	height: 120px;
+	background-color: rgba(192, 57, 43, 0.85);
+	padding: 10px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.3s ease;
+}
+
+.player-card:hover {
+	transform: scale(1.05);
+}
+
+.active-player {
+	border: 2px solid #fce3d4;
+	box-shadow: 0 0 10px #fce3d4;
+}
+
+.player-avatar img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 2px solid white;
+	object-fit: cover;
+	margin-bottom: 8px;
+}
+
+.player-info p {
+	margin: 2px 0;
+	font-size: 0.85em;
+	color: white;
+	text-align: center;
+}
+
+.turn-panel {
+	background-color: #6f1a10;
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	text-align: center;
+}
+
+.turn-info p {
+	font-size: 1em;
+	margin: 6px 0;
+	color: #fce3d4;
+}
+
+.player-info {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	padding-top: 10px;
+	box-sizing: border-box;
+}
+
+.status-columns {
+	display: flex;
+	justify-content: space-between;
+	gap: 40px;
+	margin-top: 40px;
+}
+
+.players-panel, .turn-panel {
+	flex: 1;
+}
+
+.territory-dialog-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+	padding: 10px;
+	text-align: center;
+}
+
+.territory-info {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 1em;
+	color: #fce3d4;
+}
+
+.territory-label {
+	font-weight: 500;
+	color: #fce3d4 !important;
+	font-size: 1em !important;
+}
+
+.dialog-options {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	align-items: center;
 }

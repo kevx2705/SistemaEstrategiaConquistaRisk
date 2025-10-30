@@ -1,116 +1,59 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"> <ui:composition
+	template="template/template.xhtml">
+	<ui:define name="content">
 
-<ui:composition template="template/template.xhtml">
-    <ui:define name="content">
+		<div class="risk-background"> <div class="index-wrapper">
 
-        <div class="form-container">
-            <div class="main">
-                <div class="signin-box">
+		<h1 class="index-title">¡Regístrate para conquistar!</h1> <h:form
+			id="registerForm" styleClass="signin-form">
 
-                    <h:form id="registerForm" styleClass="signin-form" class="txtBlack ">
+			<div class="form-grid"> <div class="form-input"> <p:inputText
+				id="fullName" value="#{registerbean.fullName}" required="true"
+				placeholder="Nombre completo" styleClass="form-input txtBlack" /> </div>
 
-                        <div class="signin-section">
-                            <h3 class="btn-text bold-comic">A jugar </h3>
+			<div class="form-input"> <p:inputText id="email"
+				value="#{registerbean.email}" required="true"
+				placeholder="Correo electrónico" styleClass="form-input txtBlack" />
+			</div> <div class="form-input"> <p:password id="password"
+				value="#{registerbean.password}" feedback="true" toggleMask="true"
+				required="true" placeholder="Contraseña"
+				styleClass="form-input txtBlack" /> </div> <div class="form-input">
+			<p:password id="confirmPassword"
+				value="#{registerbean.confirmPassword}" feedback="false"
+				toggleMask="true" required="true" placeholder="Repite tu contraseña"
+				styleClass="form-input txtBlack" /> </div> <div class="form-input">
+			<p:selectOneMenu id="role" value="#{registerbean.type}"
+				required="true" styleClass="form-input txtBlack">
+				<f:selectItem itemLabel="Selecciona tu rol" itemValue=""
+					noSelectionOption="true" />
+				<f:selectItem itemLabel="Jugador" itemValue="Jugador" />
+				<f:selectItem itemLabel="Administrador" itemValue="Administrador" />
+			</p:selectOneMenu> </div> </div>
 
-                            <div class="signin-input">
-                                <h3 class="txtBlack ">Tipo de usuaro</h3>
-                                <p:selectOneRadio id="type" value="#{registerbean.type}"
-                                                  required="true" layout="pageDirection"
-                                                  Class="txtBlack ">
-                                    <f:selectItem itemLabel="Jugador" itemValue="Jugador" />
-                                    <f:selectItem itemLabel="Administrador" itemValue="Administrador" />
-                                    <p:ajax update="administradorPanel" />
-                                </p:selectOneRadio>
-                            </div>
-                        </div>
+			<p:commandButton value="Registrarme"
+				action="#{registerbean.crearUsuario}" process="@form"
+				update="@form, :registerForm:messages"
+				styleClass="signin-btn btn-text" style="margin-top:20px;" />
 
-                        <h:panelGroup id="administradorPanel" layout="block"
-                                      style="display: #{registerbean.type eq 'Administrador' ? 'block' : 'none'};">
-                            <div class="signin-section">
-                                <h3 class="textBlack ">Registro de Administrador </h3>
 
-                                <div class="form-grid">
+			<h:link outcome="iniciarsesion.xhtml" styleClass="login-link"
+				style="display:block; margin-top:15px; font-weight:bold;">
+    ¿Ya tienes cuenta? Inicia sesión
+</h:link>
 
-                                    <div class="signin-input">
-                                        <div class="ui-inputgroup">
-                                            <div class="ui-inputgroup-addon">
-                                                <i class="pi pi-user"></i>
-                                            </div>
-                                            <p:inputText id="username"
-                                                         value="#{registerbean.fullName}"
-                                                         required="true"
-                                                         placeholder="Nombre completo"
-                                                         styleClass="txtBlack bold-comic form-input" />
-                                        </div>
-                                    </div>
 
-                                    <div class="signin-input">
-                                        <div class="ui-inputgroup">
-                                            <div class="ui-inputgroup-addon">
-                                                <i class="pi pi-envelope"></i>
-                                            </div>
-                                            <p:inputText id="email"
-                                                         value="#{registerbean.email}"
-                                                         required="true"
-                                                         placeholder="Correo electrónico"
-                                                         styleClass="txtBlack bold-comic form-input" />
-                                        </div>
-                                    </div>
+			<p:messages id="messages" showDetail="true" showIcon="false"
+				autoUpdate="true" styleClass="btn-text" style="margin-top:15px;" />
+		</h:form> </div> </div>
 
-                                    <div class="signin-input">
-                                        <div class="ui-inputgroup">
-                                            <div class="ui-inputgroup-addon">
-                                                <i class="pi pi-lock"></i>
-                                            </div>
-                                            <p:password id="password"
-                                                        value="#{registerbean.password}"
-                                                        feedback="true"
-                                                        required="true"
-                                                        placeholder="Contraseña"
-                                                        styleClass="txtBlack bold-comic form-input" />
-                                        </div>
-                                    </div>
+		<p:growl id="growl-sticky" for="sticky-key" showDetail="true"
+			sticky="true" styleClass="btn-text" />
 
-                                    <div class="signin-input">
-                                        <div class="ui-inputgroup">
-                                            <div class="ui-inputgroup-addon">
-                                                <i class="pi pi-check"></i>
-                                            </div>
-                                            <p:password id="confirmPassword"
-                                                        value="#{registerbean.confirmPassword}"
-                                                        required="true"
-                                                        placeholder="Repite tu contraseña"
-                                                        styleClass="txtBlack bold-comic form-input" />
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </h:panelGroup>
-
-                        <p:commandButton value="Registrarme"
-                                         action="#{registerbean.crearUsuario}"
-                                         process="@form"
-                                         update="@form, :registerForm:messages"
-                                         styleClass="signin-btn btn-text" />
-
-                        <p:messages id="messages" showDetail="true" showIcon="false"
-                                    autoUpdate="true" styleClass="btn-text" />
-                    </h:form>
-
-                </div>
-            </div>
-        </div>
-
-        <p:growl id="growl-sticky" for="sticky-key" showDetail="true"
-                 sticky="true" styleClass="btn-text" />
-
-    </ui:define>
-</ui:composition>
-</html>
+	</ui:define>
+</ui:composition> </html>

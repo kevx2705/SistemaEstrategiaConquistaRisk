@@ -7,38 +7,25 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"> <ui:composition
 	template="template/template.xhtml">
-
 	<ui:define name="content">
-		<div
-			class="risk-background d-flex flex-column align-items-center justify-content-center">
 
-		<h:form class="login-box" rendered="#{loginbean.sesionIniciada}"
-			style="margin-top: 80px;">
-			<h2 class="login-title">Sesion Iniciada!</h2>
+		<div class="risk-background"> <div class="index-wrapper">
+		<h1 class="index-title">¡Conquista el mundo!</h1> <p:commandButton
+			value="JUGAR" onclick="PF('dialogInicio').show()"
+			styleClass="play-button" /> <p:dialog header="¿Qué deseas hacer?"
+			widgetVar="dialogInicio" modal="true" responsive="true"
+			closable="true" styleClass="dialog-risk">
 
-			<h:panelGroup rendered="#{loginbean.sesionIniciada}"
-				styleClass="welcome-box">
-				<h2>👋 Bienvenido, #{loginbean.user}</h2>
-				<p>A jugar.</p>
-			</h:panelGroup>
-		</h:form> <h:form class="login-box" rendered="#{!loginbean.sesionIniciada}"
-			style="margin-top: 80px;">
-			<h2 class="login-title">Login</h2>
-			<span class="input-span"> <label for="email" class="label">Usuario</label>
-			<p:inputText id="email" value="#{loginbean.user}" required="true"
-				autocomplete="off" /> </span>
-			<span class="input-span"> <label for="password" class="label">Password</label>
-			<p:password id="password" value="#{loginbean.password}"
-				feedback="false" toggleMask="true" required="true"
-				autocomplete="off" /> </span>
+			<h:form>
+				<div class="dialog-options-horizontal"> <p:button
+					value="Crear cuenta" href="registrar.xhtml"
+					styleClass="play-button" /> <p:button value="Iniciar sesión"
+					href="iniciarsesion.xhtml" styleClass="play-button" /> </div>
+			
+			</h:form>
 
-			<div class="signin-actions" style="margin-top: 20px;"> <p:commandButton
-				value="Iniciar Sesion" action="#{loginbean.iniciarSesion}"
-				process="@form" update="@all" styleClass="signin-btn" /> </div>
 
-			<span class="span">No tienes cuenta? <a href="registrar.xhtml">Crea
-			una</a></span>
-		</h:form> </div>
+		</p:dialog> </div> </div>
+
 	</ui:define>
-
 </ui:composition> </html>
