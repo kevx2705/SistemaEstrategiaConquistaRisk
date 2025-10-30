@@ -2,6 +2,7 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity;
 
 import java.util.Objects;
 
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +23,7 @@ public class Jugador {
 	private int territoriosControlados;
 
 	private boolean activo;
+	private MyLinkedList<Carta> cartas;
 
 	public Jugador() {
 		// TODO Auto-generated constructor stub
@@ -33,6 +35,14 @@ public class Jugador {
 		this.tropasDisponibles = 0;
 		this.territoriosControlados = 0;
 		this.activo = true;
+	}
+
+	public MyLinkedList<Carta> getCartas() {
+		return cartas;
+	}
+
+	public void setCartas(MyLinkedList<Carta> cartas) {
+		this.cartas = cartas;
 	}
 
 	public Long getId() {

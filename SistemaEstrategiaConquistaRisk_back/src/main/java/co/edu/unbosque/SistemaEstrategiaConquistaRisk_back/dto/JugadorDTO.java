@@ -2,6 +2,9 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto;
 
 import java.util.Objects;
 
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+
 public class JugadorDTO {
 
 	private Long id;
@@ -14,18 +17,30 @@ public class JugadorDTO {
 	private int territoriosControlados;
 
 	private boolean activo;
+	private MyLinkedList<Carta> cartas;
 
 	public JugadorDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public JugadorDTO(String nombre, String color, int tropasDisponibles, int territoriosControlados, boolean activo) {
+	public JugadorDTO(Long id, String nombre, String color, int tropasDisponibles, int territoriosControlados,
+			boolean activo, MyLinkedList<Carta> cartas) {
 		super();
+		this.id = id;
 		this.nombre = nombre;
 		this.color = color;
 		this.tropasDisponibles = tropasDisponibles;
 		this.territoriosControlados = territoriosControlados;
 		this.activo = activo;
+		this.cartas = cartas;
+	}
+
+	public MyLinkedList<Carta> getCartas() {
+		return cartas;
+	}
+
+	public void setCartas(MyLinkedList<Carta> cartas) {
+		this.cartas = cartas;
 	}
 
 	public Long getId() {

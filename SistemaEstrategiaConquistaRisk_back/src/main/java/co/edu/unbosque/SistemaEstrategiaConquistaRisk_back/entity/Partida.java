@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 public class Partida {
 
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
-	private String nombre;
+	private String nombre; //nombre del ganador
 
 	private LocalDateTime fechaInicio;
 
