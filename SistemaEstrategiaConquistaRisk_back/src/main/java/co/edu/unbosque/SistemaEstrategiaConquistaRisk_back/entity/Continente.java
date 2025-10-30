@@ -17,9 +17,9 @@ public class Continente {
 
 	private String nombre;
 
-	private int refuerzoPorControl;
+	private int refuerzoPorControl; //la cantidad de refuerzo q recibe por conquistar ese continente
 
-	private int territoriosTotales;
+	private int territoriosTotales; //territorios q posee el continente
 
 	public Continente() {
 	}

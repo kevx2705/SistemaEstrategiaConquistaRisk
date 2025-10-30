@@ -43,6 +43,11 @@ public class CartaController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Mazo inicializado y barajado correctamente");
     }
+    @GetMapping("/debug/mazo")
+    public ResponseEntity<String> debugMazo() {
+        cartaService.imprimirEstadoMazo();
+        return ResponseEntity.ok("Mazo impreso en consola");
+    }
 
     /**
      * Roba la carta superior del mazo (si hay disponibles).
