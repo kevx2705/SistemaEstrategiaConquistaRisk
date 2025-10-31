@@ -3,10 +3,11 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.ContinenteDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Continente;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.ContinenteRepository;
-import jakarta.annotation.PostConstruct;
+import org.modelmapper.ModelMapper;
 
 @Service
 public class ContinenteService {
@@ -14,20 +15,26 @@ public class ContinenteService {
     @Autowired
     private ContinenteRepository continenteRepository;
 
-    // Obtener todos los continentes (por ejemplo, para inicializar el mapa)
-    public MyLinkedList<Continente> obtenerTodos() {
-        MyLinkedList<Continente> lista = new MyLinkedList<>();
+    @Autowired
+    private ModelMapper mapper;
+
+    // Obtener todos los continentes como DTOs
+    public MyLinkedList<ContinenteDTO> obtenerTodos() {
+        MyLinkedList<ContinenteDTO> listaDTO = new MyLinkedList<>();
+
         for (Continente c : continenteRepository.findAll()) {
-            lista.addLast(c);
+            ContinenteDTO dto = mapper.map(c, ContinenteDTO.class);
+            listaDTO.addLast(dto);
         }
-        return lista;
+
+        return listaDTO;
     }
 
-    // Buscar un continente por su nombre
-    public Continente buscarPorNombre(String nombre) {
+    // Buscar un continente por su nombre y devolverlo como DTO
+    public ContinenteDTO buscarPorNombre(String nombre) {
         for (Continente c : continenteRepository.findAll()) {
             if (c.getNombre().equalsIgnoreCase(nombre)) {
-                return c;
+                return mapper.map(c, ContinenteDTO.class);
             }
         }
         return null;

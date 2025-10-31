@@ -20,16 +20,28 @@ public class Territorio {
 
 	private int tropas;
 	private Long idContinente; // referencia numérica, sin relación JPA
-	private Long idJugador; // referencia del propietario
+	private Long idJugador = 0L; // referencia del propietario
 
-	public Territorio(String nombre, Long idContinente) {
+	public Territorio() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Territorio(String nombre, Long idContinente, int tropas) {
 		this.nombre = nombre;
 		this.idContinente = idContinente;
-		this.tropas = 0;
+		this.tropas = tropas;
 	}
 
 	public String getNombre() {
 		return nombre;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public void setNombre(String nombre) {
