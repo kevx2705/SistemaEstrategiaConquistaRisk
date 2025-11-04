@@ -16,6 +16,8 @@ public class Jugador {
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 	private String nombre;
 
+	private String correo;
+
 	private String color;
 
 	private int tropasDisponibles;
@@ -29,12 +31,21 @@ public class Jugador {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Jugador(String nombre, String color) {
+	public Jugador(String nombre, String color, String correo) {
 		this.nombre = nombre;
 		this.color = color;
+		this.correo = correo;
 		this.tropasDisponibles = 0;
 		this.territoriosControlados = 0;
 		this.activo = true;
+	}
+
+	public String getCorreo() {
+		return correo;
+	}
+
+	public void setCorreo(String correo) {
+		this.correo = correo;
 	}
 
 	public MyLinkedList<Carta> getCartas() {

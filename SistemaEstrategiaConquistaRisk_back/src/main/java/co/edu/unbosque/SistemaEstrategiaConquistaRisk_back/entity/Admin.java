@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
  * Hereda de la clase Usuario
  */
 @Entity
-public class Admin extends Usuario {
+public class Admin extends Jugador {
 
 	/**
 	 * Constructor vacio de la clase Admin
@@ -23,8 +23,8 @@ public class Admin extends Usuario {
 	 * @param edad
 	 * @param contrasena
 	 */
-	public Admin(String nombre, String correo, int edad, String contrasena) {
-		super(nombre, correo, edad, contrasena);
+	public Admin(String nombre, String correo, String contrasena) {
+		super(nombre, correo, contrasena);
 		// TODO Auto-generated constructor stub
 	}
 
