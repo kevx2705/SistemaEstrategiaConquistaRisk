@@ -1,51 +1,127 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "partida")
 public class Partida {
 
-	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
-	private String nombre; //nombre del ganador
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(nullable = false, unique = true)
+	private String codigoHash;
+
+	private boolean iniciada;
+	private boolean finalizada;
+
+	private Long ganadorId;
+	private Long jugadorActualId;
+
+	@Column(length = 6000)
+	private String territoriosJSON;
+
+	@Column(length = 3000)
+	private String mazoCartasJSON;
+
+	@Column(length = 2000)
+	private String jugadoresOrdenTurnoJSON;
 
 	private LocalDateTime fechaInicio;
-
 	private LocalDateTime fechaFin;
 
-	private String estado; // En curso, Finalizada, etc.
-
-	private int turnoActual; // índice del jugador actual
-
 	public Partida() {
-		this.fechaInicio = LocalDateTime.now();
-		this.estado = "EN_CURSO";
-		this.turnoActual = 0;
 	}
 
-	public Partida(String nombre) {
-		this();
-		this.nombre = nombre;
+	public Partida(String codigoHash, boolean iniciada, boolean finalizada, Long ganadorId, Long jugadorActualId,
+			String territoriosJSON, String mazoCartasJSON, String jugadoresOrdenTurnoJSON, LocalDateTime fechaInicio,
+			LocalDateTime fechaFin) {
+		super();
+		this.codigoHash = codigoHash;
+		this.iniciada = iniciada;
+		this.finalizada = finalizada;
+		this.ganadorId = ganadorId;
+		this.jugadorActualId = jugadorActualId;
+		this.territoriosJSON = territoriosJSON;
+		this.mazoCartasJSON = mazoCartasJSON;
+		this.jugadoresOrdenTurnoJSON = jugadoresOrdenTurnoJSON;
+		this.fechaInicio = fechaInicio;
+		this.fechaFin = fechaFin;
 	}
 
-	// Getters y setters
 	public Long getId() {
 		return id;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public String getCodigoHash() {
+		return codigoHash;
+	}
+
+	public void setCodigoHash(String codigoHash) {
+		this.codigoHash = codigoHash;
+	}
+
+	public boolean isIniciada() {
+		return iniciada;
+	}
+
+	public void setIniciada(boolean iniciada) {
+		this.iniciada = iniciada;
+	}
+
+	public boolean isFinalizada() {
+		return finalizada;
+	}
+
+	public void setFinalizada(boolean finalizada) {
+		this.finalizada = finalizada;
+	}
+
+	public Long getGanadorId() {
+		return ganadorId;
+	}
+
+	public void setGanadorId(Long ganadorId) {
+		this.ganadorId = ganadorId;
+	}
+
+	public Long getJugadorActualId() {
+		return jugadorActualId;
+	}
+
+	public void setJugadorActualId(Long jugadorActualId) {
+		this.jugadorActualId = jugadorActualId;
+	}
+
+	public String getTerritoriosJSON() {
+		return territoriosJSON;
+	}
+
+	public void setTerritoriosJSON(String territoriosJSON) {
+		this.territoriosJSON = territoriosJSON;
+	}
+
+	public String getMazoCartasJSON() {
+		return mazoCartasJSON;
+	}
+
+	public void setMazoCartasJSON(String mazoCartasJSON) {
+		this.mazoCartasJSON = mazoCartasJSON;
+	}
+
+	public String getJugadoresOrdenTurnoJSON() {
+		return jugadoresOrdenTurnoJSON;
+	}
+
+	public void setJugadoresOrdenTurnoJSON(String jugadoresOrdenTurnoJSON) {
+		this.jugadoresOrdenTurnoJSON = jugadoresOrdenTurnoJSON;
 	}
 
 	public LocalDateTime getFechaInicio() {
@@ -64,25 +140,19 @@ public class Partida {
 		this.fechaFin = fechaFin;
 	}
 
-	public String getEstado() {
-		return estado;
-	}
-
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
-
-	public int getTurnoActual() {
-		return turnoActual;
-	}
-
-	public void setTurnoActual(int turnoActual) {
-		this.turnoActual = turnoActual;
+	@Override
+	public String toString() {
+		return "Partida [id=" + id + ", codigoHash=" + codigoHash + ", iniciada=" + iniciada + ", finalizada="
+				+ finalizada + ", ganadorId=" + ganadorId + ", jugadorActualId=" + jugadorActualId
+				+ ", territoriosJSON=" + territoriosJSON + ", mazoCartasJSON=" + mazoCartasJSON
+				+ ", jugadoresOrdenTurnoJSON=" + jugadoresOrdenTurnoJSON + ", fechaInicio=" + fechaInicio
+				+ ", fechaFin=" + fechaFin + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(estado, fechaFin, fechaInicio, id, nombre, turnoActual);
+		return Objects.hash(codigoHash, fechaFin, fechaInicio, finalizada, ganadorId, id, iniciada, jugadorActualId,
+				jugadoresOrdenTurnoJSON, mazoCartasJSON, territoriosJSON);
 	}
 
 	@Override
@@ -94,15 +164,13 @@ public class Partida {
 		if (getClass() != obj.getClass())
 			return false;
 		Partida other = (Partida) obj;
-		return Objects.equals(estado, other.estado) && Objects.equals(fechaFin, other.fechaFin)
-				&& Objects.equals(fechaInicio, other.fechaInicio) && Objects.equals(id, other.id)
-				&& Objects.equals(nombre, other.nombre) && turnoActual == other.turnoActual;
-	}
-
-	@Override
-	public String toString() {
-		return "Partida [id=" + id + ", nombre=" + nombre + ", fechaInicio=" + fechaInicio + ", fechaFin=" + fechaFin
-				+ ", estado=" + estado + ", turnoActual=" + turnoActual + "]";
+		return Objects.equals(codigoHash, other.codigoHash) && Objects.equals(fechaFin, other.fechaFin)
+				&& Objects.equals(fechaInicio, other.fechaInicio) && finalizada == other.finalizada
+				&& Objects.equals(ganadorId, other.ganadorId) && Objects.equals(id, other.id)
+				&& iniciada == other.iniciada && Objects.equals(jugadorActualId, other.jugadorActualId)
+				&& Objects.equals(jugadoresOrdenTurnoJSON, other.jugadoresOrdenTurnoJSON)
+				&& Objects.equals(mazoCartasJSON, other.mazoCartasJSON)
+				&& Objects.equals(territoriosJSON, other.territoriosJSON);
 	}
 
 }
