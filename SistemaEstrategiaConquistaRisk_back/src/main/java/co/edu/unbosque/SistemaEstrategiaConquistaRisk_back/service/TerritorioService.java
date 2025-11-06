@@ -6,16 +6,17 @@ import org.springframework.stereotype.Service;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Territorio;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.TerritorioRepository;
 
 @Service
 public class TerritorioService {
 
     @Autowired
-    private static TerritorioRepository territorioRepository;
+    private TerritorioRepository territorioRepository;
 
     // Obtener todos los territorios como DTOs
-    public static MyLinkedList<TerritorioDTO> obtenerTodos() {
+    public MyLinkedList<TerritorioDTO> obtenerTodos() {
         MyLinkedList<TerritorioDTO> listaDTO = new MyLinkedList<>();
 
         for (Territorio t : territorioRepository.findAll()) {
@@ -58,7 +59,7 @@ public class TerritorioService {
     }
 
     // ✅ Asignar propietario a un territorio
-    public static void asignarJugador(Long idTerritorio, Long idJugador) {
+    public void asignarJugador(Long idTerritorio, Long idJugador) {
         Territorio territorio = territorioRepository.findById(idTerritorio).orElse(null);
         if (territorio != null) {
             territorio.setIdJugador(idJugador);
@@ -67,7 +68,7 @@ public class TerritorioService {
     }
 
     // ✅ Reforzar (añadir tropas)
-    public static void reforzar(Long idTerritorio, int cantidad) {
+    public void reforzar(Long idTerritorio, int cantidad) {
         Territorio t = territorioRepository.findById(idTerritorio).orElse(null);
         if (t != null) {
             t.setTropas(t.getTropas() + cantidad);
@@ -85,7 +86,7 @@ public class TerritorioService {
             territorioRepository.save(territorio);
         }
     }
-    public static void quitarTodasLasTropas(Long idTerritorio) {
+    public void quitarTodasLasTropas(Long idTerritorio) {
         Territorio territorio = territorioRepository.findById(idTerritorio).orElse(null);
         if (territorio != null) {
             territorio.setTropas(0);
@@ -103,7 +104,7 @@ public class TerritorioService {
 
 
     // ✅ Verificar si un jugador controla todos los territorios de un continente
-    public static boolean jugadorControlaContinente(Long idJugador, Long idContinente) {
+    public boolean jugadorControlaContinente(Long idJugador, Long idContinente) {
         int totalTerritorios = 0;
         int controladosPorJugador = 0;
 
@@ -118,7 +119,7 @@ public class TerritorioService {
 
         return totalTerritorios > 0 && controladosPorJugador == totalTerritorios;
     }
-    public static TerritorioDTO obtenerPorId(Long idTerritorio) {
+    public TerritorioDTO obtenerPorId(Long idTerritorio) {
         Territorio t = territorioRepository.findById(idTerritorio).orElse(null);
         if (t == null) return null;
 
@@ -130,6 +131,19 @@ public class TerritorioService {
         dto.setIdJugador(t.getIdJugador());
         return dto;
     }
+ // 🔹 Buscar un TerritorioDTO dentro de una lista por su id
+    public TerritorioDTO buscarEnLista(MyLinkedList<TerritorioDTO> lista, Long id) {
+        Node<TerritorioDTO> n = lista.getFirst();
+        while (n != null) {
+            TerritorioDTO t = n.getInfo();
+            if (t.getId().equals(id)) {
+                return t;
+            }
+            n = n.getNext();
+        }
+        return null;
+    }
+
 
     
 }

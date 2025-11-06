@@ -101,6 +101,7 @@ public class MyLinkedList<E> implements Serializable {
 		this.first = this.first.getNext();
 		return data;
 	}
+	
 
 	public E extract(Node<E> previous) {
 		if (previous == null || previous.getNext() == null) {

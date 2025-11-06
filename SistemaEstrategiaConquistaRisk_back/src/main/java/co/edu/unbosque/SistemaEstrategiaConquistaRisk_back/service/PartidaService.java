@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +23,21 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.PartidaRep
 
 @Service
 public class PartidaService {
+	@Autowired
+	private  PartidaRepository partidaRepository;
+	@Autowired
+	private  JugadorRepository jugadorRepository;
+	@Autowired
+	private  JugadorService jugadorService;
+	@Autowired
+	private  ContinenteService continenteService;
+	@Autowired
+	private TerritorioService territorioService;
 
-	private final PartidaRepository partidaRepository;
-	private final JugadorRepository jugadorRepository;
-	private final static Gson gson = new Gson();
+	private final Gson gson = new Gson();
 
-	public PartidaService(PartidaRepository partidaRepository) {
-		this.partidaRepository = partidaRepository;
-		this.jugadorRepository = null;
+	public PartidaService() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public Partida crearPartida(Long anfitrionId, String[] otrosNombres) {
@@ -63,7 +71,7 @@ public class PartidaService {
 		// -------------------------------------
 
 		anfitrion.setColor("ROJO");
-		JugadorService.activarJugador(anfitrion.getId());
+		jugadorService.activarJugador(anfitrion.getId());
 
 		ordenJugadores.addLast(anfitrion.getId());
 
@@ -90,7 +98,7 @@ public class PartidaService {
 				throw new RuntimeException("El jugador '" + nombre + "' ya está en otra partida.");
 			}
 
-			Jugador nuevo = JugadorService.crearJugadorTemporal(nombre, colores[colorIndex++]);
+			Jugador nuevo = jugadorService.crearJugadorTemporal(nombre, colores[colorIndex++]);
 
 			ordenJugadores.addLast(nuevo.getId());
 		}
@@ -134,15 +142,15 @@ public class PartidaService {
 
 		for (int i = 0; i < numJugadores; i++) {
 			Long idJugador = ordenJugadores.getPos(i).getInfo();
-			JugadorService.agregarTropas(idJugador, tropasIniciales);
+			jugadorService.agregarTropas(idJugador, tropasIniciales);
 		}
 
 		// 2️⃣ Inicializar todos los territorios sin dueño y 0 tropas
-		MyLinkedList<TerritorioDTO> territorios = TerritorioService.obtenerTodos();
+		MyLinkedList<TerritorioDTO> territorios = territorioService.obtenerTodos();
 		for (int i = 0; i < territorios.size(); i++) {
 			TerritorioDTO t = territorios.getPos(i).getInfo();
-			TerritorioService.quitarTodasLasTropas(t.getId());
-			TerritorioService.asignarJugador(t.getId(), 0L); // 0L = sin dueño
+			territorioService.quitarTodasLasTropas(t.getId());
+			territorioService.asignarJugador(t.getId(), 0L); // 0L = sin dueño
 		}
 
 		// 3️⃣ El turno inicial será el primer jugador de la lista
@@ -159,10 +167,10 @@ public class PartidaService {
 				.orElseThrow(() -> new RuntimeException("No existe la partida"));
 
 		// 1️⃣ Cargar orden de jugadores
-		MyLinkedList<Long> ordenJugadores = PartidaService.cargarOrdenJugadores(partida);
+		MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
 
 		// 2️⃣ Cargar todos los territorios
-		MyLinkedList<TerritorioDTO> territorios = TerritorioService.obtenerTodos();
+		MyLinkedList<TerritorioDTO> territorios = territorioService.obtenerTodos();
 
 		// 3️⃣ Índice para el turno del jugador
 		int turnoJugador = 0;
@@ -181,11 +189,11 @@ public class PartidaService {
 			}
 
 			// Asignar territorio al jugador y reforzar con 1 tropa
-			TerritorioService.asignarJugador(territorioElegido.getId(), idJugadorActual);
-			TerritorioService.reforzar(territorioElegido.getId(), 1);
+			territorioService.asignarJugador(territorioElegido.getId(), idJugadorActual);
+			territorioService.reforzar(territorioElegido.getId(), 1);
 
 			// Actualizar territorios controlados usando método estático de JugadorService
-			JugadorService.agregarTerritorio(idJugadorActual);
+			jugadorService.agregarTerritorio(idJugadorActual);
 
 			// Pasar al siguiente jugador
 			turnoJugador = (turnoJugador + 1) % ordenJugadores.size();
@@ -201,16 +209,16 @@ public class PartidaService {
 		}
 
 		// 5️⃣ Asignar bonus de continentes
-		MyLinkedList<ContinenteDTO> continentes = ContinenteService.obtenerTodos();
+		MyLinkedList<ContinenteDTO> continentes = continenteService.obtenerTodos();
 		for (int c = 0; c < continentes.size(); c++) {
 			ContinenteDTO continente = continentes.getPos(c).getInfo();
 
 			for (int i = 0; i < ordenJugadores.size(); i++) {
 				Long idJugador = ordenJugadores.getPos(i).getInfo();
-				if (TerritorioService.jugadorControlaContinente(idJugador, continente.getId())) {
+				if (territorioService.jugadorControlaContinente(idJugador, continente.getId())) {
 					// Dar tropas de bonificación según el continente
-					JugadorService.agregarTropas(idJugador,
-							ContinenteService.getBonusPorContinente(continente.getNombre()));
+					jugadorService.agregarTropas(idJugador,
+							continenteService.getBonusPorContinente(continente.getNombre()));
 				}
 			}
 		}
@@ -231,7 +239,7 @@ public class PartidaService {
 		// Mientras algún jugador tenga tropas disponibles
 		while (quedanTropasPorColocar) {
 			Long idJugadorActual = ordenJugadores.getPos(turnoJugador).getInfo();
-			Jugador jugador = JugadorService.obtenerJugadorPorId(idJugadorActual);
+			Jugador jugador = jugadorService.obtenerJugadorPorId(idJugadorActual);
 
 			if (jugador.getTropasDisponibles() > 0) {
 				// Aquí se espera la acción del jugador en frontend para colocar tropas:
@@ -246,7 +254,7 @@ public class PartidaService {
 			quedanTropasPorColocar = false;
 			for (int i = 0; i < ordenJugadores.size(); i++) {
 				Long idJ = ordenJugadores.getPos(i).getInfo();
-				Jugador j = JugadorService.obtenerJugadorPorId(idJ);
+				Jugador j = jugadorService.obtenerJugadorPorId(idJ);
 				if (j.getTropasDisponibles() > 0) {
 					quedanTropasPorColocar = true;
 					break;
@@ -271,12 +279,12 @@ public class PartidaService {
 		// 3️⃣ Dar tropas de refuerzo inicial a cada jugador
 		for (int i = 0; i < ordenJugadores.size(); i++) {
 			Long idJugador = ordenJugadores.getPos(i).getInfo();
-			Jugador jugador = JugadorService.obtenerJugadorPorId(idJugador);
+			Jugador jugador = jugadorService.obtenerJugadorPorId(idJugador);
 
 			int refuerzos = jugador.getTerritoriosControlados() / 3;
 			if (refuerzos < 3)
 				refuerzos = 3; // mínimo 3 tropas
-			JugadorService.agregarTropas(idJugador, refuerzos);
+			jugadorService.agregarTropas(idJugador, refuerzos);
 		}
 
 		// 4️⃣ Ciclo de turno para que los jugadores coloquen manualmente sus tropas
@@ -285,7 +293,7 @@ public class PartidaService {
 
 		while (quedanTropasPorColocar) {
 			Long idJugadorActual = ordenJugadores.getPos(turnoJugador).getInfo();
-			Jugador jugador = JugadorService.obtenerJugadorPorId(idJugadorActual);
+			Jugador jugador = jugadorService.obtenerJugadorPorId(idJugadorActual);
 
 			if (jugador.getTropasDisponibles() > 0) {
 				// Aquí se espera acción del jugador desde el frontend
@@ -301,7 +309,7 @@ public class PartidaService {
 			// Verificar si aún queda algún jugador con tropas por colocar
 			quedanTropasPorColocar = false;
 			for (int i = 0; i < ordenJugadores.size(); i++) {
-				Jugador j = JugadorService.obtenerJugadorPorId(ordenJugadores.getPos(i).getInfo());
+				Jugador j = jugadorService.obtenerJugadorPorId(ordenJugadores.getPos(i).getInfo());
 				if (j.getTropasDisponibles() > 0) {
 					quedanTropasPorColocar = true;
 					break;
@@ -323,7 +331,7 @@ public class PartidaService {
 		return null; // no quedan territorios libres
 	}
 
-	private static MyLinkedList<Long> cargarOrdenJugadores(Partida partida) {
+	private MyLinkedList<Long> cargarOrdenJugadores(Partida partida) {
 		if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
 			throw new RuntimeException("La partida no tiene orden de jugadores definido");
 		}

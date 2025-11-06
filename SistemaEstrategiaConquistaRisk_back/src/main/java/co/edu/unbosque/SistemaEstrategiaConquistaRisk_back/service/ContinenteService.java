@@ -13,13 +13,13 @@ import org.modelmapper.ModelMapper;
 public class ContinenteService {
 
     @Autowired
-    private static ContinenteRepository continenteRepository;
+    private  ContinenteRepository continenteRepository;
 
     @Autowired
-    private static ModelMapper mapper;
+    private ModelMapper mapper;
 
     // Obtener todos los continentes como DTOs
-    public static MyLinkedList<ContinenteDTO> obtenerTodos() {
+    public  MyLinkedList<ContinenteDTO> obtenerTodos() {
         MyLinkedList<ContinenteDTO> listaDTO = new MyLinkedList<>();
 
         for (Continente c : continenteRepository.findAll()) {
@@ -29,7 +29,7 @@ public class ContinenteService {
 
         return listaDTO;
     }
-    public static int getBonusPorContinente(String nombreContinente) {
+    public int getBonusPorContinente(String nombreContinente) {
         return switch(nombreContinente) {
             case "Oceanía", "América del Sur" -> 2;
             case "África" -> 3;

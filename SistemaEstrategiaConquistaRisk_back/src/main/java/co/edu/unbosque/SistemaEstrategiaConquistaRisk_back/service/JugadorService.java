@@ -17,10 +17,13 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.JugadorRep
 public class JugadorService {
 
 	@Autowired
-	private static JugadorRepository jugadorRepo;
+	private JugadorRepository jugadorRepo;
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private TerritorioService territorioService;
 
 	public JugadorService() {
 	}
@@ -35,7 +38,7 @@ public class JugadorService {
 		return 0;
 	}
 
-	public static Jugador obtenerJugadorPorId(Long idJugador) {
+	public Jugador obtenerJugadorPorId(Long idJugador) {
 		return jugadorRepo.findById(idJugador).orElse(null);
 	}
 
@@ -85,7 +88,7 @@ public class JugadorService {
 		return jugadorRepo.existsById(id);
 	}
 
-	public static Jugador crearJugadorTemporal(String nombre, String color) {
+	public Jugador crearJugadorTemporal(String nombre, String color) {
 		Jugador j = new Jugador();
 		j.setNombre(nombre);
 		j.setColor(color);
@@ -99,7 +102,7 @@ public class JugadorService {
 	// ==========================================================
 
 	// ✅ Añadir tropas al jugador
-	public static void agregarTropas(Long idJugador, int cantidad) {
+	public void agregarTropas(Long idJugador, int cantidad) {
 		Jugador j = jugadorRepo.findById(idJugador).orElse(null);
 		if (j != null) {
 			j.setTropasDisponibles(j.getTropasDisponibles() + cantidad);
@@ -107,7 +110,7 @@ public class JugadorService {
 		}
 	}
 
-	public static void agregarTerritorio(Long idJugador) {
+	public void agregarTerritorio(Long idJugador) {
 		Jugador j = jugadorRepo.findById(idJugador).orElse(null);
 		if (j != null) {
 			j.setTerritoriosControlados(j.getTerritoriosControlados() + 1);
@@ -116,7 +119,7 @@ public class JugadorService {
 	}
 
 	// Colocar tropas en un territorio específico
-	public static void colocarTropasEnTerritorio(Long idJugador, Long idTerritorio, int cantidad) {
+	public void colocarTropasEnTerritorio(Long idJugador, Long idTerritorio, int cantidad) {
 		if (cantidad <= 0)
 			return;
 
@@ -129,13 +132,13 @@ public class JugadorService {
 		}
 
 		// Validar que el territorio sea del jugador
-		TerritorioDTO territorio = TerritorioService.obtenerPorId(idTerritorio);
+		TerritorioDTO territorio = territorioService.obtenerPorId(idTerritorio);
 		if (!idJugador.equals(territorio.getIdJugador())) {
 			throw new RuntimeException("No puedes colocar tropas en un territorio que no controlas");
 		}
 
 		// Colocar tropas
-		TerritorioService.reforzar(idTerritorio, cantidad);
+		territorioService.reforzar(idTerritorio, cantidad);
 
 		// Restar tropas disponibles
 		jugador.setTropasDisponibles(jugador.getTropasDisponibles() - cantidad);
@@ -191,7 +194,7 @@ public class JugadorService {
 	}
 
 	// ✅ Activar jugador (nueva partida)
-	public static void activarJugador(Long idJugador) {
+	public void activarJugador(Long idJugador) {
 		Jugador j = jugadorRepo.findById(idJugador).orElse(null);
 		if (j != null) {
 			j.setActivo(true);

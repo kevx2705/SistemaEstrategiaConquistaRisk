@@ -1,10 +1,12 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Graph;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Vertex;
+import jakarta.annotation.PostConstruct;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Edge;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
@@ -13,8 +15,16 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 public class MapaTerritorio {
 
 	private Graph grafo = new Graph();
-
+	
+	@Autowired
+	private TerritorioService territorioService;
+	
 	public MapaTerritorio() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@PostConstruct
+	public void inicializarMapa() {
 		inicializarVertices();
 		inicializarAristas();
 	}
@@ -23,7 +33,7 @@ public class MapaTerritorio {
 	// 1. Cargar todos los territorios como vértices
 	// ============================================================
 	private void inicializarVertices() {
-		MyLinkedList<TerritorioDTO> territorios = TerritorioService.obtenerTodos();
+		MyLinkedList<TerritorioDTO> territorios = territorioService.obtenerTodos();
 
 		Node<TerritorioDTO> n = territorios.getFirst();
 		while (n != null) {
@@ -349,7 +359,7 @@ public class MapaTerritorio {
 			while (n != null) {
 				Long vecino = n.getInfo();
 
-				TerritorioDTO dto = TerritorioService.obtenerPorId(vecino);
+				TerritorioDTO dto = territorioService.obtenerPorId(vecino);
 
 				if (dto != null && dto.getIdJugador().equals(jugadorId) && !visitados.contains(vecino)) {
 
