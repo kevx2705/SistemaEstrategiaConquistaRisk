@@ -21,7 +21,6 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Jugador;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.JsonUtil;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyDoubleLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.JugadorRepository;
@@ -180,93 +179,87 @@ public class PartidaService {
 	@Transactional
 	public void reclamarTerritorio(Long partidaId, Long jugadorId, Long territorioId) {
 
-		Partida partida = partidaRepository.findById(partidaId)
-				.orElseThrow(() -> new RuntimeException("No existe la partida"));
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("No existe la partida"));
 
-		// Validar que sea el turno del jugador
-		if (!partida.getJugadorActualId().equals(jugadorId)) {
-			throw new RuntimeException("No es el turno de este jugador");
-		}
+	    // Validar que sea el turno del jugador
+	    if (!partida.getJugadorActualId().equals(jugadorId)) {
+	        throw new RuntimeException("No es el turno de este jugador");
+	    }
 
-		// Cargar lista de jugadores
-		MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
+	    // Cargar lista de jugadores
+	    MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
 
-		// Cargar todos los territorios
-		MyLinkedList<TerritorioDTO> territorios = territorioService.obtenerTodos();
+	    // Buscar territorio solicitado (usar servicio para evitar inconsistencias)
+	    TerritorioDTO territorioElegido = territorioService.obtenerPorId(territorioId);
+	    if (territorioElegido == null) {
+	        throw new RuntimeException("Territorio no encontrado");
+	    }
 
-		// Buscar territorio solicitado
-		TerritorioDTO territorioElegido = null;
-		for (int i = 0; i < territorios.size(); i++) {
-			TerritorioDTO t = territorios.getPos(i).getInfo();
-			if (t.getId().equals(territorioId)) {
-				territorioElegido = t;
-				break;
-			}
-		}
+	    // Verificar que esté libre
+	    if (territorioElegido.getIdJugador() != 0L) {
+	        throw new RuntimeException("Territorio ya tiene dueño");
+	    }
 
-		if (territorioElegido == null) {
-			throw new RuntimeException("Territorio no encontrado");
-		}
+	    // Asignar territorio y reforzar con 1 tropa
+	    territorioService.asignarJugador(territorioElegido.getId(), jugadorId);
+	    territorioService.reforzar(territorioElegido.getId(), 1);
 
-		// Verificar que esté libre
-		if (territorioElegido.getIdJugador() != 0L) {
-			throw new RuntimeException("Territorio ya tiene dueño");
-		}
+	    // Descontar la tropa de la reserva del jugador
+	    jugadorService.quitarTropas(jugadorId, 1);
 
-		// Asignar territorio y reforzar con 1 tropa
-		territorioService.asignarJugador(territorioElegido.getId(), jugadorId);
-		territorioService.reforzar(territorioElegido.getId(), 1);
+	    // Actualizar territorios controlados del jugador
+	    jugadorService.agregarTerritorio(jugadorId);
 
-		// Descontar la tropa de la reserva del jugador
-		jugadorService.quitarTropas(jugadorId, 1);
+	    // Pasar al siguiente jugador (busca nodo actual en ordenJugadores)
+	    Node<Long> nodoActual = null;
+	    Node<Long> current = ordenJugadores.getFirst();
+	    while (current != null) {
+	        if (current.getInfo().equals(jugadorId)) {
+	            nodoActual = current;
+	            break;
+	        }
+	        current = current.getNext();
+	    }
 
-		// Actualizar territorios controlados del jugador
-		jugadorService.agregarTerritorio(jugadorId);
+	    Node<Long> nodoSiguiente = nodoActual != null ? nodoActual.getNext() : null;
+	    if (nodoSiguiente == null) {
+	        nodoSiguiente = ordenJugadores.getFirst(); // ciclo circular
+	    }
+	    partida.setJugadorActualId(nodoSiguiente.getInfo());
 
-		// Pasar al siguiente jugador
-		Node<Long> nodoActual = null;
-		Node<Long> current = ordenJugadores.getFirst();
-		while (current != null) {
-			if (current.getInfo().equals(jugadorId)) {
-				nodoActual = current;
-				break;
-			}
-			current = current.getNext();
-		}
+	    // -----------------------
+	    // Bonus de continentes (solo SI ya no quedan territorios libres)
+	    // -----------------------
+	    // IMPORTANTE: recargar la lista de territorios DESPUÉS de la asignación
+	    MyLinkedList<TerritorioDTO> territoriosActualizados = territorioService.obtenerTodos();
 
-		Node<Long> nodoSiguiente = nodoActual.getNext();
-		if (nodoSiguiente == null) {
-			nodoSiguiente = ordenJugadores.getFirst(); // ciclo circular
-		}
-		partida.setJugadorActualId(nodoSiguiente.getInfo());
+	    boolean quedanTerritoriosLibres = false;
+	    for (int i = 0; i < territoriosActualizados.size(); i++) {
+	        if (territoriosActualizados.getPos(i).getInfo().getIdJugador() == 0L) {
+	            quedanTerritoriosLibres = true;
+	            break;
+	        }
+	    }
 
-		// -----------------------
-		// Bonus de continentes
-		// -----------------------
-		boolean quedanTerritoriosLibres = false;
-		for (int i = 0; i < territorios.size(); i++) {
-			if (territorios.getPos(i).getInfo().getIdJugador() == 0L) {
-				quedanTerritoriosLibres = true;
-				break;
-			}
-		}
+	    // Si NO quedan territorios libres -> terminó la fase de reparto inicial -> dar bonus por continente
+	    if (!quedanTerritoriosLibres) {
+	        MyLinkedList<ContinenteDTO> continentes = continenteService.obtenerTodos();
+	        for (int c = 0; c < continentes.size(); c++) {
+	            ContinenteDTO continente = continentes.getPos(c).getInfo();
+	            for (int i = 0; i < ordenJugadores.size(); i++) {
+	                Long idJ = ordenJugadores.getPos(i).getInfo();
+	                // usar el método del servicio de territorios (ya hace el conteo correctamente)
+	                if (territorioService.jugadorControlaContinente(idJ, continente.getId())) {
+	                    int bonus = continenteService.getBonusPorContinente(continente.getNombre());
+	                    jugadorService.agregarTropas(idJ, bonus);
+	                }
+	            }
+	        }
+	    }
 
-		if (!quedanTerritoriosLibres) {
-			MyLinkedList<ContinenteDTO> continentes = continenteService.obtenerTodos();
-			for (int c = 0; c < continentes.size(); c++) {
-				ContinenteDTO continente = continentes.getPos(c).getInfo();
-				for (int i = 0; i < ordenJugadores.size(); i++) {
-					Long idJugador = ordenJugadores.getPos(i).getInfo();
-					if (territorioService.jugadorControlaContinente(idJugador, continente.getId())) {
-						jugadorService.agregarTropas(idJugador,
-								continenteService.getBonusPorContinente(continente.getNombre()));
-					}
-				}
-			}
-		}
-
-		// Guardar cambios en la partida
-		partidaRepository.save(partida);
+	    // Guardar cambios en la partida
+	    partidaRepository.save(partida);
 	}
 
 	@Transactional
@@ -570,27 +563,26 @@ public class PartidaService {
 	 * Calcula los bonus de continentes controlados por un jugador.
 	 */
 	private int calcularBonusContinentes(Long jugadorId) {
-
 	    int bonus = 0;
 
 	    // Obtener todos los continentes
 	    MyLinkedList<ContinenteDTO> continentes = continenteService.obtenerTodos();
 
 	    for (int i = 0; i < continentes.size(); i++) {
-
 	        ContinenteDTO cont = continentes.getPos(i).getInfo();
 
-	        // Verificar si el jugador controla TODO el continente
+	        // Verificar si el jugador controla TODO el continente (usa TerritorioService)
 	        boolean controla = territorioService.jugadorControlaContinente(jugadorId, cont.getId());
 
 	        if (controla) {
-	            // Obtener bonus según nombre (tu servicio ya lo hace)
+	            // Obtener bonus definido (tu ContinenteService ya tiene getBonusPorContinente)
 	            bonus += continenteService.getBonusPorContinente(cont.getNombre());
 	        }
 	    }
 
 	    return bonus;
 	}
+
 
 
 }
