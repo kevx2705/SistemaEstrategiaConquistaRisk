@@ -29,6 +29,8 @@ public class CartaService {
 
 	private StackImpl<Carta> mazo;
 	private Random random;
+	private int canjesRealizados = 0;
+
 
 	public CartaService() {
 		mazo = new StackImpl<>();
@@ -50,6 +52,76 @@ public class CartaService {
 			}
 		}
 		barajarYCrearMazo(lista);
+	}
+
+	/**
+	 * Valida si las cartas enviadas forman una combinación válida (3 iguales o 3
+	 * diferentes con comodines)
+	 */
+	public boolean combinacionValida(MyLinkedList<Long> idsCartas, MyLinkedList<Carta> mano) {
+		if (idsCartas.size() != 3)
+			return false;
+
+		Carta[] cartas = new Carta[3];
+		for (int i = 0; i < 3; i++) {
+			Long id = idsCartas.getPos(i).getInfo();
+			for (int j = 0; j < mano.size(); j++) {
+				if (mano.getPos(j).getInfo().getId().equals(id)) {
+					cartas[i] = mano.getPos(j).getInfo();
+					break;
+				}
+			}
+			if (cartas[i] == null)
+				return false;
+		}
+
+		int infanteria = 0, caballeria = 0, artilleria = 0, comodines = 0;
+
+		for (Carta c : cartas) {
+			String tipo = c.getTipo(); // suponiendo que tipo es String
+			if (tipo.equalsIgnoreCase("INFANTERIA"))
+				infanteria++;
+			else if (tipo.equalsIgnoreCase("CABALLERIA"))
+				caballeria++;
+			else if (tipo.equalsIgnoreCase("ARTILLERIA"))
+				artilleria++;
+			else if (tipo.equalsIgnoreCase("COMODIN"))
+				comodines++;
+		}
+
+		// 3 iguales
+		if (infanteria + comodines == 3 || caballeria + comodines == 3 || artilleria + comodines == 3)
+			return true;
+
+		// 3 diferentes (con comodines)
+		int tiposDistintos = 0;
+		if (infanteria > 0)
+			tiposDistintos++;
+		if (caballeria > 0)
+			tiposDistintos++;
+		if (artilleria > 0)
+			tiposDistintos++;
+
+		return tiposDistintos + comodines >= 3;
+	}
+
+	/**
+	 * Canjea las cartas: las remueve de la mano y devuelve tropas
+	 */
+
+	public int canjearCartas(MyLinkedList<Long> idsCartas, MyLinkedList<Carta> mano) {
+		for (int i = 0; i < idsCartas.size(); i++) {
+			Long id = idsCartas.getPos(i).getInfo();
+			for (int j = 0; j < mano.size(); j++) {
+				if (mano.getPos(j).getInfo().getId().equals(id)) {
+					mano.deleteAt(j); // si j es el índice
+					break;
+				}
+			}
+		}
+
+		canjesRealizados++;
+		return 4 + (canjesRealizados - 1) * 2; // Ejemplo progresión de tropas
 	}
 
 	/** Baraja la lista y llena el mazo */

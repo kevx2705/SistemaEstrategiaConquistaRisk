@@ -21,7 +21,7 @@ public class JugadorService {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private TerritorioService territorioService;
 
@@ -96,6 +96,26 @@ public class JugadorService {
 		jugadorRepo.save(j);
 		return j;
 	}
+
+	public boolean jugadorControlaContinente(Long idContinente, Long idJugador,
+			MyLinkedList<TerritorioDTO> todosTerritorios) {
+
+		boolean controla = true;
+
+		for (int i = 0; i < todosTerritorios.size(); i++) {
+		    TerritorioDTO t = todosTerritorios.getPos(i).getInfo();  // ✅ CORRECTO
+
+			if (t.getIdContinente().equals(idContinente)) {
+				if (!t.getIdJugador().equals(idJugador)) {
+					controla = false;
+					break;
+				}
+			}
+		}
+
+		return controla;
+	}
+	
 
 	// ==========================================================
 	// ✅ FUNCIONES ESPECIALES PARA EL JUEGO RISK

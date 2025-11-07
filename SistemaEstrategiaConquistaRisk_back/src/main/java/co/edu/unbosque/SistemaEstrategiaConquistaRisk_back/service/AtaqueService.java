@@ -114,7 +114,6 @@ public class AtaqueService {
 		if (terrDefensor.getTropas() <= 0) {
 			terrDefensor.setIdJugador(atacanteId);
 
-// Mover al menos 1 tropa del atacante al nuevo territorio
 			int moverTropas = Math.max(1, dadosAtacante - bajasAtacante);
 			terrDefensor.setTropas(moverTropas);
 			terrAtacante.setTropas(terrAtacante.getTropas() - moverTropas);
@@ -123,16 +122,9 @@ public class AtaqueService {
 			jugador.setTerritoriosControlados(jugador.getTerritoriosControlados() + 1);
 			conquista = true;
 
-// -------------------------------
-// 7b. Robar carta tras conquista
-// -------------------------------
-			CartaDTO nuevaCarta = cartaService.robarCarta();
-			if (nuevaCarta != null) {
-				if (jugador.getCartas() == null) {
-					jugador.setCartas(new MyLinkedList<>());
-				}
-				jugador.getCartas().addLast(modelMapper.map(nuevaCarta, Carta.class));
-			}
+// ⚠️ No robar carta aquí: se hará al final del turno
+// Puedes marcar un flag en el jugador o en la partida
+// por ejemplo: jugador.setConquistoTerritorio(true);
 		}
 
 // -------------------------------

@@ -31,6 +31,42 @@ public class TerritorioService {
 
         return listaDTO;
     }
+    public boolean controlaContinente(Long idJugador, Long idContinente) {
+        MyLinkedList<TerritorioDTO> territorios = obtenerPorContinente(idContinente);
+        
+        for (int i = 0; i < territorios.size(); i++) {
+            if (!territorios.getPos(i).getInfo().getIdJugador().equals(idJugador)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int contarTerritoriosDeJugador(Long idJugador) {
+        return obtenerPorJugador(idJugador).size();
+    }
+ // ✅ Obtener todos los territorios que pertenecen a un jugador
+    public MyLinkedList<TerritorioDTO> obtenerPorJugador(Long idJugador) {
+        MyLinkedList<TerritorioDTO> lista = new MyLinkedList<>();
+
+        for (Territorio t : territorioRepository.findAll()) {
+            if (t.getIdJugador() != null && t.getIdJugador().equals(idJugador)) {
+
+                TerritorioDTO dto = new TerritorioDTO();
+                dto.setId(t.getId());
+                dto.setNombre(t.getNombre());
+                dto.setTropas(t.getTropas());
+                dto.setIdContinente(t.getIdContinente());
+                dto.setIdJugador(t.getIdJugador());
+
+                lista.addLast(dto);
+            }
+        }
+
+        return lista;
+    }
+
+
 
     // 🔹 Buscar entidad por nombre (uso interno del service)
     private Territorio buscarEntidadPorNombre(String nombre) {
