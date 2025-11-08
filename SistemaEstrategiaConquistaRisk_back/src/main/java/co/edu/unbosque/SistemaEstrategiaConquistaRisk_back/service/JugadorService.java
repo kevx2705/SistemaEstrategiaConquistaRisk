@@ -6,11 +6,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Jugador;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.JugadorRepository;
 
 @Service
@@ -60,25 +62,41 @@ public class JugadorService {
 	}
 
 	public int updateById(Long id, JugadorDTO newData) {
-		Optional<Jugador> opt = jugadorRepo.findById(id);
+	    Optional<Jugador> opt = jugadorRepo.findById(id);
 
-		if (opt.isPresent()) {
-			Jugador entity = opt.get();
+	    if (opt.isPresent()) {
+	        Jugador entity = opt.get();
 
-			entity.setNombre(newData.getNombre());
-			entity.setCorreo(newData.getCorreo());
-			entity.setColor(newData.getColor());
-			entity.setTropasDisponibles(newData.getTropasDisponibles());
-			entity.setTerritoriosControlados(newData.getTerritoriosControlados());
-			entity.setActivo(newData.isActivo());
-			entity.setCartas(newData.getCartas());
+	        entity.setNombre(newData.getNombre());
+	        entity.setCorreo(newData.getCorreo());
+	        entity.setColor(newData.getColor());
+	        entity.setTropasDisponibles(newData.getTropasDisponibles());
+	        entity.setTerritoriosControlados(newData.getTerritoriosControlados());
+	        entity.setActivo(newData.isActivo());
 
-			jugadorRepo.save(entity);
-			return 0;
-		}
+	        // --- Convertir CartaDTO a Carta ---
+	        MyLinkedList<Carta> cartasConvertidas = new MyLinkedList<>();
+	        if (newData.getCartas() != null) {
+	            Node<CartaDTO> nodo = newData.getCartas().getFirst();
+	            while (nodo != null) {
+	                CartaDTO dto = nodo.getInfo();
+	                Carta carta = new Carta();
+	                carta.setId(dto.getId()); // si tienes id en DTO
+	                carta.setTipo(dto.getTipo());
+	                carta.setDisponible(dto.isDisponible());
+	                cartasConvertidas.add(carta);
+	                nodo = nodo.getNext();
+	            }
+	        }
+	        entity.setCartas(cartasConvertidas);
 
-		return 1;
+	        jugadorRepo.save(entity);
+	        return 0;
+	    }
+
+	    return 1;
 	}
+
 
 	public Long count() {
 		return (long) getAll().size();
