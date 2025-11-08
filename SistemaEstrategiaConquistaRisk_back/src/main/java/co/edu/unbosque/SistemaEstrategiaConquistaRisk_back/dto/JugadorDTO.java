@@ -19,14 +19,14 @@ public class JugadorDTO {
 	private int territoriosControlados;
 
 	private boolean activo;
-	private MyLinkedList<Carta> cartas;
+	private MyLinkedList<CartaDTO> cartas = new MyLinkedList<>();
 
 	public JugadorDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public JugadorDTO(String nombre, String correo, String color, int tropasDisponibles, int territoriosControlados,
-			boolean activo, MyLinkedList<Carta> cartas) {
+			boolean activo, MyLinkedList<CartaDTO> cartas) {
 		super();
 		this.nombre = nombre;
 		this.correo = correo;
@@ -45,11 +45,11 @@ public class JugadorDTO {
 		this.correo = correo;
 	}
 
-	public MyLinkedList<Carta> getCartas() {
+	public MyLinkedList<CartaDTO> getCartas() {
 		return cartas;
 	}
 
-	public void setCartas(MyLinkedList<Carta> cartas) {
+	public void setCartas(MyLinkedList<CartaDTO> cartas) {
 		this.cartas = cartas;
 	}
 

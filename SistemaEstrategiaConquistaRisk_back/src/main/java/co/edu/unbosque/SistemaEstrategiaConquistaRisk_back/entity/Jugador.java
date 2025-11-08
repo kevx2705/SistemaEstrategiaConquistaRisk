@@ -25,7 +25,7 @@ public class Jugador {
 	private int territoriosControlados;
 
 	private boolean activo;
-	private MyLinkedList<Carta> cartas;
+	private MyLinkedList<Carta> cartas = new MyLinkedList<>();
 
 	public Jugador() {
 		// TODO Auto-generated constructor stub

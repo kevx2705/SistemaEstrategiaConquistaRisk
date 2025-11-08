@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.JsonUtil;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.StackImpl;
@@ -53,6 +54,23 @@ public class CartaService {
 		}
 		barajarYCrearMazo(lista);
 	}
+	/**
+	 * Devuelve el mazo inicial en JSON para asignarlo a una nueva partida.
+	 * No modifica el mazo global del servicio, solo serializa las cartas disponibles.
+	 */
+	public String inicializarMazoParaPartida() {
+	    MyLinkedList<CartaDTO> mazoParaPartida = new MyLinkedList<>();
+	    inicializarMazo();
+	    // Solo las cartas disponibles
+	    for (Carta c : cartaRepository.findAll()) {
+	        if (c.isDisponible()) {
+	            mazoParaPartida.addLast(modelMapper.map(c, CartaDTO.class));
+	        }
+	    }
+
+	    return JsonUtil.toJson(mazoParaPartida);
+	}
+
 
 	/**
 	 * Valida si las cartas enviadas forman una combinación válida (3 iguales o 3
