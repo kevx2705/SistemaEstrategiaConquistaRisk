@@ -1,10 +1,13 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.*;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.PartidaService;
 
@@ -102,6 +105,15 @@ public class PartidaController {
 	public ResponseEntity<Long> verificarFinPartida(@PathVariable Long id) {
 		Long ganadorId = partidaService.verificarFinPartida(partidaService.retornarPartidaEntidad(id));
 		return ResponseEntity.ok(ganadorId);
+	}
+
+	@GetMapping("/listar")
+	public ResponseEntity<?> listarPartidas() {
+		try {
+			return ResponseEntity.ok(partidaService.verTodasLasPartidas());
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Error al listar partidas: " + e.getMessage());
+		}
 	}
 
 }

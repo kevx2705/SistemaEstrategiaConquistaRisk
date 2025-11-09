@@ -27,6 +27,9 @@ public class JugadorService {
 	@Autowired
 	private TerritorioService territorioService;
 
+	@Autowired
+	private EmailService emailService;
+
 	public JugadorService() {
 	}
 
@@ -37,8 +40,14 @@ public class JugadorService {
 	public int create(JugadorDTO newData) {
 		Jugador entity = modelMapper.map(newData, Jugador.class);
 		jugadorRepo.save(entity);
+//		 emailService.enviarCorreoHtml(
+//			        entity.getCorreo(),
+//			        "¡Bienvenido a NeoLeague Risk!",
+//			        html
+//			    );
 		return 0;
 	}
+	
 
 	public Jugador obtenerJugadorPorId(Long idJugador) {
 		return jugadorRepo.findById(idJugador).orElse(null);
@@ -62,41 +71,40 @@ public class JugadorService {
 	}
 
 	public int updateById(Long id, JugadorDTO newData) {
-	    Optional<Jugador> opt = jugadorRepo.findById(id);
+		Optional<Jugador> opt = jugadorRepo.findById(id);
 
-	    if (opt.isPresent()) {
-	        Jugador entity = opt.get();
+		if (opt.isPresent()) {
+			Jugador entity = opt.get();
 
-	        entity.setNombre(newData.getNombre());
-	        entity.setCorreo(newData.getCorreo());
-	        entity.setColor(newData.getColor());
-	        entity.setTropasDisponibles(newData.getTropasDisponibles());
-	        entity.setTerritoriosControlados(newData.getTerritoriosControlados());
-	        entity.setActivo(newData.isActivo());
+			entity.setNombre(newData.getNombre());
+			entity.setCorreo(newData.getCorreo());
+			entity.setColor(newData.getColor());
+			entity.setTropasDisponibles(newData.getTropasDisponibles());
+			entity.setTerritoriosControlados(newData.getTerritoriosControlados());
+			entity.setActivo(newData.isActivo());
 
-	        // --- Convertir CartaDTO a Carta ---
-	        MyLinkedList<Carta> cartasConvertidas = new MyLinkedList<>();
-	        if (newData.getCartas() != null) {
-	            Node<CartaDTO> nodo = newData.getCartas().getFirst();
-	            while (nodo != null) {
-	                CartaDTO dto = nodo.getInfo();
-	                Carta carta = new Carta();
-	                carta.setId(dto.getId()); // si tienes id en DTO
-	                carta.setTipo(dto.getTipo());
-	                carta.setDisponible(dto.isDisponible());
-	                cartasConvertidas.add(carta);
-	                nodo = nodo.getNext();
-	            }
-	        }
-	        entity.setCartas(cartasConvertidas);
+			// --- Convertir CartaDTO a Carta ---
+			MyLinkedList<Carta> cartasConvertidas = new MyLinkedList<>();
+			if (newData.getCartas() != null) {
+				Node<CartaDTO> nodo = newData.getCartas().getFirst();
+				while (nodo != null) {
+					CartaDTO dto = nodo.getInfo();
+					Carta carta = new Carta();
+					carta.setId(dto.getId()); // si tienes id en DTO
+					carta.setTipo(dto.getTipo());
+					carta.setDisponible(dto.isDisponible());
+					cartasConvertidas.add(carta);
+					nodo = nodo.getNext();
+				}
+			}
+			entity.setCartas(cartasConvertidas);
 
-	        jugadorRepo.save(entity);
-	        return 0;
-	    }
+			jugadorRepo.save(entity);
+			return 0;
+		}
 
-	    return 1;
+		return 1;
 	}
-
 
 	public Long count() {
 		return (long) getAll().size();
@@ -121,7 +129,7 @@ public class JugadorService {
 		boolean controla = true;
 
 		for (int i = 0; i < todosTerritorios.size(); i++) {
-		    TerritorioDTO t = todosTerritorios.getPos(i).getInfo();  // ✅ CORRECTO
+			TerritorioDTO t = todosTerritorios.getPos(i).getInfo(); // ✅ CORRECTO
 
 			if (t.getIdContinente().equals(idContinente)) {
 				if (!t.getIdJugador().equals(idJugador)) {
@@ -133,7 +141,6 @@ public class JugadorService {
 
 		return controla;
 	}
-	
 
 	// ==========================================================
 	// ✅ FUNCIONES ESPECIALES PARA EL JUEGO RISK

@@ -876,6 +876,7 @@ public class PartidaService {
 		partida.setGanadorId(jugadorGanadorId); // <-- asignamos el ganador a la partida
 		partida.setFinalizada(true); // opcional: marcar la partida como finalizada
 		partidaRepository.save(partida); // guardar cambios en la BD
+	    partida.setFechaFin(LocalDateTime.now());
 
 		return jugadorGanadorId;
 	}
@@ -925,5 +926,18 @@ public class PartidaService {
 		return partidaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("No existe la partida con id: " + id));
 	}
+	public MyLinkedList<Partida> verTodasLasPartidas() {
+
+	    MyLinkedList<Partida> resultado = new MyLinkedList<>();
+
+	    // findAll() retorna List<Partida>, debes convertirlo
+	    for (Partida p : partidaRepository.findAll()) {
+	        resultado.add(p);
+	    }
+
+	    return resultado;
+	}
+
+
 
 }
