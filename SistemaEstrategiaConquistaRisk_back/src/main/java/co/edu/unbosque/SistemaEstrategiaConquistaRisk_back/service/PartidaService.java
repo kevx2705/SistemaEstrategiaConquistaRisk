@@ -8,9 +8,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.internal.LinkedTreeMap;
+import java.io.ByteArrayOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.ContinenteDTO;
@@ -42,6 +50,9 @@ public class PartidaService {
 
 	@Autowired
 	private CartaService cartaService;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private AtaqueService ataqueService;
@@ -51,6 +62,9 @@ public class PartidaService {
 
 	@Autowired
 	private MapaTerritorio mapaTerritorio;
+	
+	@Autowired
+	private PDFService pdfService;
 
 	private final Gson gson = new Gson();
 
@@ -857,29 +871,47 @@ public class PartidaService {
 	}
 
 	public Long verificarFinPartida(Partida partida) {
-		MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
+	    MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
 
-		if (territorios.isEmpty())
-			return null;
+	    if (territorios.isEmpty())
+	        return null;
 
-		Long jugadorGanadorId = territorios.getFirst().getInfo().getIdJugador();
+	    Long jugadorGanadorId = territorios.getFirst().getInfo().getIdJugador();
 
-		Node<TerritorioDTO> nodo = territorios.getFirst();
-		while (nodo != null) {
-			if (!nodo.getInfo().getIdJugador().equals(jugadorGanadorId)) {
-				return null; // aún hay territorios de otro jugador
-			}
-			nodo = nodo.getNext();
-		}
+	    Node<TerritorioDTO> nodo = territorios.getFirst();
+	    while (nodo != null) {
+	        if (!nodo.getInfo().getIdJugador().equals(jugadorGanadorId)) {
+	            return null; // aún hay territorios de otro jugador
+	        }
+	        nodo = nodo.getNext();
+	    }
 
-		// Todos los territorios pertenecen a un mismo jugador
-		partida.setGanadorId(jugadorGanadorId); // <-- asignamos el ganador a la partida
-		partida.setFinalizada(true); // opcional: marcar la partida como finalizada
-		partidaRepository.save(partida); // guardar cambios en la BD
+	    // Todos los territorios pertenecen a un mismo jugador
+	    partida.setGanadorId(jugadorGanadorId);
+	    partida.setFinalizada(true);
 	    partida.setFechaFin(LocalDateTime.now());
+	    partidaRepository.save(partida); // guardar cambios en la BD
 
-		return jugadorGanadorId;
+	    // ----------------------------
+	    // Generar y enviar PDF
+	    // ----------------------------
+	    try {
+	        MyLinkedList<Jugador> jugadores = obtenerJugadoresPartida(partida);
+	        for (int i = 0; i < jugadores.size(); i++) {
+	            Jugador j = jugadores.getPos(i).getInfo();
+	            if (j.getCorreo() != null && !j.getCorreo().isEmpty()) {
+	                // Enviar correo, pasando la lista de jugadores al EmailService
+	                emailService.enviarCorreoFinalPartida(j.getCorreo(), partida, jugadores);
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); // manejar excepción si falla el envío, no bloquear la finalización
+	    }
+
+	    return jugadorGanadorId;
 	}
+
+
 
 	@Transactional
 	public PartidaDTO retomarPartida(String codigoHash) {
@@ -926,18 +958,90 @@ public class PartidaService {
 		return partidaRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("No existe la partida con id: " + id));
 	}
+
 	public MyLinkedList<Partida> verTodasLasPartidas() {
 
-	    MyLinkedList<Partida> resultado = new MyLinkedList<>();
+		MyLinkedList<Partida> resultado = new MyLinkedList<>();
 
-	    // findAll() retorna List<Partida>, debes convertirlo
-	    for (Partida p : partidaRepository.findAll()) {
-	        resultado.add(p);
-	    }
+		// findAll() retorna List<Partida>, debes convertirlo
+		for (Partida p : partidaRepository.findAll()) {
+			resultado.add(p);
+		}
 
-	    return resultado;
+		return resultado;
 	}
 
+	public Partida obtenerPartidaPorId(int id) {
+		return partidaRepository.findById((long) id).orElse(null);
+	}
+
+	//eliminar
+	@Transactional
+	public PartidaDTO finalizarPartidaForzada(Long partidaId) {
+
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("No existe la partida con ID: " + partidaId));
+
+		// ---------------------------
+		// Finalización forzada
+		// ---------------------------
+		partida.setFinalizada(true);
+		partida.setFechaFin(LocalDateTime.now());
+
+		partidaRepository.save(partida);
+
+		return modelMapper.map(partida, PartidaDTO.class);
+	}
+
+	public MyLinkedList<Jugador> obtenerJugadoresPartida(Partida partida) {
+	    MyLinkedList<Jugador> jugadores = new MyLinkedList<>();
+
+	    if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
+	        return jugadores;
+	    }
+
+	    // Deserializar como LinkedTreeMap porque Gson no puede inferir Jugador directamente
+	    Type tipoLista = new TypeToken<MyLinkedList<LinkedTreeMap>>() {}.getType();
+	    MyLinkedList<LinkedTreeMap> temp = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
+
+	    for (int i = 0; i < temp.size(); i++) {
+	        LinkedTreeMap map = temp.getPos(i).getInfo();
+	        Jugador j = new Jugador();
+
+	        // Mapear los campos del JSON a Jugador
+	        j.setId(((Double) map.get("id")).longValue()); // Gson convierte números a Double
+	        j.setNombre((String) map.get("nombre"));
+	        j.setCorreo((String) map.getOrDefault("correo", ""));
+	        j.setColor((String) map.get("color"));
+	        j.setTropasDisponibles(((Double) map.getOrDefault("tropasDisponibles", 0.0)).intValue());
+	        j.setTerritoriosControlados(((Double) map.getOrDefault("territoriosControlados", 0.0)).intValue());
+	        j.setActivo((Boolean) map.getOrDefault("activo", true));
+	        // Si necesitas cartas u otros campos, puedes mapearlos aquí también
+
+	        jugadores.add(j);
+	    }
+
+	    return jugadores;
+	}
+	public byte[] generarZipFinalPartida(int partidaId) throws Exception {
+	    Partida partida = obtenerPartidaPorId(partidaId);
+	    if (partida == null || !Boolean.TRUE.equals(partida.isFinalizada())) {
+	        return null;
+	    }
+
+	    MyLinkedList<Jugador> jugadores = obtenerJugadoresPartida(partida);
+	    byte[] pdfBytes = pdfService.generarPDFPartida(partida, jugadores);
+ 
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+	        ZipEntry entry = new ZipEntry("Resultados Partida" + ".pdf");
+	        zos.putNextEntry(entry);
+	        zos.write(pdfBytes);
+	        zos.closeEntry();
+	    }
+
+	    return baos.toByteArray();
+	}
 
 
 }

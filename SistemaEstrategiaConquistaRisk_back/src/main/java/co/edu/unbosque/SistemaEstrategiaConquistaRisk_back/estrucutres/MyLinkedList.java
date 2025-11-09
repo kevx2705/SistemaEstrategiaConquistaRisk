@@ -38,6 +38,11 @@ public class MyLinkedList<E> implements Serializable {
 		first = newNode;
 	}
 
+	public E get(int index) {
+		Node<E> node = getPos(index);
+		return (node == null ? null : node.getInfo());
+	}
+
 	public boolean delete(E info) {
 		if (isEmpty())
 			return false;
@@ -101,7 +106,6 @@ public class MyLinkedList<E> implements Serializable {
 		this.first = this.first.getNext();
 		return data;
 	}
-	
 
 	public E extract(Node<E> previous) {
 		if (previous == null || previous.getNext() == null) {

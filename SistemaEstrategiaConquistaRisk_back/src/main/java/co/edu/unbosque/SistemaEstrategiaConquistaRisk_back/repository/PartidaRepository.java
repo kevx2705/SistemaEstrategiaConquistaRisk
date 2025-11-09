@@ -20,4 +20,5 @@ public interface PartidaRepository extends CrudRepository<Partida, Long> {
     // Buscar partidas activas (iniciada = true, finalizada = false)
     Iterable<Partida> findByIniciadaTrueAndFinalizadaFalse();
     
+    
 }

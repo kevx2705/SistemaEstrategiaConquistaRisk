@@ -27,8 +27,6 @@ public class JugadorService {
 	@Autowired
 	private TerritorioService territorioService;
 
-	@Autowired
-	private EmailService emailService;
 
 	public JugadorService() {
 	}
@@ -40,14 +38,8 @@ public class JugadorService {
 	public int create(JugadorDTO newData) {
 		Jugador entity = modelMapper.map(newData, Jugador.class);
 		jugadorRepo.save(entity);
-//		 emailService.enviarCorreoHtml(
-//			        entity.getCorreo(),
-//			        "¡Bienvenido a NeoLeague Risk!",
-//			        html
-//			    );
 		return 0;
 	}
-	
 
 	public Jugador obtenerJugadorPorId(Long idJugador) {
 		return jugadorRepo.findById(idJugador).orElse(null);

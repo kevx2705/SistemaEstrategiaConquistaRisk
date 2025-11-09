@@ -17,6 +17,13 @@ public class PartidaController {
 
 	@Autowired
 	private PartidaService partidaService;
+	
+	//ELIMINAR
+	@PutMapping("/partida/{id}/finalizar-forzada")
+	public ResponseEntity<PartidaDTO> finalizarForzada(@PathVariable Long id) {
+	    return ResponseEntity.ok(partidaService.finalizarPartidaForzada(id));
+	}
+
 
 	// ------------------ CREAR PARTIDA ------------------
 	@PostMapping("/crear")
@@ -115,5 +122,25 @@ public class PartidaController {
 			return ResponseEntity.status(500).body("Error al listar partidas: " + e.getMessage());
 		}
 	}
+	@GetMapping("/descargar-final/{partidaId}")
+	public ResponseEntity<byte[]> descargarZipFinal(@PathVariable int partidaId) {
+	    try {
+	        byte[] zipBytes = partidaService.generarZipFinalPartida(partidaId);
+	        if (zipBytes == null) {
+	            return ResponseEntity.badRequest().body(null);
+	        }
+
+	        return ResponseEntity.ok()
+	                .header("Content-Disposition", "attachment; filename=\"Resultados_" + partidaId + ".zip\"")
+	                .header("Content-Type", "application/zip")
+	                .body(zipBytes);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.internalServerError().body(null);
+	    }
+	}
+
+
 
 }

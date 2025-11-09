@@ -1,6 +1,5 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.EmailService;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.JugadorService;
 
 @RestController
@@ -17,6 +17,9 @@ public class JugadorController {
 
 	@Autowired
 	private JugadorService jugadorService;
+
+	@Autowired
+	private EmailService emailService;
 
 	// ==========================================================
 	// ✅ CRUD BÁSICO
@@ -33,6 +36,7 @@ public class JugadorController {
 		dto.setContraseña(contrasena);
 
 		int status = jugadorService.create(dto);
+		emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
 
 		if (status == 0) {
 			return ResponseEntity.status(201).body("Jugador creado con éxito");
@@ -40,11 +44,13 @@ public class JugadorController {
 			return ResponseEntity.status(406).body("Error: el nombre o correo ya están en uso");
 		}
 	}
-	 @GetMapping("/listar")
-	    public ResponseEntity<MyLinkedList<JugadorDTO>> listarJugadores() {
-	        MyLinkedList<JugadorDTO> jugadores = jugadorService.getAll();
-	        return ResponseEntity.ok(jugadores);
-	    }
+
+	@GetMapping("/listar")
+	public ResponseEntity<MyLinkedList<JugadorDTO>> listarJugadores() {
+		MyLinkedList<JugadorDTO> jugadores = jugadorService.getAll();
+		return ResponseEntity.ok(jugadores);
+	}
+
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		int r = jugadorService.deleteById(id);
