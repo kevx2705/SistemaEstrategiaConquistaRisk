@@ -32,7 +32,6 @@ public class CartaService {
 	private Random random;
 	private int canjesRealizados = 0;
 
-
 	public CartaService() {
 		mazo = new StackImpl<>();
 		random = new Random();
@@ -54,23 +53,25 @@ public class CartaService {
 		}
 		barajarYCrearMazo(lista);
 	}
+
 	/**
-	 * Devuelve el mazo inicial en JSON para asignarlo a una nueva partida.
-	 * No modifica el mazo global del servicio, solo serializa las cartas disponibles.
+	 * Devuelve el mazo inicial en JSON para asignarlo a una nueva partida. No
+	 * modifica el mazo global del servicio, solo serializa las cartas disponibles.
 	 */
 	public String inicializarMazoParaPartida() {
-	    MyLinkedList<CartaDTO> mazoParaPartida = new MyLinkedList<>();
-	    inicializarMazo();
-	    // Solo las cartas disponibles
-	    for (Carta c : cartaRepository.findAll()) {
-	        if (c.isDisponible()) {
-	            mazoParaPartida.addLast(modelMapper.map(c, CartaDTO.class));
-	        }
-	    }
+		inicializarMazo(); // baraja y llena el Stack "mazo"
 
-	    return JsonUtil.toJson(mazoParaPartida);
+		MyLinkedList<CartaDTO> lista = new MyLinkedList<>();
+
+		// Convertir stack a lista en el orden real del mazo
+		StackImpl<Carta> copia = mazo.copiar(); // si no existe, te lo programo
+		while (copia.size() > 0) {
+			Carta c = copia.pop();
+			lista.addLast(modelMapper.map(c, CartaDTO.class));
+		}
+
+		return JsonUtil.toJson(lista);
 	}
-
 
 	/**
 	 * Valida si las cartas enviadas forman una combinación válida (3 iguales o 3

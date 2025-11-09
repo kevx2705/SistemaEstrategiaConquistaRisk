@@ -21,13 +21,13 @@ public class Partida {
 	private Long ganadorId;
 	private Long jugadorActualId;
 
-	@Column(length = 6000)
+	@Column(columnDefinition = "LONGTEXT")
 	private String territoriosJSON;
 
-	@Column(length = 3000)
+	@Column(columnDefinition = "LONGTEXT")
 	private String mazoCartasJSON;
 
-	@Column(length = 2000)
+	@Column(columnDefinition = "LONGTEXT")
 	private String jugadoresOrdenTurnoJSON;
 
 	private LocalDateTime fechaInicio;

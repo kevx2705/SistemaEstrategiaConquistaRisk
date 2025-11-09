@@ -11,7 +11,7 @@ public class JugadorDTO {
 	private String nombre;
 
 	private String correo;
-
+	private String contraseña;
 	private String color;
 
 	private int tropasDisponibles;
@@ -25,16 +25,25 @@ public class JugadorDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public JugadorDTO(String nombre, String correo, String color, int tropasDisponibles, int territoriosControlados,
-			boolean activo, MyLinkedList<CartaDTO> cartas) {
+	public JugadorDTO(String nombre, String correo, String contraseña, String color, int tropasDisponibles,
+			int territoriosControlados, boolean activo, MyLinkedList<CartaDTO> cartas) {
 		super();
 		this.nombre = nombre;
 		this.correo = correo;
+		this.contraseña = contraseña;
 		this.color = color;
 		this.tropasDisponibles = tropasDisponibles;
 		this.territoriosControlados = territoriosControlados;
 		this.activo = activo;
 		this.cartas = cartas;
+	}
+
+	public String getContraseña() {
+		return contraseña;
+	}
+
+	public void setContraseña(String contraseña) {
+		this.contraseña = contraseña;
 	}
 
 	public String getCorreo() {

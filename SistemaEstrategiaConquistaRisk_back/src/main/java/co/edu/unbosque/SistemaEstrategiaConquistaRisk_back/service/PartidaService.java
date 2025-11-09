@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.ContinenteDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.PartidaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.ResultadoAtaqueDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
@@ -112,11 +113,6 @@ public class PartidaService {
 			if (nombre == null || nombre.trim().isEmpty())
 				continue;
 
-			Jugador existente = jugadorRepository.findByNombre(nombre);
-			if (existente != null && existente.isActivo()) {
-				throw new RuntimeException("El jugador '" + nombre + "' ya está en otra partida.");
-			}
-
 			// Crear jugador temporal y persistir
 			Jugador nuevo = jugadorService.crearJugadorTemporal(nombre, colores[colorIndex++]);
 
@@ -131,7 +127,7 @@ public class PartidaService {
 		// -------------------------------
 		// 5. Asignar jugador actual
 		// -------------------------------
-		partida.setJugadorActualId(jugadoresDTO.getFirst().getInfo().getId());
+		partida.setJugadorActualId(anfitrionId);
 
 		// -------------------------------
 		// 6. Serializar lista de jugadores
@@ -151,6 +147,15 @@ public class PartidaService {
 		// 8. Guardar partida
 		// -------------------------------
 		return partidaRepository.save(partida);
+	}
+
+	public PartidaDTO crearPartidaDTO(Long anfitrionId, String[] otrosNombres) {
+		Partida partida = crearPartida(anfitrionId, otrosNombres);
+
+		// Convertir entidad a DTO automáticamente
+		PartidaDTO dto = modelMapper.map(partida, PartidaDTO.class);
+
+		return dto;
 	}
 
 	@Transactional
@@ -873,6 +878,52 @@ public class PartidaService {
 		partidaRepository.save(partida); // guardar cambios en la BD
 
 		return jugadorGanadorId;
+	}
+
+	@Transactional
+	public PartidaDTO retomarPartida(String codigoHash) {
+		// 1️⃣ Buscar la partida por código
+		Partida partida = partidaRepository.findByCodigoHash(codigoHash)
+				.orElseThrow(() -> new RuntimeException("No existe la partida con el código dado"));
+
+		// 2️⃣ Reconstruir lista de jugadores
+		Type jugadoresType = new TypeToken<MyLinkedList<JugadorDTO>>() {
+		}.getType();
+		MyLinkedList<JugadorDTO> jugadores = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), jugadoresType);
+
+		// 3️⃣ Reconstruir territorios
+		Type territoriosType = new TypeToken<MyLinkedList<TerritorioDTO>>() {
+		}.getType();
+		MyLinkedList<TerritorioDTO> territorios = gson.fromJson(partida.getTerritoriosJSON(), territoriosType);
+
+		// 4️⃣ Reconstruir mazo de cartas si existe
+		MyLinkedList<CartaDTO> mazo = new MyLinkedList<>();
+		if (partida.getMazoCartasJSON() != null && !partida.getMazoCartasJSON().isBlank()) {
+			Type mazoType = new TypeToken<MyLinkedList<CartaDTO>>() {
+			}.getType();
+			mazo = gson.fromJson(partida.getMazoCartasJSON(), mazoType);
+		}
+
+		// 5️⃣ Construir DTO de partida para frontend
+		PartidaDTO dto = new PartidaDTO();
+		dto.setId(partida.getId());
+		dto.setCodigoHash(partida.getCodigoHash());
+		dto.setIniciada(partida.isIniciada());
+		dto.setFinalizada(partida.isFinalizada());
+		dto.setJugadorActualId(partida.getJugadorActualId());
+		dto.setGanadorId(partida.getGanadorId());
+		dto.setTerritoriosJSON(partida.getTerritoriosJSON());
+		dto.setMazoCartasJSON(partida.getMazoCartasJSON());
+		dto.setJugadoresOrdenTurnoJSON(partida.getJugadoresOrdenTurnoJSON());
+		dto.setFechaInicio(partida.getFechaInicio());
+		dto.setFechaFin(partida.getFechaFin());
+
+		return dto;
+	}
+
+	public Partida retornarPartidaEntidad(Long id) {
+		return partidaRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("No existe la partida con id: " + id));
 	}
 
 }

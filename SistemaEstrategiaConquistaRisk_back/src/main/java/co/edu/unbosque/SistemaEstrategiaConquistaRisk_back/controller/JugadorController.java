@@ -22,12 +22,23 @@ public class JugadorController {
 	// ✅ CRUD BÁSICO
 	// ==========================================================
 
-	@PostMapping("/create")
-	public ResponseEntity<?> create(@RequestBody JugadorDTO dto) {
-		int r = jugadorService.create(dto);
-		if (r == 0)
-			return ResponseEntity.ok("Jugador creado");
-		return ResponseEntity.badRequest().body("No se pudo crear el jugador");
+	@PostMapping(path = "/crear")
+	public ResponseEntity<String> crearJugador(@RequestParam String nombre, @RequestParam String correo,
+			@RequestParam String contrasena) {
+
+		// Crear DTO temporal con los campos necesarios
+		JugadorDTO dto = new JugadorDTO();
+		dto.setNombre(nombre);
+		dto.setCorreo(correo);
+		dto.setContraseña(contrasena);
+
+		int status = jugadorService.create(dto);
+
+		if (status == 0) {
+			return ResponseEntity.status(201).body("Jugador creado con éxito");
+		} else {
+			return ResponseEntity.status(406).body("Error: el nombre o correo ya están en uso");
+		}
 	}
 
 	@DeleteMapping("/delete/{id}")

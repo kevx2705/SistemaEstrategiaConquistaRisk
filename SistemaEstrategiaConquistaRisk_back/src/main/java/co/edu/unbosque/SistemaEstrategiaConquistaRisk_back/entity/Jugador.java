@@ -18,6 +18,8 @@ public class Jugador {
 
 	private String correo;
 
+	private String contraseña;
+
 	private String color;
 
 	private int tropasDisponibles;
@@ -31,9 +33,10 @@ public class Jugador {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Jugador(String nombre, String color, String correo) {
+	public Jugador(String nombre, String correo, String contraseña) {
 		this.nombre = nombre;
-		this.color = color;
+		this.contraseña = contraseña;
+		this.color = null;
 		this.correo = correo;
 		this.tropasDisponibles = 0;
 		this.territoriosControlados = 0;
@@ -103,6 +106,18 @@ public class Jugador {
 	@Override
 	public int hashCode() {
 		return Objects.hash(activo, color, id, nombre, territoriosControlados, tropasDisponibles);
+	}
+
+	public String getContraseña() {
+		return contraseña;
+	}
+
+	public void setContraseña(String contraseña) {
+		this.contraseña = contraseña;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	@Override
