@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Jugador;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.EmailService;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.PartidaService;
 

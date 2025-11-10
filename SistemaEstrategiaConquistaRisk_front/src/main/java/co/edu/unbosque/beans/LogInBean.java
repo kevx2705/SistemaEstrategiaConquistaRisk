@@ -2,12 +2,12 @@ package co.edu.unbosque.beans;
 
 import java.io.Serializable;
 
+import co.edu.unbosque.estructures.MyLinkedList;
+import co.edu.unbosque.estructures.Node;
 import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.model.Usuario;
 import co.edu.unbosque.model.UsuarioActual;
 import co.edu.unbosque.service.JugadorService;
-import co.edu.unbosque.estrucutres.MyLinkedList;
-import co.edu.unbosque.estrucutres.Node;
 import co.edu.unbosque.util.AESUtil;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;

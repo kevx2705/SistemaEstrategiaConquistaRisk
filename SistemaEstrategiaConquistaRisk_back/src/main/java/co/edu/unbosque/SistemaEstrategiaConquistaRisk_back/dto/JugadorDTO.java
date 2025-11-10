@@ -3,7 +3,7 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto;
 import java.util.Objects;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
 
 public class JugadorDTO {
 

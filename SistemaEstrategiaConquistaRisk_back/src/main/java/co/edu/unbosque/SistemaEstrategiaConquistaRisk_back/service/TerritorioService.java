@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Territorio;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.TerritorioRepository;
 
 @Service

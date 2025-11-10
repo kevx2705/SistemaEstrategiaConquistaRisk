@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Jugador;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;

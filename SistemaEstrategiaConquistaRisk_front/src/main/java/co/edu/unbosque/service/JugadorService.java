@@ -11,8 +11,8 @@ import java.time.Duration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import co.edu.unbosque.estructures.MyLinkedList;
 import co.edu.unbosque.model.Jugador;
-import co.edu.unbosque.estrucutres.MyLinkedList;
 
 public class JugadorService {
 

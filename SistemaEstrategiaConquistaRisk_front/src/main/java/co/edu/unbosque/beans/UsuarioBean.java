@@ -7,8 +7,8 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 
-import co.edu.unbosque.estrucutres.MyLinkedList;
-import co.edu.unbosque.estrucutres.Node;
+import co.edu.unbosque.estructures.MyLinkedList;
+import co.edu.unbosque.estructures.Node;
 import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.service.JugadorService;
 
