@@ -246,21 +246,4 @@ public class MyLinkedList<E> implements Serializable {
 		return toStringRecursivo(current.getNext(), sb);
 	}
 	
-	 public E findByCorreoAndPassword(String correo, String password) {
-	        return findByCorreoAndPasswordRecursivo(correo, password, first);
-	    }
-
-	    private E findByCorreoAndPasswordRecursivo(String correo, String password, Node<E> current) {
-	        if (current == null) {
-	            return null;
-	        }
-
-	        E jugador = current.getInfo();
-	        if (E.getCorreo().equalsIgnoreCase(correo)
-	                && jugador.getPassword().equals(password)) {
-	            return jugador;
-	        }
-
-	        return findByCorreoAndPasswordRecursivo(correo, password, current.getNext());
-	    }
 }

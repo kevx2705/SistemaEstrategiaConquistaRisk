@@ -48,9 +48,7 @@ public class LogInBean implements Serializable {
 	            String contrasenaEncriptada = usuario.getContrasena();
 
 	            if (nombreEncriptado == null || contrasenaEncriptada == null)
-	            	
 	                continue;
-	            // Intentar desencriptar
 	            System.out.println("qweqweqw");
 	            String usuarioN = AESUtil.decrypt(nombreEncriptado);
 	            String contrasenaN = AESUtil.decrypt(contrasenaEncriptada);
