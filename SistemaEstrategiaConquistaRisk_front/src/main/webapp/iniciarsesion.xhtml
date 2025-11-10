@@ -15,7 +15,6 @@
 
                 <h1 class="index-title">¡Inicia sesión para conquistar!</h1>
 
-                <!-- ✅ Mostrar si ya hay sesión iniciada -->
                 <h:form rendered="#{loginbean.sesionIniciada}" styleClass="signin-form">
                     <h2 class="login-title txtBlack">¡Sesión iniciada!</h2>
 
@@ -33,8 +32,7 @@
                     </h:panelGroup>
                 </h:form>
 
-                <!-- ✅ Mostrar si NO hay sesión -->
-                <h:form rendered="#{!loginbean.sesionIniciada}" styleClass="signin-form">
+                <h:form id="loginForm" rendered="#{!loginbean.sesionIniciada}" styleClass="signin-form">
 
                     <div class="form-grid">
                         <div class="form-input">
@@ -59,7 +57,7 @@
                     <p:commandButton value="Entrar"
                                      action="#{loginbean.iniciarSesion}"
                                      process="@form"
-                                     update="@form, :growl"
+                                     update="@form, :loginForm:messages, :growl-sticky"
                                      styleClass="signin-btn btn-text"
                                      style="margin-top: 30px;" />
 
@@ -68,10 +66,14 @@
                             style="display:block; margin-top:20px; font-weight:bold;">
                         ¿No tienes cuenta? Regístrate aquí
                     </h:link>
-                </h:form>
 
-                <!-- ✅ Componente para mensajes -->
-                <p:growl id="growl" showDetail="true" sticky="false" life="3000" />
+                    <p:messages id="messages"
+                                showDetail="true"
+                                showIcon="false"
+                                autoUpdate="true"
+                                styleClass="btn-text"
+                                style="margin-top:15px;" />
+                </h:form>
 
             </div>
         </div>

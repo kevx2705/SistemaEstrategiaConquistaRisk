@@ -2,7 +2,7 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity;
 
 import java.util.Objects;
 
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

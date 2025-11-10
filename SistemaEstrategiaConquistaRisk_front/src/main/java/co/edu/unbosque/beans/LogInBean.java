@@ -9,6 +9,7 @@ import co.edu.unbosque.model.Usuario;
 import co.edu.unbosque.model.UsuarioActual;
 import co.edu.unbosque.service.JugadorService;
 import co.edu.unbosque.util.AESUtil;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -33,58 +34,103 @@ public class LogInBean implements Serializable {
 		cargarUsuarios();
 	}
 
+//
+//	public void iniciarSesion() {
+//	    boolean encontrado = false;
+//	    System.out.println(listUsers.toString());
+//	    for (int i = 0; i < listUsers.size(); i++) {
+//	        Node<Jugador> nodo = listUsers.getPos(i);
+//	        if (nodo == null)
+//	            continue;
+//
+//	        Jugador usuario = nodo.getInfo();
+//
+//	        try {
+//	            String nombreEncriptado = usuario.getNombre();
+//	            String contrasenaEncriptada = usuario.getContrasena();
+//
+//	            if (nombreEncriptado == null || contrasenaEncriptada == null)
+//	                continue;
+//	            System.out.println("qweqweqw");
+//	            String usuarioN = AESUtil.decrypt(nombreEncriptado);
+//	            String contrasenaN = AESUtil.decrypt(contrasenaEncriptada);
+//
+//	            if (usuarioN == null) usuarioN = nombreEncriptado;
+//	            if (contrasenaN == null) contrasenaN = contrasenaEncriptada;
+//
+//	            if (usuarioN != null && contrasenaN != null
+//	                    && usuarioN.trim().equalsIgnoreCase(user.trim())
+//	                    && contrasenaN.trim().equals(password.trim())) {
+//
+//	                showStickyLogin("202", "Sesión iniciada exitosamente");
+//	                UsuarioActual.setUsuarioActual(usuario);
+//	                password = "";
+//	                encontrado = true;
+//	                break;
+//	            }
+//
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        }
+//	    }
+//
+//	    if (!encontrado) {
+//	        showStickyLogin("401", "Credenciales inválidas");
+//	        password = "";
+//	    }
+//	}
+//
+//	public void cargarUsuarios() {
+//		MyLinkedList<Jugador> jugadores = JugadorService.doGetAll("http://localhost:8081/jugadores/listar");
+//		for (int i = 0; i < jugadores.size(); i++) {
+//			Node<Jugador> nodo = jugadores.getPos(i);
+//			if (nodo != null) {
+//				listUsers.addLast(nodo.getInfo());
+//			}
+//		}
+//	}
 	public void iniciarSesion() {
-	    boolean encontrado = false;
-	    System.out.println(listUsers.toString());
-	    for (int i = 0; i < listUsers.size(); i++) {
-	        Node<Jugador> nodo = listUsers.getPos(i);
-	        if (nodo == null)
-	            continue;
+		if (user == null || password == null || user.isBlank() || password.isBlank()) {
+			showStickyLogin("400", "Debe ingresar usuario y contraseña");
+			return;
+		}
 
-	        Jugador usuario = nodo.getInfo();
+		if (listUsers == null || listUsers.size() == 0) {
+			showStickyLogin("404", "No hay usuarios cargados");
+			return;
+		}
 
-	        try {
-	            String nombreEncriptado = usuario.getNombre();
-	            String contrasenaEncriptada = usuario.getContrasena();
+		for (int i = 0; i < listUsers.size(); i++) {
+			Jugador jugador = listUsers.get(i);
 
-	            if (nombreEncriptado == null || contrasenaEncriptada == null)
-	                continue;
-	            System.out.println("qweqweqw");
-	            String usuarioN = AESUtil.decrypt(nombreEncriptado);
-	            String contrasenaN = AESUtil.decrypt(contrasenaEncriptada);
+			try {
+				String nombreDescifrado = AESUtil.decrypt(jugador.getNombre());
+				String contrasenaDescifrada = AESUtil.decrypt(jugador.getContrasena());
 
-	            if (usuarioN == null) usuarioN = nombreEncriptado;
-	            if (contrasenaN == null) contrasenaN = contrasenaEncriptada;
+				if (nombreDescifrado != null && contrasenaDescifrada != null && nombreDescifrado.equals(user)
+						&& contrasenaDescifrada.equals(password)) {
 
-	            if (usuarioN != null && contrasenaN != null
-	                    && usuarioN.trim().equalsIgnoreCase(user.trim())
-	                    && contrasenaN.trim().equals(password.trim())) {
+					sesionIniciada = jugador;
+					UsuarioActual.setUsuarioActual(jugador);
+					showStickyLogin("200", "Sesión iniciada exitosamente");
 
-	                showStickyLogin("202", "Sesión iniciada exitosamente");
-	                UsuarioActual.setUsuarioActual(usuario);
-	                password = "";
-	                encontrado = true;
-	                break;
-	            }
+					return;
+				}
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
+			} catch (Exception e) {
+				System.err.println("Error al descifrar credenciales: " + e.getMessage());
+			}
+		}
 
-	    if (!encontrado) {
-	        showStickyLogin("401", "Credenciales inválidas");
-	        password = "";
-	    }
+		showStickyLogin("401", "Credenciales inválidas");
+		password = "";
 	}
 
+	@PostConstruct
 	public void cargarUsuarios() {
 		MyLinkedList<Jugador> jugadores = JugadorService.doGetAll("http://localhost:8081/jugadores/listar");
 		for (int i = 0; i < jugadores.size(); i++) {
-			Node<Jugador> nodo = jugadores.getPos(i);
-			if (nodo != null) {
-				listUsers.addLast(nodo.getInfo());
-			}
+			listUsers.addLast(jugadores.get(i));
 		}
 	}
 

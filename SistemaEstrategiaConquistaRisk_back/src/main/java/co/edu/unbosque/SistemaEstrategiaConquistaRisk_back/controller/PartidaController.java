@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.*;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.PartidaService;
 
 @RestController
