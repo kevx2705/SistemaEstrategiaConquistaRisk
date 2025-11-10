@@ -1,6 +1,8 @@
 package co.edu.unbosque.beans;
+package co.edu.unbosque.beans;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -9,28 +11,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.edu.unbosque.model.Admin;
-import co.edu.unbosque.model.Usuario;
-import co.edu.unbosque.service.AdministradorService;
-
+@Named("usuariosBean")
+@ViewScoped
 /**
  * Bean de vista para la administración de usuarios del sistema. Consolida las
  * listas de administradores, profesores y estudiantes obtenidas de los
  * servicios REST y permite eliminar usuarios individuales.
  */
-@Named("usuariosBean")
-@ViewScoped
 public class UsuarioBean implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/** Lista consolidada de todos los usuarios. */
-	private ArrayList<Usuario> usuarios;
-	/** Lista de administradores. */
 	private ArrayList<Admin> admins;
-	/** Lista de profesores. */
 
 	/** Usuario actualmente seleccionado (por ejemplo para mostrar detalles). */
 	private Usuario usuarioSeleccionado;
@@ -51,7 +41,11 @@ public class UsuarioBean implements Serializable {
 	public void cargarUsuarios() {
 		usuarios = new ArrayList<>();
 		admins = AdministradorService.doGetAll("http://localhost:8081/admin/getall");
+		profesores = ProfesorService.doGetAll("http://localhost:8081/profesor/getall");
+		estudiantes = EstudianteService.doGetAll("http://localhost:8081/estudiante/getall");
 		usuarios.addAll(admins);
+		usuarios.addAll(profesores);
+		usuarios.addAll(estudiantes);
 	}
 
 	/**
@@ -84,41 +78,49 @@ public class UsuarioBean implements Serializable {
 	public String getTipoUsuario(Usuario u) {
 		if (u instanceof Admin)
 			return "Administrador";
+		if (u instanceof Profesor)
+			return "Profesor";
+		if (u instanceof Estudiante)
+			return "Estudiante";
 		return "Usuario";
 	}
 
 	/**
-	 * Elimina un usuario invocando el servicio REST correspondiente según su tipo.
-	 * Tras la operación recarga la lista consolidada y muestra mensajes al usuario.
+	 * Elimina un usuario invocando el servicio REST correspondiente según su
+	 * tipo. Tras la operación recarga la lista consolidada y muestra mensajes al
+	 * usuario.
 	 * 
 	 * @param u Usuario a eliminar.
 	 */
-//	public void eliminarUsuario(Usuario u) {
-//		usuarios.remove(u);
-//		String respuesta = "";
-//		switch (getTipoUsuario(u)) {
-//		case "Administrador":
-//			respuesta = ProblemaService.doDelete("http://localhost:8081/admin/eliminar?id=" + u.getId());
-//			break;
-//		case "Jugador":
-//			respuesta = ProblemaService.doDelete("http://localhost:8081/profesor/eliminar?id=" + u.getId());
-//			break;
-//		default:
-//			respuesta = "400 Error";
-//			break;
-//		}
-//		String[] data = respuesta.split("\n");
-//		if (data[0].equals("204")) {
-//			showStickyLogin(data[0], "usuario eliminado");
-//			cargarUsuarios();
-//			return;
-//		} else {
-//			showStickyLogin(data[0], "no se ha podido eliminar el usuario.");
-//			cargarUsuarios();
-//			return;
-//		}
-//	}
-
+	public void eliminarUsuario(Usuario u) {
+		usuarios.remove(u);
+		String respuesta = "";
+		switch (getTipoUsuario(u)) {
+		case "Administrador":
+			respuesta = ProblemaService.doDelete("http://localhost:8081/admin/eliminar?id=" + u.getId());
+			break;
+		case "Profesor":
+			respuesta = ProblemaService.doDelete("http://localhost:8081/profesor/eliminar?id=" + u.getId());
+			break;
+		case "Estudiante":
+			respuesta = ProblemaService.doDelete("http://localhost:8081/estudiante/eliminar?id=" + u.getId());
+			break;
+		default:
+			respuesta = "400 Error";
+			break;
+		}
+		String[] data = respuesta.split("\n");
+		if (data[0].equals("204")) {
+			showStickyLogin(data[0], "usuario eliminado");
+			cargarUsuarios();
+			return;
+		} else {
+			showStickyLogin(data[0], "no se ha podido eliminar el usuario.");
+			cargarUsuarios();
+			return;
+		}
+	}
+	
 	/**
 	 * Muestra mensajes de estado según el resultado de operaciones con usuarios.
 	 * 
@@ -165,10 +167,39 @@ public class UsuarioBean implements Serializable {
 	}
 
 	/**
+	 * @return Lista de profesores.
+	 */
+	public ArrayList<Profesor> getProfesores() {
+		return profesores;
+	}
+
+	/**
+	 * @param profesores Lista de profesores.
+	 */
+	public void setProfesores(ArrayList<Profesor> profesores) {
+		this.profesores = profesores;
+	}
+
+	/**
+	 * @return Lista de estudiantes.
+	 */
+	public ArrayList<Estudiante> getEstudiantes() {
+		return estudiantes;
+	}
+
+	/**
+	 * @param estudiantes Lista de estudiantes.
+	 */
+	public void setEstudiantes(ArrayList<Estudiante> estudiantes) {
+		this.estudiantes = estudiantes;
+	}
+
+	/**
 	 * @param usuarios Lista consolidada de usuarios.
 	 */
 	public void setUsuarios(ArrayList<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
-
+	
+	
 }

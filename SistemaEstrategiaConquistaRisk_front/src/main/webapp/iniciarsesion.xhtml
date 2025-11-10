@@ -2,47 +2,80 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui"> <ui:composition
-	template="template/template.xhtml">
-	<ui:define name="content">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 
-		<div class="risk-background"> <div class="index-wrapper">
+<ui:composition template="template/template.xhtml">
+    <ui:define name="content">
 
-		<h1 class="index-title">¡Inicia sesión para conquistar!</h1> <h:form
-			rendered="#{loginbean.sesionIniciada}" styleClass="signin-form">
-			<h2 class="login-title txtBlack">¡Sesión iniciada!</h2>
+        <div class="risk-background">
+            <div class="index-wrapper">
 
-			<h:panelGroup styleClass="welcome-box">
-				<h2 class="txtBlack">Bienvenido, <span style="color: #540f07;">#{loginbean.user}</span></h2>
-				<p class="txtBlack">¡Prepárate para conquistar el mundo!</p>
-				<p:commandButton value="Ir al lobby" action="lobby.xhtml"
-					styleClass="signin-btn btn-text" icon="pi pi-play" />
-			</h:panelGroup>
-		</h:form> <h:form rendered="#{!loginbean.sesionIniciada}"
-			styleClass="signin-form">
+                <h1 class="index-title">¡Inicia sesión para conquistar!</h1>
 
-			<div class="form-grid"> <div class="form-input"> <p:inputText
-				id="email" value="#{loginbean.user}" required="true"
-				placeholder="Ingresa tu usuario" styleClass="form-input txtBlack" />
-			</div> <div class="form-input"> <p:password id="password"
-				value="#{loginbean.password}" feedback="false" toggleMask="true"
-				required="true" placeholder="Ingresa tu contraseña"
-				styleClass="form-input txtBlack" /> </div> </div>
+                <!-- ✅ Mostrar si ya hay sesión iniciada -->
+                <h:form rendered="#{loginbean.sesionIniciada}" styleClass="signin-form">
+                    <h2 class="login-title txtBlack">¡Sesión iniciada!</h2>
 
-			<p:commandButton value="Entrar" action="#{loginbean.iniciarSesion}"
-				process="@form" update="@all" styleClass="signin-btn btn-text"
-				style="margin-top: 30px;" />
+                    <h:panelGroup styleClass="welcome-box">
+                        <h2 class="txtBlack">
+                            Bienvenido,
+                            <span style="color: #540f07;">#{loginbean.user}</span>
+                        </h2>
+                        <p class="txtBlack">¡Prepárate para conquistar el mundo!</p>
 
-			<h:link outcome="registrar.xhtml" styleClass="login-link"
-				style="display:block; margin-top:20px; font-weight:bold;">
+                        <p:commandButton value="Ir al lobby"
+                                         action="lobby.xhtml?faces-redirect=true"
+                                         styleClass="signin-btn btn-text"
+                                         icon="pi pi-play" />
+                    </h:panelGroup>
+                </h:form>
+
+                <!-- ✅ Mostrar si NO hay sesión -->
+                <h:form rendered="#{!loginbean.sesionIniciada}" styleClass="signin-form">
+
+                    <div class="form-grid">
+                        <div class="form-input">
+                            <p:inputText id="usuario"
+                                         value="#{loginbean.user}"
+                                         required="true"
+                                         placeholder="Ingresa tu usuario"
+                                         styleClass="form-input txtBlack" />
+                        </div>
+
+                        <div class="form-input">
+                            <p:password id="password"
+                                        value="#{loginbean.password}"
+                                        feedback="false"
+                                        toggleMask="true"
+                                        required="true"
+                                        placeholder="Ingresa tu contraseña"
+                                        styleClass="form-input txtBlack" />
+                        </div>
+                    </div>
+
+                    <p:commandButton value="Entrar"
+                                     action="#{loginbean.iniciarSesion}"
+                                     process="@form"
+                                     update="@form, :growl"
+                                     styleClass="signin-btn btn-text"
+                                     style="margin-top: 30px;" />
+
+                    <h:link outcome="registrar.xhtml"
+                            styleClass="login-link"
+                            style="display:block; margin-top:20px; font-weight:bold;">
                         ¿No tienes cuenta? Regístrate aquí
                     </h:link>
+                </h:form>
 
-		</h:form> </div> </div>
+                <!-- ✅ Componente para mensajes -->
+                <p:growl id="growl" showDetail="true" sticky="false" life="3000" />
 
-	</ui:define>
-</ui:composition> </html>
+            </div>
+        </div>
 
+    </ui:define>
+</ui:composition>
+</html>

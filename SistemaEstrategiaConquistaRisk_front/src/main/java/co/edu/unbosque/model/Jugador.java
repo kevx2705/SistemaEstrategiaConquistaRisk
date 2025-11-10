@@ -2,16 +2,16 @@ package co.edu.unbosque.model;
 
 
 /**
- * Clase Admin que representa a un administrador del sistema de entrenamiento
+ * Clase Jugador que representa a un Jugadoristrador del sistema de entrenamiento
  * Hereda de la clase Usuario
  */
 
-public class Admin extends Usuario {
+public class Jugador extends Usuario {
 
 	/**
-	 * Constructor vacio de la clase Admin
+	 * Constructor vacio de la clase Jugador
 	 */
-	public Admin() {
+	public Jugador() {
 	}
 
 	/**
@@ -22,13 +22,13 @@ public class Admin extends Usuario {
 	 * @param edad
 	 * @param contrasena
 	 */
-	public Admin(String nombre, String correo, int edad, String contrasena) {
+	public Jugador(String nombre, String correo, int edad, String contrasena) {
 		super(nombre, correo, edad, contrasena);
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * Metodo hashCode de la clase Admin
+	 * Metodo hashCode de la clase Jugador
 	 * 
 	 * @return int con el hashCode del estudiante
 	 */
@@ -38,7 +38,7 @@ public class Admin extends Usuario {
 	}
 
 	/**
-	 * Metodo equals de la clase Admin
+	 * Metodo equals de la clase Jugador
 	 * 
 	 * @param obj Objeto a comparar
 	 * @return boolean que indica si son iguales o no
@@ -55,13 +55,13 @@ public class Admin extends Usuario {
 	}
 
 	/**
-	 * Metodo toString de la clase Admin
+	 * Metodo toString de la clase Jugador
 	 * 
-	 * @return String con la informacion del administrador
+	 * @return String con la informacion del Jugadoristrador
 	 */
 	@Override
 	public String toString() {
-		return super.toString() + "Admin";
+		return super.toString() + "Jugador";
 	}
 
 }

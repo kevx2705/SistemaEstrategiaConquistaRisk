@@ -1,14 +1,22 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.CharacterException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.ExceptionCheker;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.MailException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.NumberException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.SymbolException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.TextException;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.EmailService;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.JugadorService;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.util.AESUtil;
 
 @RestController
 @RequestMapping("/jugadores")
@@ -21,29 +29,59 @@ public class JugadorController {
 	@Autowired
 	private EmailService emailService;
 
-	// ==========================================================
-	// ✅ CRUD BÁSICO
-	// ==========================================================
-
 	@PostMapping(path = "/crear")
-	public ResponseEntity<String> crearJugador(@RequestParam String nombre, @RequestParam String correo,
-			@RequestParam String contrasena) {
+	public ResponseEntity<String> crearJugador(
+	        @RequestParam String nombre,
+	        @RequestParam String correo,
+	        @RequestParam String contrasena) {
+	    try {
+	        String nombreDec = AESUtil.decrypt(nombre);
+	        String correoDec = AESUtil.decrypt(correo);
+	        String contrasenaDec = AESUtil.decrypt(contrasena);
 
-		// Crear DTO temporal con los campos necesarios
-		JugadorDTO dto = new JugadorDTO();
-		dto.setNombre(nombre);
-		dto.setCorreo(correo);
-		dto.setContraseña(contrasena);
+	        ExceptionCheker.checkerText(nombreDec);      
+	        ExceptionCheker.checkerMail(correoDec);       
+	        ExceptionCheker.checkerPasword(contrasenaDec);
 
-		int status = jugadorService.create(dto);
-		emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
+	        JugadorDTO dto = new JugadorDTO();
+	        dto.setNombre(nombreDec);
+	        dto.setCorreo(correoDec);
+	        dto.setContraseña(contrasenaDec);
 
-		if (status == 0) {
-			return ResponseEntity.status(201).body("Jugador creado con éxito");
-		} else {
-			return ResponseEntity.status(406).body("Error: el nombre o correo ya están en uso");
-		}
+	        int status = jugadorService.create(dto);
+
+	        if (status == 0) {
+	            emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
+
+	            return ResponseEntity.status(HttpStatus.CREATED)
+	                    .body("201\nUsuario creado exitosamente");
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                    .body("406\nEl nombre o correo ya están en uso");
+	        }
+
+	    } catch (MailException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nCorreo inválido. Use gmail, hotmail, outlook o unbosque.edu.co");
+	    } catch (TextException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nEl nombre solo debe contener letras");
+	    } catch (CharacterException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nLa contraseña debe tener al menos 8 caracteres");
+	    } catch (NumberException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nLa contraseña debe contener al menos un número");
+	    } catch (SymbolException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nLa contraseña debe tener al menos un símbolo especial");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("500\nError interno del servidor");
+	    }
 	}
+
 
 	@GetMapping("/listar")
 	public ResponseEntity<MyLinkedList<JugadorDTO>> listarJugadores() {

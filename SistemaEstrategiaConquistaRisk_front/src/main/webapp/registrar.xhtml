@@ -27,17 +27,10 @@
 			<p:password id="confirmPassword"
 				value="#{registerbean.confirmPassword}" feedback="false"
 				toggleMask="true" required="true" placeholder="Repite tu contraseña"
-				styleClass="form-input txtBlack" /> </div> <div class="form-input">
-			<p:selectOneMenu id="role" value="#{registerbean.type}"
-				required="true" styleClass="form-input txtBlack">
-				<f:selectItem itemLabel="Selecciona tu rol" itemValue=""
-					noSelectionOption="true" />
-				<f:selectItem itemLabel="Jugador" itemValue="Jugador" />
-				<f:selectItem itemLabel="Administrador" itemValue="Administrador" />
-			</p:selectOneMenu> </div> </div>
+				styleClass="form-input txtBlack" /> </div> </div>
 
 			<p:commandButton value="Registrarme"
-				action="#{registerbean.crearUsuario}" process="@form"
+				action="#{registerbean.crearJugador}" process="@form"
 				update="@form, :registerForm:messages"
 				styleClass="signin-btn btn-text" style="margin-top:20px;" />
 
