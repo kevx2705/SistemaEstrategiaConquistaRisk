@@ -1,4 +1,4 @@
-package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures;
+package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres;
 
 import java.io.Serializable;
 

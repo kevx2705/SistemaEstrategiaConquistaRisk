@@ -28,7 +28,7 @@ public class LogInBean implements Serializable {
 	private String user;
 	private String password;
 	private Usuario sesionIniciada;
-	private MyLinkedList<Jugador> listUsers = new MyLinkedList<>();
+	private static MyLinkedList<Jugador> listUsers = new MyLinkedList<>();
 
 	public LogInBean() {
 		cargarUsuarios();
@@ -126,6 +126,13 @@ public class LogInBean implements Serializable {
 		password = "";
 	}
 
+	public static void main(String[] args) {
+		MyLinkedList<Jugador> jugadores = JugadorService.doGetAll("http://localhost:8081/jugadores/listar");
+		for (int i = 0; i < jugadores.size(); i++) {
+			listUsers.addLast(jugadores.get(i));
+		}
+	}
+	
 	@PostConstruct
 	public void cargarUsuarios() {
 		MyLinkedList<Jugador> jugadores = JugadorService.doGetAll("http://localhost:8081/jugadores/listar");

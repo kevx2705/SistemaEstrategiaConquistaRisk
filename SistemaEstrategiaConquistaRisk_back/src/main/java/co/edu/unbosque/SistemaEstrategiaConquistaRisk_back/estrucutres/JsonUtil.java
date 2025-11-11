@@ -1,4 +1,4 @@
-package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures;
+package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

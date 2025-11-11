@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.Edge;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.Graph;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.Node;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.Vertex;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Edge;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Graph;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Vertex;
 import jakarta.annotation.PostConstruct;
 
 @Service
