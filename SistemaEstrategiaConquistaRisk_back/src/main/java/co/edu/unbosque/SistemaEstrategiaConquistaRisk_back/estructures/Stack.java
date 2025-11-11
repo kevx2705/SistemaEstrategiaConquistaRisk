@@ -1,4 +1,4 @@
-package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres;
+package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures;
 
 /**
  * Interfaz que define el comportamiento básico de una pila (LIFO: Last-In-First-Out).

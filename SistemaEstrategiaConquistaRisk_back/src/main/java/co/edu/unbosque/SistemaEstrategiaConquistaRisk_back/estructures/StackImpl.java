@@ -1,4 +1,4 @@
-package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres;
+package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures;
 
 import java.util.LinkedList;
 import java.util.Queue;

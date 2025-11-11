@@ -1,4 +1,4 @@
-package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres;
+package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures;
 
 public class Edge {
 	private Vertex<?> source;

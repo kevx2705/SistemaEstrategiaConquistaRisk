@@ -11,8 +11,8 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Jugador;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
-import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estructures.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.JugadorRepository;
 
 @Service
