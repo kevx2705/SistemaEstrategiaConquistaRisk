@@ -1,5 +1,7 @@
 package co.edu.unbosque.beans;
 
+import co.edu.unbosque.estructures.MyLinkedList;
+import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.service.JugadorService;
 import co.edu.unbosque.util.AESUtil;
 import jakarta.enterprise.context.RequestScoped;
@@ -20,42 +22,46 @@ import java.nio.charset.StandardCharsets;
 @RequestScoped
 public class RegisterBean implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String fullName;
 	private String email;
 	private String password;
 	private String confirmPassword;
-
+	private MyLinkedList<Jugador> listaJugadores = new MyLinkedList<>();
+	
 	public void crearJugador() {
-		if (!password.equals(confirmPassword)) {
-			showStickyLogin("406", "Las contraseñas no coinciden");
-			return;
-		}
+	    if (!password.equals(confirmPassword)) {
+	        showStickyLogin("406", "Las contraseñas no coinciden");
+	        return;
+	    }
+	    try {
+	        System.out.println("Datos a guardar (antes de encriptar):");
+	        System.out.println("Nombre: " + fullName);
+	        System.out.println("Correo: " + email);
+	        System.out.println("Contraseña: " + password);
 
-		try {
-			String nombreEnc = URLEncoder.encode(AESUtil.encrypt(fullName), StandardCharsets.UTF_8);
-			String correoEnc = URLEncoder.encode(AESUtil.encrypt(email), StandardCharsets.UTF_8);
-			String contrasenaEnc = URLEncoder.encode(AESUtil.encrypt(password), StandardCharsets.UTF_8);
+	        String url = "http://localhost:8081/jugadores/crear" + "?nombre=" + fullName + "&correo=" + email
+	                + "&contrasena=" + password;
+	        String respuesta = JugadorService.doPostJson("", url);
+	        System.out.println("Respuesta del servidor: " + respuesta);
 
-			String url = "http://localhost:8081/jugadores/crear" + "?nombre=" + nombreEnc + "&correo=" + correoEnc
-					+ "&contrasena=" + contrasenaEnc;
-			String respuesta = JugadorService.doPostJson("", url);
-			System.out.println("Respuesta del servidor: " + respuesta);
+	        String[] data = respuesta.split("\n", 2);
+	        String codigo = data[0].trim();
+	        String mensaje = data.length > 1 ? data[1].trim() : "";
+	        showStickyLogin(codigo, mensaje);
 
-			String[] data = respuesta.split("\n", 2);
-			String codigo = data[0].trim();
-			String mensaje = data.length > 1 ? data[1].trim() : "";
-
-			showStickyLogin(codigo, mensaje);
-
-			if (codigo.equals("201")) {
-				limpiarCampos();
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			showStickyLogin("500", "Error al procesar el registro");
-		}
+	        if (codigo.equals("201")) {
+	            limpiarCampos();
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        showStickyLogin("500", "Error al procesar el registro");
+	    }
 	}
+
 
 	private void limpiarCampos() {
 		fullName = "";

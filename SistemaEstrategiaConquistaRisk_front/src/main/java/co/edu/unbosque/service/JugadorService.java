@@ -21,7 +21,6 @@ public class JugadorService {
             .connectTimeout(Duration.ofSeconds(5))
             .build();
 
-    // ---------------- POST JSON ----------------
     public static String doPostJson(String json, String url) {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(json))
@@ -43,7 +42,6 @@ public class JugadorService {
         return response.statusCode() + "\n" + response.body();
     }
 
-    // ---------------- GET ALL ----------------
     public static MyLinkedList<Jugador> doGetAll(String url) {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -72,11 +70,9 @@ public class JugadorService {
 
         MyLinkedList<Jugador> usuarios = new MyLinkedList<>();
         try {
-            // Deserializa la lista de JugadorDTO del backend
             Type listType = new TypeToken<MyLinkedList<Jugador>>() {}.getType();
             usuarios = gson.fromJson(body, listType);
 
-            // Si Gson falla por tipo incorrecto, prueba a transformar manualmente
             if (usuarios == null) usuarios = new MyLinkedList<>();
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +82,6 @@ public class JugadorService {
         return usuarios;
     }
 
-    // ---------------- DELETE ----------------
     public static String doDelete(String url) {
         HttpRequest request = HttpRequest.newBuilder()
                 .DELETE()

@@ -39,7 +39,7 @@
                             <p:inputText id="usuario"
                                          value="#{loginbean.user}"
                                          required="true"
-                                         placeholder="Ingresa tu usuario"
+                                         placeholder="Ingresa tu correo"
                                          styleClass="form-input txtBlack" />
                         </div>
 
@@ -57,7 +57,7 @@
                     <p:commandButton value="Entrar"
                                      action="#{loginbean.iniciarSesion}"
                                      process="@form"
-                                     update="@form, :loginForm:messages, :growl-sticky"
+                                     update="@all, :loginForm:messages, :growl-sticky"
                                      styleClass="signin-btn btn-text"
                                      style="margin-top: 30px;" />
 

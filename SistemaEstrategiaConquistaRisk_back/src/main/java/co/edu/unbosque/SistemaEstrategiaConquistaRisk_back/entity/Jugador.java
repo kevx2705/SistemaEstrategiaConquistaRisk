@@ -18,7 +18,7 @@ public class Jugador {
 
 	private String correo;
 
-	private String contraseña;
+	private String contrasena;
 
 	private String color;
 
@@ -33,9 +33,9 @@ public class Jugador {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Jugador(String nombre, String correo, String contraseña) {
+	public Jugador(String nombre, String correo, String contrasena) {
 		this.nombre = nombre;
-		this.contraseña = contraseña;
+		this.contrasena = contrasena;
 		this.color = null;
 		this.correo = correo;
 		this.tropasDisponibles = 0;
@@ -102,18 +102,20 @@ public class Jugador {
 	public void setActivo(boolean activo) {
 		this.activo = activo;
 	}
+	
+	
+
+	public String getContrasena() {
+		return contrasena;
+	}
+
+	public void setContrasena(String contrasena) {
+		this.contrasena = contrasena;
+	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(activo, color, id, nombre, territoriosControlados, tropasDisponibles);
-	}
-
-	public String getContraseña() {
-		return contraseña;
-	}
-
-	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
 	}
 
 	public void setId(Long id) {

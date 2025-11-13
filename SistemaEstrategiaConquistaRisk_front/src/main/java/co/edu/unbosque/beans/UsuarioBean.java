@@ -93,7 +93,7 @@ public class UsuarioBean implements Serializable {
 
 		return findByNameAndPasswordRec(current.getNext(), nombre, password);
 	}
-
+	
 	/**
 	 * Busca un jugador por su correo (sin distinguir mayúsculas/minúsculas).
 	 * 

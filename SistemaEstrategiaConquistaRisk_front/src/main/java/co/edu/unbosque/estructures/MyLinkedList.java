@@ -1,6 +1,7 @@
 package co.edu.unbosque.estructures;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 import co.edu.unbosque.model.Jugador;
 
@@ -9,7 +10,7 @@ import co.edu.unbosque.model.Jugador;
  *
  * @param <E> Tipo de los elementos almacenados en la lista.
  */
-public class MyLinkedList<E> implements Serializable {
+public class MyLinkedList<E> implements Serializable, Iterable<E> {
 
 	private static final long serialVersionUID = 1L;
 	protected Node<E> first;
@@ -245,5 +246,39 @@ public class MyLinkedList<E> implements Serializable {
 		}
 		return toStringRecursivo(current.getNext(), sb);
 	}
-	
+
+	/**
+	 * Implementación del iterador para MyLinkedList.
+	 */
+	@Override
+	public Iterator<E> iterator() {
+		return new Iterator<E>() {
+			private Node<E> current = first;
+
+			@Override
+			public boolean hasNext() {
+				return current != null;
+			}
+
+			@Override
+			public E next() {
+				E data = current.getInfo();
+				current = current.getNext();
+				return data;
+			}
+		};
+	}
+
+	public String[] toArray(String[] array) {
+		int size = size(); 
+		String[] result = (array.length >= size) ? array : new String[size];
+		Node<E> current = first; 
+		int i = 0;
+		while (current != null) {
+			result[i++] = current.getInfo().toString(); 
+			current = current.getNext();
+		}
+		return result;
+	}
+
 }

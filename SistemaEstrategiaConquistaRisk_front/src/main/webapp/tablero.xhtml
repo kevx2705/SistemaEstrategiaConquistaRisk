@@ -4,341 +4,155 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
-<ui:composition template="template/template.xhtml">
+	xmlns:p="http://primefaces.org/ui"> <ui:composition
+	template="template/template.xhtml">
 	<ui:define name="content">
 
-		<div class="risk-background">
-			<div class="game-wrapper">
-				<h1 class="game-title">Conquista</h1>
+		<div class="risk-background"> <div class="game-wrapper"> <h1
+			class="game-title">Conquista</h1> <div class="game-columns"> <div
+			class="left-column"> <div class="game-board"> <img
+			src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" /> <!-- Botones de territorios -->
+		<button class="territory-point" style="top: 80px; left: 60px;"
+			onclick="showTerritory('Alaska','Jugador 1',5)"></button> <button
+			class="territory-point" style="top: 70px; left: 110px;"
+			onclick="showTerritory('Alberta','Jugador 2',4)"></button> <!-- ... más botones ... -->
+		</div> <!-- Diálogo de acciones en territorio --> <p:dialog
+			widgetVar="territoryDialog" modal="true"
+			header="Acciones en territorio" styleClass="dialog-risk"
+			responsive="true" closable="true" width="400">
+			<div class="territory-info"> <p>
+			<strong>Territorio:</strong> <span id="territoryName"></span></p> <p>
+			<strong>Dueño:</strong> <span id="territoryOwner"></span></p> <p>
+			<strong>Tropas:</strong> <span id="territoryTroops"></span></p> </div>
+			<p:separator />
+			<div class="dialog-options"> <p:commandButton value="Atacar"
+				icon="pi pi-bolt" onclick="PF('attackDialog').show()"
+				styleClass="play-button" /> <p:commandButton value="Mover tropas"
+				icon="pi pi-arrow-right" onclick="PF('moveDialog').show()"
+				styleClass="play-button" /> <p:commandButton value="Reforzar"
+				icon="pi pi-plus" onclick="PF('reinforceDialog').show()"
+				styleClass="play-button" /> </div>
+		</p:dialog> <!-- Diálogo de ataque --> <p:dialog widgetVar="attackDialog"
+			header="Atacar territorio" modal="true" closable="true"
+			draggable="true" resizable="false" width="450"
+			styleClass="dialog-risk">
+			<h:form>
+				<p class="modal-title">Selecciona los territorios y tropas para
+				atacar</p>
+				<div class="modal-content"> <h:outputLabel
+					value="Desde (tu territorio):" for="fromTerritory" /> <h:selectOneMenu
+					id="fromTerritory" value="#{gameBean.fromTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Hacia (territorio enemigo):"
+					for="toTerritory" /> <h:selectOneMenu id="toTerritory"
+					value="#{gameBean.toTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosEnemigos}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Tropas a usar:" for="troopsToUse" /> <p:inputText
+					id="troopsToUse" value="#{gameBean.tropasParaAtacar}" type="number"
+					min="1" max="3" /> <p class="modal-note">Regla: Máximo 3 dados
+				para atacar. Debes dejar al menos 1 tropa en el territorio origen.</p> <div
+					class="modal-buttons"> <p:commandButton
+					value="Confirmar ataque" action="#{gameBean.confirmarAtaque}"
+					update=":dicePanel :turnInfo" styleClass="btn-action"
+					oncomplete="PF('attackDialog').hide()" /> <p:commandButton
+					value="Cancelar" onclick="PF('attackDialog').hide()"
+					styleClass="btn-cancel" /> </div> </div>
+			</h:form>
+		</p:dialog> <!-- Diálogo de movimiento --> <p:dialog widgetVar="moveDialog"
+			header="Mover tropas" modal="true" closable="true" draggable="true"
+			resizable="false" width="450" styleClass="dialog-risk">
+			<h:form>
+				<p class="modal-title">Selecciona los territorios para mover
+				tropas</p>
+				<div class="modal-content"> <h:outputLabel
+					value="Desde (tu territorio):" for="fromMoveTerritory" /> <h:selectOneMenu
+					id="fromMoveTerritory" value="#{gameBean.fromMoveTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Hacia (territorio aliado):"
+					for="toMoveTerritory" /> <h:selectOneMenu id="toMoveTerritory"
+					value="#{gameBean.toMoveTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosConectados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Tropas a mover:" for="troopsToMove" /> <p:inputText
+					id="troopsToMove" value="#{gameBean.tropasAMover}" type="number"
+					min="1" max="10" /> <p class="modal-note">Regla: Solo entre
+				territorios conectados y debes dejar al menos 1 tropa en el origen.</p>
 
-				<div class="game-columns">
-
-					<div class="left-column">
-						<div class="game-board">
-							<img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
-							<button class="territory-point" style="top: 80px; left: 60px;"
-								onclick="showTerritory('Alaska','Jugador 1',5)"></button>
-							<button class="territory-point" style="top: 70px; left: 110px;"
-								onclick="showTerritory('Alberta','Jugador 2',4)"></button>
-							<button class="territory-point" style="top: 60px; left: 160px;"
-								onclick="showTerritory('Ontario','Jugador 3',3)"></button>
-							<button class="territory-point" style="top: 60px; left: 210px;"
-								onclick="showTerritory('Quebec','Jugador 1',4)"></button>
-							<button class="territory-point" style="top: 50px; left: 130px;"
-								onclick="showTerritory('North West Territory','Jugador 2',3)"></button>
-							<button class="territory-point" style="top: 40px; left: 280px;"
-								onclick="showTerritory('Greenland','Jugador 3',2)"></button>
-							<button class="territory-point" style="top: 120px; left: 120px;"
-								onclick="showTerritory('Western United States','Jugador 1',5)"></button>
-							<button class="territory-point" style="top: 120px; left: 180px;"
-								onclick="showTerritory('Eastern United States','Jugador 2',4)"></button>
-							<button class="territory-point" style="top: 160px; left: 150px;"
-								onclick="showTerritory('Central America','Jugador 3',3)"></button>
-							<button class="territory-point" style="top: 200px; left: 160px;"
-								onclick="showTerritory('Venezuela','Jugador 1',4)"></button>
-							<button class="territory-point" style="top: 220px; left: 180px;"
-								onclick="showTerritory('Brazil','Jugador 2',6)"></button>
-							<button class="territory-point" style="top: 240px; left: 160px;"
-								onclick="showTerritory('Peru','Jugador 3',3)"></button>
-							<button class="territory-point" style="top: 280px; left: 200px;"
-								onclick="showTerritory('Argentina','Jugador 1',2)"></button>
-							<button class="territory-point" style="top: 100px; left: 300px;"
-								onclick="showTerritory('Iceland','Jugador 2',3)"></button>
-							<button class="territory-point" style="top: 120px; left: 320px;"
-								onclick="showTerritory('Great Britain','Jugador 3',4)"></button>
-							<button class="territory-point" style="top: 80px; left: 340px;"
-								onclick="showTerritory('Scandinavia','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 140px; left: 340px;"
-								onclick="showTerritory('Western Europe','Jugador 2',4)"></button>
-							<button class="territory-point" style="top: 140px; left: 360px;"
-								onclick="showTerritory('Southern Europe','Jugador 3',4)"></button>
-							<button class="territory-point" style="top: 120px; left: 360px;"
-								onclick="showTerritory('Northern Europe','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 100px; left: 400px;"
-								onclick="showTerritory('Ukraine','Jugador 2',5)"></button>
-							<button class="territory-point" style="top: 180px; left: 300px;"
-								onclick="showTerritory('North Africa','Jugador 3',4)"></button>
-							<button class="territory-point" style="top: 180px; left: 340px;"
-								onclick="showTerritory('Egypt','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 220px; left: 320px;"
-								onclick="showTerritory('Congo','Jugador 2',3)"></button>
-							<button class="territory-point" style="top: 220px; left: 360px;"
-								onclick="showTerritory('East Africa','Jugador 3',4)"></button>
-							<button class="territory-point" style="top: 260px; left: 340px;"
-								onclick="showTerritory('South Africa','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 260px; left: 380px;"
-								onclick="showTerritory('Madagascar','Jugador 2',2)"></button>
-							<button class="territory-point" style="top: 60px; left: 460px;"
-								onclick="showTerritory('Ural','Jugador 3',4)"></button>
-							<button class="territory-point" style="top: 40px; left: 480px;"
-								onclick="showTerritory('Siberia','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 40px; left: 520px;"
-								onclick="showTerritory('Yakutsk','Jugador 2',3)"></button>
-							<button class="territory-point" style="top: 40px; left: 560px;"
-								onclick="showTerritory('Kamchatka','Jugador 3',3)"></button>
-							<button class="territory-point" style="top: 80px; left: 500px;"
-								onclick="showTerritory('Irkutsk','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 80px; left: 540px;"
-								onclick="showTerritory('Mongolia','Jugador 2',4)"></button>
-							<button class="territory-point" style="top: 100px; left: 580px;"
-								onclick="showTerritory('Japan','Jugador 3',2)"></button>
-							<button class="territory-point" style="top: 140px; left: 500px;"
-								onclick="showTerritory('China','Jugador 1',6)"></button>
-							<button class="territory-point" style="top: 160px; left: 480px;"
-								onclick="showTerritory('Afghanistan','Jugador 2',4)"></button>
-							<button class="territory-point" style="top: 180px; left: 500px;"
-								onclick="showTerritory('India','Jugador 3',5)"></button>
-							<button class="territory-point" style="top: 200px; left: 520px;"
-								onclick="showTerritory('Siam','Jugador 1',3)"></button>
-							<button class="territory-point" style="top: 220px; left: 560px;"
-								onclick="showTerritory('Indonesia','Jugador 2',3)"></button>
-							<button class="territory-point" style="top: 240px; left: 580px;"
-								onclick="showTerritory('New Guinea','Jugador 3',3)"></button>
-							<button class="territory-point" style="top: 280px; left: 560px;"
-								onclick="showTerritory('Western Australia','Jugador 1',4)"></button>
-							<button class="territory-point" style="top: 280px; left: 600px;"
-								onclick="showTerritory('Eastern Australia','Jugador 2',4)"></button>
-
-
-						</div>
-
-						<p:dialog widgetVar="territoryDialog" modal="true"
-							header="Acciones en territorio" styleClass="dialog-risk"
-							responsive="true" closable="true" width="400">
-							<div class="territory-info">
-								<p>
-									<strong>Territorio:</strong> <span id="territoryName"></span>
-								</p>
-								<p>
-									<strong>Dueño:</strong> <span id="territoryOwner"></span>
-								</p>
-								<p>
-									<strong>Tropas:</strong> <span id="territoryTroops"></span>
-								</p>
-							</div>
-							<p:separator />
-							<div class="dialog-options">
-								<p:commandButton value="Atacar" icon="pi pi-bolt"
-									onclick="PF('attackDialog').show()" styleClass="play-button" />
-
-								<p:commandButton value="Mover tropas" icon="pi pi-arrow-right"
-									onclick="PF('moveDialog').show()" styleClass="play-button" />
-
-								<p:commandButton value="Reforzar" icon="pi pi-plus"
-									onclick="PF('reinforceDialog').show()" styleClass="play-button" />
-							</div>
-
-							<p:dialog widgetVar="attackDialog" header="Atacar territorio"
-								modal="true" closable="true" draggable="true" resizable="false"
-								width="450" styleClass="dialog-risk">
-
-								<h:form>
-									<p class="modal-title">Selecciona los territorios y tropas
-										para atacar</p>
-									<div class="modal-content">
-
-										<h:outputLabel value="Desde (tu territorio):"
-											for="fromTerritory" />
-										<h:selectOneMenu id="fromTerritory"
-											value="#{gameBean.fromTerritory}">
-											<f:selectItem itemLabel="Selecciona" itemValue="" />
-											<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-												itemLabel="#{t}" itemValue="#{t}" />
-										</h:selectOneMenu>
-
-										<h:outputLabel value="Hacia (territorio enemigo):"
-											for="toTerritory" />
-										<h:selectOneMenu id="toTerritory"
-											value="#{gameBean.toTerritory}">
-											<f:selectItem itemLabel="Selecciona" itemValue="" />
-											<f:selectItems value="#{gameBean.territoriosEnemigos}"
-												var="t" itemLabel="#{t}" itemValue="#{t}" />
-										</h:selectOneMenu>
-
-										<h:outputLabel value="Tropas a usar:" for="troopsToUse" />
-										<p:inputText id="troopsToUse"
-											value="#{gameBean.tropasParaAtacar}" type="number" min="1"
-											max="3" />
-
-										<p class="modal-note">Regla: Máximo 3 dados para atacar.
-											Debes dejar al menos 1 tropa en el territorio origen.</p>
-
-										<div class="modal-buttons">
-											<p:commandButton value="Confirmar ataque"
-												action="#{gameBean.confirmarAtaque}"
-												update="dicePanel turnInfo" styleClass="btn-action"
-												oncomplete="PF('attackDialog').hide()" />
-											<p:commandButton value="Cancelar"
-												onclick="PF('attackDialog').hide()" styleClass="btn-cancel" />
-										</div>
-									</div>
-								</h:form>
-							</p:dialog>
-
-							<p:dialog widgetVar="moveDialog" header="Mover tropas"
-								modal="true" closable="true" draggable="true" resizable="false"
-								width="450" styleClass="dialog-risk">
-
-								<h:form>
-									<p class="modal-title">Selecciona los territorios para
-										mover tropas</p>
-									<div class="modal-content">
-
-										<h:outputLabel value="Desde (tu territorio):"
-											for="fromMoveTerritory" />
-										<h:selectOneMenu id="fromMoveTerritory"
-											value="#{gameBean.fromMoveTerritory}">
-											<f:selectItem itemLabel="Selecciona" itemValue="" />
-											<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-												itemLabel="#{t}" itemValue="#{t}" />
-										</h:selectOneMenu>
-
-										<h:outputLabel value="Hacia (territorio aliado):"
-											for="toMoveTerritory" />
-										<h:selectOneMenu id="toMoveTerritory"
-											value="#{gameBean.toMoveTerritory}">
-											<f:selectItem itemLabel="Selecciona" itemValue="" />
-											<f:selectItems value="#{gameBean.territoriosConectados}"
-												var="t" itemLabel="#{t}" itemValue="#{t}" />
-										</h:selectOneMenu>
-
-										<h:outputLabel value="Tropas a mover:" for="troopsToMove" />
-										<p:inputText id="troopsToMove"
-											value="#{gameBean.tropasAMover}" type="number" min="1"
-											max="10" />
-
-										<p class="modal-note">Regla: Solo entre territorios
-											conectados y debes dejar al menos 1 tropa en el origen.</p>
-
-										<div class="modal-buttons">
-											<p:commandButton value="Confirmar movimiento"
-												action="#{gameBean.confirmarMovimiento}" update="@form"
-												styleClass="btn-action" oncomplete="PF('moveDialog').hide()" />
-											<p:commandButton value="Cancelar"
-												onclick="PF('moveDialog').hide()" styleClass="btn-cancel" />
-										</div>
-									</div>
-								</h:form>
-							</p:dialog>
-
-							<p:dialog widgetVar="reinforceDialog"
-								header="Reforzar territorio" modal="true" closable="true"
-								draggable="true" resizable="false" width="450"
-								styleClass="dialog-risk">
-
-								<h:form>
-									<p class="modal-title">Agrega tropas a uno de tus
-										territorios</p>
-									<div class="modal-content">
-
-										<h:outputLabel value="Territorio a reforzar:"
-											for="reinforceTerritory" />
-										<h:selectOneMenu id="reinforceTerritory"
-											value="#{gameBean.territorioAReforzar}">
-											<f:selectItem itemLabel="Selecciona" itemValue="" />
-											<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-												itemLabel="#{t}" itemValue="#{t}" />
-										</h:selectOneMenu>
-
-										<h:outputLabel value="Tropas a agregar:" for="troopsToAdd" />
-										<p:inputText id="troopsToAdd"
-											value="#{gameBean.tropasAReforzar}" type="number" min="1"
-											max="5" />
-
-										<p class="modal-note">Regla: Reforzar solo al inicio del
-											turno con tropas disponibles.</p>
-
-										<div class="modal-buttons">
-											#{gameBean.confirmarRefuerzo}
-											<p:commandButton value="Cancelar"
-												onclick="PF('reinforceDialog').hide()"
-												styleClass="btn-cancel" />
-										</div>
-									</div>
-								</h:form>
-							</p:dialog>
-
-						</p:dialog>
-
-						<div>
-							<button class="btn-show-players"
-								onclick="PF('playersDialog').show()">Ver jugadores en
-								partida</button>
-						</div>
-					</div>
-
-					<div class="right-column">
-
-						<div class="turn-panel">
-							<h2 class="panel-title bordered-title">Turno actual</h2>
-							<div class="turn-info">
-								<p>
-									<strong>Jugador:</strong> <span>#{gameBean.currentPlayer}</span>
-								</p>
-								<p>
-									<strong>Territorios controlados:</strong> <span>#{gameBean.territories}</span>
-								</p>
-								<p>
-									<strong>Tropas disponibles:</strong> <span>#{gameBean.troops}</span>
-								</p>
-								<p:commandButton value="Terminar turno"
-									action="#{gameBean.nextTurn}"
-									update="turnInfo dicePanel playersDialog" styleClass="btn-turn" />
-							</div>
-						</div>
-
-						<div class="dice-panel" id="dicePanel">
-							<h2 class="panel-title">Dados de ataque y defensa</h2>
-							<div class="dice-container">
-								<div class="dice-group">
-									<p>Atacante (máx 3):</p>
-									<div class="dice attacker-dice">
-										<ui:repeat value="#{gameBean.attackerDice}" var="die">
-											<span class="die">#{die}</span>
-										</ui:repeat>
-									</div>
-								</div>
-								<div class="dice-group">
-									<p>Defensor (máx 2):</p>
-									<div class="dice defender-dice">
-										<ui:repeat value="#{gameBean.defenderDice}" var="die">
-											<span class="die">#{die}</span>
-										</ui:repeat>
-									</div>
-								</div>
-							</div>
-							<p:commandButton value="Lanzar dados"
-								action="#{gameBean.rollDice}" update="dicePanel"
-								styleClass="btn-roll" />
-						</div>
-
-						<p:dialog widgetVar="playersDialog" modal="true"
-							header="Jugadores en partida" styleClass="dialog-risk"
-							responsive="true" closable="true" width="500">
-							<div class="player-cards-row">
-								<ui:repeat value="#{gameBean.players}" var="player"
-									varStatus="status">
-									<div
-										class="player-card #{status.index == gameBean.currentPlayerIndex ? 'active-player' : ''}">
-										<div class="player-info">
-											<p class="player-name">#{player}</p>
-											<p class="player-territories">Territorios:
-												#{gameBean.getTerritoriosPorJugador(player)}</p>
-											<p class="player-troops">Tropas:
-												#{gameBean.getTropasPorJugador(player)}</p>
-										</div>
-									</div>
-								</ui:repeat>
-							</div>
-						</p:dialog>
-
-
-					</div>
-
-				</div>
-			</div>
-		</div>
+				<div class="modal-buttons"> <p:commandButton
+					value="Confirmar movimiento"
+					action="#{gameBean.confirmarMovimiento}" update="@form"
+					styleClass="btn-action" oncomplete="PF('moveDialog').hide()" /> <p:commandButton
+					value="Cancelar" onclick="PF('moveDialog').hide()"
+					styleClass="btn-cancel" /> </div> </div>
+			</h:form>
+		</p:dialog> <!-- Diálogo de refuerzo --> <p:dialog widgetVar="reinforceDialog"
+			header="Reforzar territorio" modal="true" closable="true"
+			draggable="true" resizable="false" width="450"
+			styleClass="dialog-risk">
+			<h:form>
+				<p class="modal-title">Agrega tropas a uno de tus territorios</p>
+				<div class="modal-content"> <h:outputLabel
+					value="Territorio a reforzar:" for="reinforceTerritory" /> <h:selectOneMenu
+					id="reinforceTerritory" value="#{gameBean.territorioAReforzar}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Tropas a agregar:" for="troopsToAdd" /> <p:inputText
+					id="troopsToAdd" value="#{gameBean.tropasAReforzar}" type="number"
+					min="1" max="5" /> <p class="modal-note">Regla: Reforzar solo
+				al inicio del turno con tropas disponibles.</p> <div
+					class="modal-buttons"> <p:commandButton
+					value="Confirmar refuerzo" action="#{gameBean.confirmarRefuerzo}"
+					update="@form" styleClass="btn-action"
+					oncomplete="PF('reinforceDialog').hide()" /> <p:commandButton
+					value="Cancelar" onclick="PF('reinforceDialog').hide()"
+					styleClass="btn-cancel" /> </div> </div>
+			</h:form>
+		</p:dialog> <div> <button class="btn-show-players"
+			onclick="PF('playersDialog').show()">Ver jugadores en
+		partida</button> </div> </div> <div class="right-column"> <!-- Panel de dados --> <p:panel
+			id="dicePanel" header="Dados de ataque y defensa">
+			<div class="dice-container"> <div class="dice-group"> <p>Atacante
+			(máx 3):</p> <div class="dice attacker-dice"> <ui:repeat
+				value="#{gameBean.attackerDice}" var="die">
+				<span class="die">#{die}</span>
+			</ui:repeat> </div> </div> <div class="dice-group"> <p>Defensor (máx 2):</p> <div
+				class="dice defender-dice"> <ui:repeat
+				value="#{gameBean.defenderDice}" var="die">
+				<span class="die">#{die}</span>
+			</ui:repeat> </div> </div> </div>
+			<p:commandButton value="Lanzar dados" action="#{gameBean.rollDice}"
+				update=":dicePanel" styleClass="btn-roll" />
+		</p:panel> <!-- Panel de turno --> <p:panel id="turnInfo" header="Turno actual">
+			<p>
+			<strong>Jugador:</strong> <span>#{gameBean.currentPlayer}</span></p>
+			<p>
+			<strong>Territorios controlados:</strong> <span>#{gameBean.territories}</span></p>
+			<p>
+			<strong>Tropas disponibles:</strong> <span>#{gameBean.troops}</span></p>
+			<p:commandButton value="Terminar turno" action="#{gameBean.nextTurn}"
+				update=":turnInfo :dicePanel :playersDialog" styleClass="btn-turn" />
+		</p:panel> <p:dialog widgetVar="playersDialog" modal="true"
+			header="Jugadores en partida" styleClass="dialog-risk"
+			responsive="true" closable="true" width="500">
+			<div class="player-cards-row"> <ui:repeat
+				value="#{gameBean.players}" var="player" varStatus="status">
+				<div
+					class="player-card #{status.index == gameBean.currentPlayerIndex ? 'active-player' : ''}">
+				<div class="player-info"> <p class="player-name">#{player}</p>
+				<p class="player-territories">Territorios:
+				#{gameBean.getTerritoriosPorJugador(player)}</p> <p
+					class="player-troops">Tropas:
+				#{gameBean.getTropasPorJugador(player)}</p> </div> </div>
+			</ui:repeat> </div>
+		</p:dialog> </div> </div> </div> </div>
 
 		<script>
 			function showTerritory(name, owner, troops) {
@@ -347,38 +161,7 @@
 				document.getElementById('territoryTroops').textContent = troops;
 				PF('territoryDialog').show();
 			}
-			
-			function rollDice() {
-			    const attackerDice = document.querySelectorAll('.attacker-dice img');
-			    const defenderDice = document.querySelectorAll('.defender-dice img');
-
-			    attackerDice.forEach(d => {
-			        d.classList.add('animate');
-			        setTimeout(() => {
-			            d.src = `assets/dice${Math.floor(Math.random()*6)+1}.png`;
-			            d.classList.remove('animate');
-			        }, 300);
-			    });
-
-			    defenderDice.forEach(d => {
-			        d.classList.add('animate');
-			        setTimeout(() => {
-			            d.src = `assets/dice${Math.floor(Math.random()*6)+1}.png`;
-			            d.classList.remove('animate');
-			        }, 300);
-			    });
-			}
-
-			let currentPlayerIndex = 1;
-			function nextTurn() {
-			    currentPlayerIndex = (currentPlayerIndex % 3) + 1;
-			    document.getElementById('currentPlayer').textContent = `Jugador ${currentPlayerIndex}`;
-			    alert(`Turno cambiado: Jugador ${currentPlayerIndex}`);
-			}
-			
 		</script>
 
-
 	</ui:define>
-</ui:composition>
-</html>
+</ui:composition> </html>

@@ -27,14 +27,9 @@ public class JugadorService {
 	@Autowired
 	private TerritorioService territorioService;
 
-
 	public JugadorService() {
 	}
-
-	// ==========================================================
-	// ✅ CRUD NORMAL (igual al AdminService)
-	// ==========================================================
-
+	
 	public int create(JugadorDTO newData) {
 		Jugador entity = modelMapper.map(newData, Jugador.class);
 		jugadorRepo.save(entity);
@@ -252,4 +247,34 @@ public class JugadorService {
 		}
 	}
 
+	public JugadorDTO findByName(String nombre) {
+	    MyLinkedList<JugadorDTO> lista = getAll();
+	    for (int i = 0; i < lista.size(); i++) {
+	        JugadorDTO jugador = lista.get(i);
+	        if (jugador.getNombre().equals(nombre)) {
+	            return jugador;
+	        }
+	    }
+	    return null;
+	}
+
+	   // Método para convertir Jugador a JugadorDTO usando ModelMapper
+    private JugadorDTO convertToDTO(Jugador jugador) {
+        return modelMapper.map(jugador, JugadorDTO.class);
+    }
+
+    // Método para convertir JugadorDTO a Jugador usando ModelMapper
+    @SuppressWarnings("unused")
+	private Jugador convertToEntity(JugadorDTO jugadorDTO) {
+        return modelMapper.map(jugadorDTO, Jugador.class);
+    }
+
+    // Método para buscar un jugador por correo y contraseña
+    public JugadorDTO findByCorreoAndContrasena(String correo, String contrasena) {
+        Jugador jugador = jugadorRepo.findByCorreo(correo);
+        if (jugador != null && jugador.getContrasena().equals(contrasena)) {
+            return convertToDTO(jugador);
+        }
+        return null;
+    }
 }

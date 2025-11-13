@@ -150,7 +150,7 @@ public abstract class Usuario {
 	 */
 	@Override
 	public String toString() {
-		return "Usuario [nombre=" + nombre + ", correo=" + correo + ", edad=" + edad + "]";
+		return "Usuario [nombre=" + nombre + ", correo=" + correo + ", contraseña=" + contrasena + "]";
 	}
 
 	/**

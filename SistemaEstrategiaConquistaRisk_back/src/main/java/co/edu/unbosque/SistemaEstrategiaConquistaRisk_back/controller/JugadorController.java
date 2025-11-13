@@ -1,12 +1,19 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.CharacterException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.ExceptionCheker;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.MailException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.NumberException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.SymbolException;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.exception.TextException;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.EmailService;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.JugadorService;
 
@@ -24,25 +31,52 @@ public class JugadorController {
 	// ==========================================================
 	// ✅ CRUD BÁSICO
 	// ==========================================================
-
 	@PostMapping(path = "/crear")
 	public ResponseEntity<String> crearJugador(@RequestParam String nombre, @RequestParam String correo,
-			@RequestParam String contrasena) {
+	        @RequestParam String contrasena) {
+	    try {
+	        ExceptionCheker.checkerText(nombre);
+	        ExceptionCheker.checkerMail(correo);
+	        ExceptionCheker.checkerPasword(contrasena);
 
-		// Crear DTO temporal con los campos necesarios
-		JugadorDTO dto = new JugadorDTO();
-		dto.setNombre(nombre);
-		dto.setCorreo(correo);
-		dto.setContraseña(contrasena);
+	        JugadorDTO dto = new JugadorDTO();
+	        dto.setNombre(nombre);
+	        dto.setCorreo(correo);
+	        dto.setContrasena(contrasena);
 
-		int status = jugadorService.create(dto);
-		emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
+	        int status = jugadorService.create(dto);
+	        emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
 
-		if (status == 0) {
-			return ResponseEntity.status(201).body("Jugador creado con éxito");
-		} else {
-			return ResponseEntity.status(406).body("Error: el nombre o correo ya están en uso");
-		}
+	        if (status == 0) {
+	            emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
+	            return ResponseEntity.status(201).body("Jugador creado con éxito");
+	        } else if (status == 1) {
+	            return ResponseEntity.status(406).body("Error: el nombre ya está en uso");
+	        } else if (status == 2) {
+	            return ResponseEntity.status(406).body("Error: datos inválidos");
+	        } else if (status == 3) {
+	            return ResponseEntity.status(406).body("Error: el correo ya está en uso");
+	        } else {
+	            return ResponseEntity.status(406).body("Error desconocido al crear el jugador");
+	        }
+	    } catch (MailException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nCorreo inválido. Use gmail, hotmail, outlook o unbosque.edu.co");
+	    } catch (TextException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("406\nEl nombre solo debe contener letras");
+	    } catch (CharacterException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nLa contraseña debe tener al menos 8 caracteres");
+	    } catch (NumberException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nLa contraseña debe contener al menos un número");
+	    } catch (SymbolException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nLa contraseña debe tener al menos un símbolo especial");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("500\nError interno del servidor");
+	    }
 	}
 
 	@GetMapping("/listar")
@@ -77,10 +111,32 @@ public class JugadorController {
 		return ResponseEntity.ok(jugadorService.exist(id));
 	}
 
-	// ==========================================================
-	// ✅ FUNCIONES ESPECIALES DEL JUEGO
-	// ==========================================================
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestParam String correo, @RequestParam String contrasena) {
+	    try {
+	        if (correo == null || correo.trim().isEmpty() || contrasena == null || contrasena.trim().isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("400\nEl correo y la contraseña son obligatorios");
+	        }
 
+	        ExceptionCheker.checkerMail(correo);
+
+	        JugadorDTO jugador = jugadorService.findByCorreoAndContrasena(correo, contrasena);
+
+	        if (jugador != null) {
+	            return ResponseEntity.ok("Login exitoso");
+	        } else {
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("401\nCorreo o contraseña incorrectos");
+	        }
+	    } catch (MailException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+	                .body("406\nCorreo inválido. Use gmail, hotmail, outlook o unbosque.edu.co");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("500\nError interno del servidor");
+	    }
+	}
+
+	
 	// ✅ Agregar tropas
 	@PutMapping("/{id}/agregar-tropas/{cantidad}")
 	public ResponseEntity<?> agregarTropas(@PathVariable Long id, @PathVariable int cantidad) {

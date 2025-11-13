@@ -8,6 +8,8 @@ package co.edu.unbosque.model;
 
 public class Jugador extends Usuario {
 
+	 private int index;
+	
 	/**
 	 * Constructor vacio de la clase Jugador
 	 */
@@ -63,5 +65,15 @@ public class Jugador extends Usuario {
 	public String toString() {
 		return super.toString() + "Jugador";
 	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
+	
 
 }
