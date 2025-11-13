@@ -26,6 +26,9 @@ public class JugadorService {
 
 	@Autowired
 	private TerritorioService territorioService;
+	
+	private Long jugadorLogueadoId;
+
 
 	public JugadorService() {
 	}

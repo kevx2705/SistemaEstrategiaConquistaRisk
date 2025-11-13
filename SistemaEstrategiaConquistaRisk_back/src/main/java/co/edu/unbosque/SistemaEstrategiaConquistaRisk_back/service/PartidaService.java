@@ -68,6 +68,8 @@ public class PartidaService {
 	private final Gson gson = new Gson();
 
 	private MyLinkedList<String> movimientosFase3;
+	
+	
 
 	public PartidaService() {
 		movimientosFase3 = new MyLinkedList<>();

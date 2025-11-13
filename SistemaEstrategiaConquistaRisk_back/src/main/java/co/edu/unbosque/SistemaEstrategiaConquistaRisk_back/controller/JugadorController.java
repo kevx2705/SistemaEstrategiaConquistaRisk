@@ -168,28 +168,16 @@ public class JugadorController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String correo, @RequestParam String contrasena) {
-        try {
-            if (correo == null || correo.trim().isEmpty() || contrasena == null || contrasena.trim().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("400\nEl correo y la contraseña son obligatorios");
-            }
-            ExceptionCheker.checkerMail(correo);
-            JugadorDTO jugador = jugadorService.findByCorreoAndContrasena(correo, contrasena);
-            if (jugador != null) {
-                return ResponseEntity.ok("Login exitoso");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("401\nCorreo o contraseña incorrectos");
-            }
-        } catch (MailException e) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
-                    .body("406\nCorreo inválido. Use gmail, hotmail, outlook o unbosque.edu.co");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("500\nError interno del servidor");
+        JugadorDTO jugador = jugadorService.findByCorreoAndContrasena(correo, contrasena);
+
+        if (jugador != null) {
+            return ResponseEntity.ok(jugador.getId());  
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Correo o contraseña incorrectos");
         }
     }
+
 
     /**
      * Agrega tropas a un jugador.
