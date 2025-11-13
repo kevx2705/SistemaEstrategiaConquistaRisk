@@ -27,7 +27,7 @@ public class AtaqueService {
 	private CartaService cartaService;
 
 	@Autowired
-	private MapaTerritorio mapa;
+	private MapaTerritorioService mapa;
 
 	@Autowired
 	private ModelMapper modelMapper;

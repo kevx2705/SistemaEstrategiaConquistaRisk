@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.ContinenteDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.JugadorDTO;
@@ -50,7 +49,7 @@ public class PartidaService {
 
 	@Autowired
 	private CartaService cartaService;
-	
+
 	@Autowired
 	private EmailService emailService;
 
@@ -61,8 +60,8 @@ public class PartidaService {
 	private ModelMapper modelMapper;
 
 	@Autowired
-	private MapaTerritorio mapaTerritorio;
-	
+	private MapaTerritorioService mapaTerritorio;
+
 	@Autowired
 	private PDFService pdfService;
 
@@ -871,47 +870,45 @@ public class PartidaService {
 	}
 
 	public Long verificarFinPartida(Partida partida) {
-	    MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
+		MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
 
-	    if (territorios.isEmpty())
-	        return null;
+		if (territorios.isEmpty())
+			return null;
 
-	    Long jugadorGanadorId = territorios.getFirst().getInfo().getIdJugador();
+		Long jugadorGanadorId = territorios.getFirst().getInfo().getIdJugador();
 
-	    Node<TerritorioDTO> nodo = territorios.getFirst();
-	    while (nodo != null) {
-	        if (!nodo.getInfo().getIdJugador().equals(jugadorGanadorId)) {
-	            return null; // aún hay territorios de otro jugador
-	        }
-	        nodo = nodo.getNext();
-	    }
+		Node<TerritorioDTO> nodo = territorios.getFirst();
+		while (nodo != null) {
+			if (!nodo.getInfo().getIdJugador().equals(jugadorGanadorId)) {
+				return null; // aún hay territorios de otro jugador
+			}
+			nodo = nodo.getNext();
+		}
 
-	    // Todos los territorios pertenecen a un mismo jugador
-	    partida.setGanadorId(jugadorGanadorId);
-	    partida.setFinalizada(true);
-	    partida.setFechaFin(LocalDateTime.now());
-	    partidaRepository.save(partida); // guardar cambios en la BD
+		// Todos los territorios pertenecen a un mismo jugador
+		partida.setGanadorId(jugadorGanadorId);
+		partida.setFinalizada(true);
+		partida.setFechaFin(LocalDateTime.now());
+		partidaRepository.save(partida); // guardar cambios en la BD
 
-	    // ----------------------------
-	    // Generar y enviar PDF
-	    // ----------------------------
-	    try {
-	        MyLinkedList<Jugador> jugadores = obtenerJugadoresPartida(partida);
-	        for (int i = 0; i < jugadores.size(); i++) {
-	            Jugador j = jugadores.getPos(i).getInfo();
-	            if (j.getCorreo() != null && !j.getCorreo().isEmpty()) {
-	                // Enviar correo, pasando la lista de jugadores al EmailService
-	                emailService.enviarCorreoFinalPartida(j.getCorreo(), partida, jugadores);
-	            }
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace(); // manejar excepción si falla el envío, no bloquear la finalización
-	    }
+		// ----------------------------
+		// Generar y enviar PDF
+		// ----------------------------
+		try {
+			MyLinkedList<Jugador> jugadores = obtenerJugadoresPartida(partida);
+			for (int i = 0; i < jugadores.size(); i++) {
+				Jugador j = jugadores.getPos(i).getInfo();
+				if (j.getCorreo() != null && !j.getCorreo().isEmpty()) {
+					// Enviar correo, pasando la lista de jugadores al EmailService
+					emailService.enviarCorreoFinalPartida(j.getCorreo(), partida, jugadores);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); // manejar excepción si falla el envío, no bloquear la finalización
+		}
 
-	    return jugadorGanadorId;
+		return jugadorGanadorId;
 	}
-
-
 
 	@Transactional
 	public PartidaDTO retomarPartida(String codigoHash) {
@@ -975,7 +972,7 @@ public class PartidaService {
 		return partidaRepository.findById((long) id).orElse(null);
 	}
 
-	//eliminar
+	// eliminar
 	@Transactional
 	public PartidaDTO finalizarPartidaForzada(Long partidaId) {
 
@@ -994,54 +991,66 @@ public class PartidaService {
 	}
 
 	public MyLinkedList<Jugador> obtenerJugadoresPartida(Partida partida) {
-	    MyLinkedList<Jugador> jugadores = new MyLinkedList<>();
+		MyLinkedList<Jugador> jugadores = new MyLinkedList<>();
 
-	    if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
-	        return jugadores;
-	    }
+		if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
+			return jugadores;
+		}
 
-	    // Deserializar como LinkedTreeMap porque Gson no puede inferir Jugador directamente
-	    Type tipoLista = new TypeToken<MyLinkedList<LinkedTreeMap>>() {}.getType();
-	    MyLinkedList<LinkedTreeMap> temp = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
+		// Deserializar como LinkedTreeMap porque Gson no puede inferir Jugador
+		// directamente
+		Type tipoLista = new TypeToken<MyLinkedList<LinkedTreeMap>>() {
+		}.getType();
+		MyLinkedList<LinkedTreeMap> temp = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
 
-	    for (int i = 0; i < temp.size(); i++) {
-	        LinkedTreeMap map = temp.getPos(i).getInfo();
-	        Jugador j = new Jugador();
+		for (int i = 0; i < temp.size(); i++) {
+			LinkedTreeMap map = temp.getPos(i).getInfo();
+			Jugador j = new Jugador();
 
-	        // Mapear los campos del JSON a Jugador
-	        j.setId(((Double) map.get("id")).longValue()); // Gson convierte números a Double
-	        j.setNombre((String) map.get("nombre"));
-	        j.setCorreo((String) map.getOrDefault("correo", ""));
-	        j.setColor((String) map.get("color"));
-	        j.setTropasDisponibles(((Double) map.getOrDefault("tropasDisponibles", 0.0)).intValue());
-	        j.setTerritoriosControlados(((Double) map.getOrDefault("territoriosControlados", 0.0)).intValue());
-	        j.setActivo((Boolean) map.getOrDefault("activo", true));
-	        // Si necesitas cartas u otros campos, puedes mapearlos aquí también
+			// Mapear los campos del JSON a Jugador
+			j.setId(((Double) map.get("id")).longValue()); // Gson convierte números a Double
+			j.setNombre((String) map.get("nombre"));
+			j.setCorreo((String) map.getOrDefault("correo", ""));
+			j.setColor((String) map.get("color"));
+			j.setTropasDisponibles(((Double) map.getOrDefault("tropasDisponibles", 0.0)).intValue());
+			j.setTerritoriosControlados(((Double) map.getOrDefault("territoriosControlados", 0.0)).intValue());
+			j.setActivo((Boolean) map.getOrDefault("activo", true));
+			// Si necesitas cartas u otros campos, puedes mapearlos aquí también
 
-	        jugadores.add(j);
-	    }
+			jugadores.add(j);
+		}
 
-	    return jugadores;
+		return jugadores;
 	}
+
 	public byte[] generarZipFinalPartida(int partidaId) throws Exception {
-	    Partida partida = obtenerPartidaPorId(partidaId);
-	    if (partida == null || !Boolean.TRUE.equals(partida.isFinalizada())) {
-	        return null;
-	    }
+		Partida partida = obtenerPartidaPorId(partidaId);
+		if (partida == null || !Boolean.TRUE.equals(partida.isFinalizada())) {
+			return null;
+		}
 
-	    MyLinkedList<Jugador> jugadores = obtenerJugadoresPartida(partida);
-	    byte[] pdfBytes = pdfService.generarPDFPartida(partida, jugadores);
- 
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-	        ZipEntry entry = new ZipEntry("Resultados Partida" + ".pdf");
-	        zos.putNextEntry(entry);
-	        zos.write(pdfBytes);
-	        zos.closeEntry();
-	    }
+		MyLinkedList<Jugador> jugadores = obtenerJugadoresPartida(partida);
+		byte[] pdfBytes = pdfService.generarPDFPartida(partida, jugadores);
 
-	    return baos.toByteArray();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+			ZipEntry entry = new ZipEntry("Resultados Partida" + ".pdf");
+			zos.putNextEntry(entry);
+			zos.write(pdfBytes);
+			zos.closeEntry();
+		}
+
+		return baos.toByteArray();
 	}
 
+	public Long obtenerPartidaActual() {
+		Partida partida = partidaRepository.findFirstByIniciadaTrueAndFinalizadaFalse();
+
+		if (partida == null) {
+			return null;
+		}
+
+		return partida.getId();
+	}
 
 }

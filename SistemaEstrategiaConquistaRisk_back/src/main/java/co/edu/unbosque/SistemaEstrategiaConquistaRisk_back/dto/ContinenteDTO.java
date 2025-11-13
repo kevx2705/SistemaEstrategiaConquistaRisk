@@ -2,83 +2,155 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto;
 
 import java.util.Objects;
 
+/**
+ * Clase DTO que representa un continente en el juego Risk.
+ * Contiene información sobre el nombre del continente, el refuerzo otorgado por controlarlo
+ * y la cantidad total de territorios que lo componen.
+ */
 public class ContinenteDTO {
-	private Long id;
 
-	private String nombre;
+    /** Identificador único del continente. */
+    private Long id;
 
-	private int refuerzoPorControl;
+    /** Nombre del continente. */
+    private String nombre;
 
-	private int territoriosTotales;
-	
-	public ContinenteDTO() {
-		// TODO Auto-generated constructor stub
-	}
+    /** Cantidad de refuerzos otorgados por controlar el continente. */
+    private int refuerzoPorControl;
 
-	public ContinenteDTO(String nombre, int refuerzoPorControl, int territoriosTotales) {
-		super();
-		this.nombre = nombre;
-		this.refuerzoPorControl = refuerzoPorControl;
-		this.territoriosTotales = territoriosTotales;
-	}
+    /** Cantidad total de territorios que componen el continente. */
+    private int territoriosTotales;
 
-	public Long getId() {
-		return id;
-	}
+    /**
+     * Constructor por defecto de la clase ContinenteDTO.
+     */
+    public ContinenteDTO() {
+        // Constructor vacío
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * Constructor parametrizado de la clase ContinenteDTO.
+     *
+     * @param nombre              Nombre del continente.
+     * @param refuerzoPorControl  Refuerzos otorgados por controlar el continente.
+     * @param territoriosTotales  Total de territorios que componen el continente.
+     */
+    public ContinenteDTO(String nombre, int refuerzoPorControl, int territoriosTotales) {
+        super();
+        this.nombre = nombre;
+        this.refuerzoPorControl = refuerzoPorControl;
+        this.territoriosTotales = territoriosTotales;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    /**
+     * Obtiene el identificador único del continente.
+     *
+     * @return El identificador único del continente.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    /**
+     * Establece el identificador único del continente.
+     *
+     * @param id El identificador único a establecer.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public int getRefuerzoPorControl() {
-		return refuerzoPorControl;
-	}
+    /**
+     * Obtiene el nombre del continente.
+     *
+     * @return El nombre del continente.
+     */
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setRefuerzoPorControl(int refuerzoPorControl) {
-		this.refuerzoPorControl = refuerzoPorControl;
-	}
+    /**
+     * Establece el nombre del continente.
+     *
+     * @param nombre El nombre a establecer.
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public int getTerritoriosTotales() {
-		return territoriosTotales;
-	}
+    /**
+     * Obtiene la cantidad de refuerzos otorgados por controlar el continente.
+     *
+     * @return La cantidad de refuerzos por control.
+     */
+    public int getRefuerzoPorControl() {
+        return refuerzoPorControl;
+    }
 
-	public void setTerritoriosTotales(int territoriosTotales) {
-		this.territoriosTotales = territoriosTotales;
-	}
+    /**
+     * Establece la cantidad de refuerzos otorgados por controlar el continente.
+     *
+     * @param refuerzoPorControl La cantidad de refuerzos a establecer.
+     */
+    public void setRefuerzoPorControl(int refuerzoPorControl) {
+        this.refuerzoPorControl = refuerzoPorControl;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, nombre, refuerzoPorControl, territoriosTotales);
-	}
+    /**
+     * Obtiene la cantidad total de territorios que componen el continente.
+     *
+     * @return La cantidad total de territorios.
+     */
+    public int getTerritoriosTotales() {
+        return territoriosTotales;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ContinenteDTO other = (ContinenteDTO) obj;
-		return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre)
-				&& refuerzoPorControl == other.refuerzoPorControl && territoriosTotales == other.territoriosTotales;
-	}
+    /**
+     * Establece la cantidad total de territorios que componen el continente.
+     *
+     * @param territoriosTotales La cantidad total de territorios a establecer.
+     */
+    public void setTerritoriosTotales(int territoriosTotales) {
+        this.territoriosTotales = territoriosTotales;
+    }
 
-	@Override
-	public String toString() {
-		return "ContinenteDTO [id=" + id + ", nombre=" + nombre + ", refuerzoPorControl=" + refuerzoPorControl
-				+ ", territoriosTotales=" + territoriosTotales + "]";
-	}
-	
-	
-	
+    /**
+     * Genera un código hash para el continente basado en sus atributos.
+     *
+     * @return El código hash generado.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nombre, refuerzoPorControl, territoriosTotales);
+    }
 
+    /**
+     * Compara este continente con otro objeto para determinar si son iguales.
+     *
+     * @param obj El objeto a comparar.
+     * @return true si los objetos son iguales, false en caso contrario.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ContinenteDTO other = (ContinenteDTO) obj;
+        return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre)
+                && refuerzoPorControl == other.refuerzoPorControl && territoriosTotales == other.territoriosTotales;
+    }
+
+    /**
+     * Devuelve una representación en cadena del continente.
+     *
+     * @return Una cadena que representa los atributos del continente.
+     */
+    @Override
+    public String toString() {
+        return "ContinenteDTO [id=" + id + ", nombre=" + nombre + ", refuerzoPorControl=" + refuerzoPorControl
+                + ", territoriosTotales=" + territoriosTotales + "]";
+    }
 }

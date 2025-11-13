@@ -12,14 +12,14 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedL
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 
 @Service
-public class MapaTerritorio {
+public class MapaTerritorioService {
 
 	private Graph grafo = new Graph();
 	
 	@Autowired
 	private TerritorioService territorioService;
 	
-	public MapaTerritorio() {
+	public MapaTerritorioService() {
 		// TODO Auto-generated constructor stub
 	}
 

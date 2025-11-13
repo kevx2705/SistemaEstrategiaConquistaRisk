@@ -1,7 +1,6 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity;
 
 import java.util.Objects;
-
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,137 +8,269 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * Entidad que representa a un jugador en el juego Risk.
+ * Contiene información sobre el nombre, correo, contraseña, color,
+ * tropas disponibles, territorios controlados, estado de actividad
+ * y las cartas que posee el jugador.
+ */
 @Entity
 @Table(name = "jugador")
 public class Jugador {
 
-	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
-	private String nombre;
+    /** Identificador único del jugador. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private String correo;
+    /** Nombre del jugador. */
+    private String nombre;
 
-	private String contrasena;
+    /** Correo electrónico del jugador. */
+    private String correo;
 
-	private String color;
+    /** Contraseña del jugador. */
+    private String contrasena;
 
-	private int tropasDisponibles;
+    /** Color asignado al jugador en el juego. */
+    private String color;
 
-	private int territoriosControlados;
+    /** Cantidad de tropas disponibles para el jugador. */
+    private int tropasDisponibles;
 
-	private boolean activo;
-	private MyLinkedList<Carta> cartas = new MyLinkedList<>();
+    /** Cantidad de territorios controlados por el jugador. */
+    private int territoriosControlados;
 
-	public Jugador() {
-		// TODO Auto-generated constructor stub
-	}
+    /** Estado de actividad del jugador. */
+    private boolean activo;
 
-	public Jugador(String nombre, String correo, String contrasena) {
-		this.nombre = nombre;
-		this.contrasena = contrasena;
-		this.color = null;
-		this.correo = correo;
-		this.tropasDisponibles = 0;
-		this.territoriosControlados = 0;
-		this.activo = true;
-	}
+    /** Lista de cartas que posee el jugador. */
+    private MyLinkedList<Carta> cartas = new MyLinkedList<>();
 
-	public String getCorreo() {
-		return correo;
-	}
+    /**
+     * Constructor por defecto de la clase Jugador.
+     */
+    public Jugador() {
+        // Constructor vacío
+    }
 
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
+    /**
+     * Constructor parametrizado de la clase Jugador.
+     *
+     * @param nombre     Nombre del jugador.
+     * @param correo     Correo electrónico del jugador.
+     * @param contrasena Contraseña del jugador.
+     */
+    public Jugador(String nombre, String correo, String contrasena) {
+        this.nombre = nombre;
+        this.contrasena = contrasena;
+        this.color = null;
+        this.correo = correo;
+        this.tropasDisponibles = 0;
+        this.territoriosControlados = 0;
+        this.activo = true;
+    }
 
-	public MyLinkedList<Carta> getCartas() {
-		return cartas;
-	}
+    /**
+     * Obtiene el correo electrónico del jugador.
+     *
+     * @return El correo electrónico del jugador.
+     */
+    public String getCorreo() {
+        return correo;
+    }
 
-	public void setCartas(MyLinkedList<Carta> cartas) {
-		this.cartas = cartas;
-	}
+    /**
+     * Establece el correo electrónico del jugador.
+     *
+     * @param correo El correo electrónico a establecer.
+     */
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    /**
+     * Obtiene la lista de cartas que posee el jugador.
+     *
+     * @return La lista de cartas del jugador.
+     */
+    public MyLinkedList<Carta> getCartas() {
+        return cartas;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    /**
+     * Establece la lista de cartas del jugador.
+     *
+     * @param cartas La lista de cartas a establecer.
+     */
+    public void setCartas(MyLinkedList<Carta> cartas) {
+        this.cartas = cartas;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    /**
+     * Obtiene el identificador único del jugador.
+     *
+     * @return El identificador único del jugador.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public String getColor() {
-		return color;
-	}
+    /**
+     * Obtiene el nombre del jugador.
+     *
+     * @return El nombre del jugador.
+     */
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setColor(String color) {
-		this.color = color;
-	}
+    /**
+     * Establece el nombre del jugador.
+     *
+     * @param nombre El nombre a establecer.
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public int getTropasDisponibles() {
-		return tropasDisponibles;
-	}
+    /**
+     * Obtiene el color asignado al jugador.
+     *
+     * @return El color del jugador.
+     */
+    public String getColor() {
+        return color;
+    }
 
-	public void setTropasDisponibles(int tropasDisponibles) {
-		this.tropasDisponibles = tropasDisponibles;
-	}
+    /**
+     * Establece el color del jugador.
+     *
+     * @param color El color a establecer.
+     */
+    public void setColor(String color) {
+        this.color = color;
+    }
 
-	public int getTerritoriosControlados() {
-		return territoriosControlados;
-	}
+    /**
+     * Obtiene la cantidad de tropas disponibles para el jugador.
+     *
+     * @return La cantidad de tropas disponibles.
+     */
+    public int getTropasDisponibles() {
+        return tropasDisponibles;
+    }
 
-	public void setTerritoriosControlados(int territoriosControlados) {
-		this.territoriosControlados = territoriosControlados;
-	}
+    /**
+     * Establece la cantidad de tropas disponibles para el jugador.
+     *
+     * @param tropasDisponibles La cantidad de tropas a establecer.
+     */
+    public void setTropasDisponibles(int tropasDisponibles) {
+        this.tropasDisponibles = tropasDisponibles;
+    }
 
-	public boolean isActivo() {
-		return activo;
-	}
+    /**
+     * Obtiene la cantidad de territorios controlados por el jugador.
+     *
+     * @return La cantidad de territorios controlados.
+     */
+    public int getTerritoriosControlados() {
+        return territoriosControlados;
+    }
 
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-	
-	
+    /**
+     * Establece la cantidad de territorios controlados por el jugador.
+     *
+     * @param territoriosControlados La cantidad de territorios a establecer.
+     */
+    public void setTerritoriosControlados(int territoriosControlados) {
+        this.territoriosControlados = territoriosControlados;
+    }
 
-	public String getContrasena() {
-		return contrasena;
-	}
+    /**
+     * Verifica si el jugador está activo.
+     *
+     * @return true si el jugador está activo, false en caso contrario.
+     */
+    public boolean isActivo() {
+        return activo;
+    }
 
-	public void setContrasena(String contrasena) {
-		this.contrasena = contrasena;
-	}
+    /**
+     * Establece el estado de actividad del jugador.
+     *
+     * @param activo El estado de actividad a establecer.
+     */
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(activo, color, id, nombre, territoriosControlados, tropasDisponibles);
-	}
+    /**
+     * Obtiene la contraseña del jugador.
+     *
+     * @return La contraseña del jugador.
+     */
+    public String getContrasena() {
+        return contrasena;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * Establece la contraseña del jugador.
+     *
+     * @param contrasena La contraseña a establecer.
+     */
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Jugador other = (Jugador) obj;
-		return activo == other.activo && Objects.equals(color, other.color) && Objects.equals(id, other.id)
-				&& Objects.equals(nombre, other.nombre) && territoriosControlados == other.territoriosControlados
-				&& tropasDisponibles == other.tropasDisponibles;
-	}
+    /**
+     * Genera un código hash para el jugador basado en sus atributos.
+     *
+     * @return El código hash generado.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(activo, color, id, nombre, territoriosControlados, tropasDisponibles);
+    }
 
-	@Override
-	public String toString() {
-		return "Jugador [id=" + id + ", nombre=" + nombre + ", color=" + color + ", tropasDisponibles="
-				+ tropasDisponibles + ", territoriosControlados=" + territoriosControlados + ", activo=" + activo + "]";
-	}
+    /**
+     * Establece el identificador único del jugador.
+     *
+     * @param id El identificador único a establecer.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    /**
+     * Compara este jugador con otro objeto para determinar si son iguales.
+     *
+     * @param obj El objeto a comparar.
+     * @return true si los objetos son iguales, false en caso contrario.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Jugador other = (Jugador) obj;
+        return activo == other.activo && Objects.equals(color, other.color) && Objects.equals(id, other.id)
+                && Objects.equals(nombre, other.nombre) && territoriosControlados == other.territoriosControlados
+                && tropasDisponibles == other.tropasDisponibles;
+    }
+
+    /**
+     * Devuelve una representación en cadena del jugador.
+     *
+     * @return Una cadena que representa los atributos del jugador.
+     */
+    @Override
+    public String toString() {
+        return "Jugador [id=" + id + ", nombre=" + nombre + ", color=" + color + ", tropasDisponibles="
+                + tropasDisponibles + ", territoriosControlados=" + territoriosControlados + ", activo=" + activo + "]";
+    }
 }
