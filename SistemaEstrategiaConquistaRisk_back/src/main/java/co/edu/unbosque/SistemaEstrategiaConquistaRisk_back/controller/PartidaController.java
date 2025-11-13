@@ -261,4 +261,10 @@ public class PartidaController {
 		return ResponseEntity.ok(partidaService.obtenerJugadorActual(partidaId));
 	}
 
+	@GetMapping("/{partidaId}/anfitrion")
+	public ResponseEntity<Long> obtenerAnfitrion(@PathVariable Long partidaId) {
+		Long anfitrionId = partidaService.obtenerAnfitrion(partidaId);
+		return ResponseEntity.ok(anfitrionId);
+	}
+
 }

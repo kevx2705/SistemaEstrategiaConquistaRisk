@@ -2,7 +2,6 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Carta;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.JsonUtil;
@@ -11,260 +10,274 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.StackImpl;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.CartaRepository;
 import org.modelmapper.ModelMapper;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * Servicio que gestiona la lógica relacionada con las cartas del juego.
+ * Proporciona funcionalidades para inicializar el mazo, robar cartas,
+ * validar combinaciones, canjear cartas y reiniciar el estado de las cartas.
+ */
 @Service
 @Transactional
 public class CartaService {
 
-	@Autowired
-	private CartaRepository cartaRepository;
+    @Autowired
+    private CartaRepository cartaRepository;
 
-	@Autowired
-	private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-	private StackImpl<Carta> mazo;
-	private Random random;
-	private int canjesRealizados = 0;
+    private StackImpl<Carta> mazo;
+    private Random random;
+    private int canjesRealizados = 0;
 
-	public CartaService() {
-		mazo = new StackImpl<>();
-		random = new Random();
-	}
+    /**
+     * Constructor de la clase CartaService.
+     * Inicializa el mazo y el generador de números aleatorios.
+     */
+    public CartaService() {
+        mazo = new StackImpl<>();
+        random = new Random();
+    }
 
-	/** Inicializa el mazo desde la BD al arrancar la app */
-	@PostConstruct
-	public void inicializar() {
-		inicializarMazo();
-	}
+    /**
+     * Inicializa el mazo de cartas después de que el bean haya sido construido.
+     */
+    @PostConstruct
+    public void inicializar() {
+        inicializarMazo();
+    }
 
-	/** Inicializa el mazo con cartas disponibles de la BD y las baraja */
-	public void inicializarMazo() {
-		MyLinkedList<Carta> lista = new MyLinkedList<>();
-		for (Carta c : cartaRepository.findAll()) {
-			if (c.isDisponible()) { // Solo cartas que no están robadas
-				lista.addLast(c);
-			}
-		}
-		barajarYCrearMazo(lista);
-	}
+    /**
+     * Inicializa el mazo de cartas con las cartas disponibles en la base de datos.
+     */
+    public void inicializarMazo() {
+        MyLinkedList<Carta> lista = new MyLinkedList<>();
+        for (Carta c : cartaRepository.findAll()) {
+            if (c.isDisponible()) {
+                lista.addLast(c);
+            }
+        }
+        barajarYCrearMazo(lista);
+    }
 
-	/**
-	 * Devuelve el mazo inicial en JSON para asignarlo a una nueva partida. No
-	 * modifica el mazo global del servicio, solo serializa las cartas disponibles.
-	 */
-	public String inicializarMazoParaPartida() {
-		inicializarMazo(); // baraja y llena el Stack "mazo"
+    /**
+     * Inicializa el mazo de cartas para una nueva partida y devuelve una representación JSON de las cartas.
+     *
+     * @return String Representación JSON de las cartas en el mazo.
+     */
+    public String inicializarMazoParaPartida() {
+        inicializarMazo(); // Baraja y llena el Stack "mazo"
+        MyLinkedList<CartaDTO> lista = new MyLinkedList<>();
+        StackImpl<Carta> copia = mazo.copiar(); // Si no existe, te lo programo
+        while (copia.size() > 0) {
+            Carta c = copia.pop();
+            lista.addLast(modelMapper.map(c, CartaDTO.class));
+        }
+        return JsonUtil.toJson(lista);
+    }
 
-		MyLinkedList<CartaDTO> lista = new MyLinkedList<>();
+    /**
+     * Valida si las cartas enviadas forman una combinación válida (3 iguales o 3 diferentes con comodines).
+     *
+     * @param idsCartas Lista de identificadores de las cartas a validar.
+     * @param mano Lista de cartas en la mano del jugador.
+     * @return boolean Verdadero si la combinación es válida, falso en caso contrario.
+     */
+    public boolean combinacionValida(MyLinkedList<Long> idsCartas, MyLinkedList<Carta> mano) {
+        if (idsCartas.size() != 3)
+            return false;
+        Carta[] cartas = new Carta[3];
+        for (int i = 0; i < 3; i++) {
+            Long id = idsCartas.getPos(i).getInfo();
+            for (int j = 0; j < mano.size(); j++) {
+                if (mano.getPos(j).getInfo().getId().equals(id)) {
+                    cartas[i] = mano.getPos(j).getInfo();
+                    break;
+                }
+            }
+            if (cartas[i] == null)
+                return false;
+        }
+        int infanteria = 0, caballeria = 0, artilleria = 0, comodines = 0;
+        for (Carta c : cartas) {
+            String tipo = c.getTipo();
+            if (tipo.equalsIgnoreCase("INFANTERIA"))
+                infanteria++;
+            else if (tipo.equalsIgnoreCase("CABALLERIA"))
+                caballeria++;
+            else if (tipo.equalsIgnoreCase("ARTILLERIA"))
+                artilleria++;
+            else if (tipo.equalsIgnoreCase("COMODIN"))
+                comodines++;
+        }
+        if (infanteria + comodines == 3 || caballeria + comodines == 3 || artilleria + comodines == 3)
+            return true;
+        int tiposDistintos = 0;
+        if (infanteria > 0)
+            tiposDistintos++;
+        if (caballeria > 0)
+            tiposDistintos++;
+        if (artilleria > 0)
+            tiposDistintos++;
+        return tiposDistintos + comodines >= 3;
+    }
 
-		// Convertir stack a lista en el orden real del mazo
-		StackImpl<Carta> copia = mazo.copiar(); // si no existe, te lo programo
-		while (copia.size() > 0) {
-			Carta c = copia.pop();
-			lista.addLast(modelMapper.map(c, CartaDTO.class));
-		}
+    /**
+     * Canjea las cartas seleccionadas y devuelve la cantidad de tropas correspondientes.
+     *
+     * @param idsCartas Lista de identificadores de las cartas a canjear.
+     * @param mano Lista de cartas en la mano del jugador.
+     * @return int Cantidad de tropas otorgadas por el canje.
+     */
+    public int canjearCartas(MyLinkedList<Long> idsCartas, MyLinkedList<Carta> mano) {
+        for (int i = 0; i < idsCartas.size(); i++) {
+            Long id = idsCartas.getPos(i).getInfo();
+            for (int j = 0; j < mano.size(); j++) {
+                if (mano.getPos(j).getInfo().getId().equals(id)) {
+                    mano.deleteAt(j); // Si j es el índice
+                    break;
+                }
+            }
+        }
+        canjesRealizados++;
+        return 4 + (canjesRealizados - 1) * 2;
+    }
 
-		return JsonUtil.toJson(lista);
-	}
+    /**
+     * Baraja las cartas y crea un nuevo mazo.
+     *
+     * @param lista Lista de cartas a barajar.
+     */
+    private void barajarYCrearMazo(MyLinkedList<Carta> lista) {
+        int size = lista.size();
+        if (size == 0)
+            return;
+        Node<Carta>[] nodos = new Node[size];
+        Node<Carta> current = lista.getFirst();
+        for (int i = 0; i < size; i++) {
+            nodos[i] = current;
+            current = current.getNext();
+        }
+        for (int i = size - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            Carta temp = nodos[i].getInfo();
+            nodos[i].setInfo(nodos[j].getInfo());
+            nodos[j].setInfo(temp);
+        }
+        mazo = new StackImpl<>();
+        current = lista.getFirst();
+        while (current != null) {
+            mazo.push(current.getInfo());
+            current = current.getNext();
+        }
+    }
 
-	/**
-	 * Valida si las cartas enviadas forman una combinación válida (3 iguales o 3
-	 * diferentes con comodines)
-	 */
-	public boolean combinacionValida(MyLinkedList<Long> idsCartas, MyLinkedList<Carta> mano) {
-		if (idsCartas.size() != 3)
-			return false;
+    /**
+     * Roba una carta del mazo.
+     *
+     * @return CartaDTO La carta robada, o null si el mazo está vacío.
+     */
+    public CartaDTO robarCarta() {
+        if (mazo.size() == 0)
+            return null;
+        Carta carta = mazo.pop();
+        carta.setDisponible(false);
+        cartaRepository.save(carta);
+        return modelMapper.map(carta, CartaDTO.class);
+    }
 
-		Carta[] cartas = new Carta[3];
-		for (int i = 0; i < 3; i++) {
-			Long id = idsCartas.getPos(i).getInfo();
-			for (int j = 0; j < mano.size(); j++) {
-				if (mano.getPos(j).getInfo().getId().equals(id)) {
-					cartas[i] = mano.getPos(j).getInfo();
-					break;
-				}
-			}
-			if (cartas[i] == null)
-				return false;
-		}
+    /**
+     * Devuelve una carta al mazo.
+     *
+     * @param idCarta Identificador de la carta a devolver.
+     */
+    public void devolverCarta(Long idCarta) {
+        if (idCarta == null)
+            return;
+        Optional<Carta> opt = cartaRepository.findById(idCarta);
+        if (opt.isEmpty())
+            return;
+        Carta carta = opt.get();
+        carta.setDisponible(true);
+        cartaRepository.save(carta);
+        MyLinkedList<Carta> temp = new MyLinkedList<>();
+        while (mazo.size() > 0) {
+            temp.addLast(mazo.pop());
+        }
+        int pos = random.nextInt(temp.size() + 1);
+        if (pos == 0) {
+            mazo.push(carta);
+        } else if (pos == temp.size()) {
+            temp.addLast(carta);
+        } else {
+            Node<Carta> nodo = temp.getPos(pos - 1);
+            temp.insert(carta, nodo);
+        }
+        Node<Carta> current = temp.getFirst();
+        while (current != null) {
+            mazo.push(current.getInfo());
+            current = current.getNext();
+        }
+    }
 
-		int infanteria = 0, caballeria = 0, artilleria = 0, comodines = 0;
+    /**
+     * Cuenta la cantidad de cartas que han sido robadas.
+     *
+     * @return int Cantidad de cartas robadas.
+     */
+    public int contarCartasRobadas() {
+        int count = 0;
+        for (Carta c : cartaRepository.findAll()) {
+            if (!c.isDisponible())
+                count++;
+        }
+        return count;
+    }
 
-		for (Carta c : cartas) {
-			String tipo = c.getTipo(); // suponiendo que tipo es String
-			if (tipo.equalsIgnoreCase("INFANTERIA"))
-				infanteria++;
-			else if (tipo.equalsIgnoreCase("CABALLERIA"))
-				caballeria++;
-			else if (tipo.equalsIgnoreCase("ARTILLERIA"))
-				artilleria++;
-			else if (tipo.equalsIgnoreCase("COMODIN"))
-				comodines++;
-		}
+    /**
+     * Imprime el estado actual del mazo y las cartas robadas.
+     */
+    public void imprimirEstadoMazo() {
+        System.out.println("📦 Cartas en el mazo:");
+        StackImpl<Carta> temp = new StackImpl<>();
+        while (mazo.size() > 0) {
+            Carta c = mazo.pop();
+            System.out.println("- " + c.getId() + " [" + c.getTipo() + "]");
+            temp.push(c);
+        }
+        while (temp.size() > 0)
+            mazo.push(temp.pop());
+        System.out.println("🎴 Cartas robadas:");
+        for (Carta c : cartaRepository.findAll()) {
+            if (!c.isDisponible()) {
+                System.out.println("- " + c.getId() + " [" + c.getTipo() + "]");
+            }
+        }
+    }
 
-		// 3 iguales
-		if (infanteria + comodines == 3 || caballeria + comodines == 3 || artilleria + comodines == 3)
-			return true;
+    /**
+     * Devuelve el tamaño actual del mazo.
+     *
+     * @return int Tamaño del mazo.
+     */
+    public int tamañoMazo() {
+        return mazo.size();
+    }
 
-		// 3 diferentes (con comodines)
-		int tiposDistintos = 0;
-		if (infanteria > 0)
-			tiposDistintos++;
-		if (caballeria > 0)
-			tiposDistintos++;
-		if (artilleria > 0)
-			tiposDistintos++;
-
-		return tiposDistintos + comodines >= 3;
-	}
-
-	/**
-	 * Canjea las cartas: las remueve de la mano y devuelve tropas
-	 */
-
-	public int canjearCartas(MyLinkedList<Long> idsCartas, MyLinkedList<Carta> mano) {
-		for (int i = 0; i < idsCartas.size(); i++) {
-			Long id = idsCartas.getPos(i).getInfo();
-			for (int j = 0; j < mano.size(); j++) {
-				if (mano.getPos(j).getInfo().getId().equals(id)) {
-					mano.deleteAt(j); // si j es el índice
-					break;
-				}
-			}
-		}
-
-		canjesRealizados++;
-		return 4 + (canjesRealizados - 1) * 2; // Ejemplo progresión de tropas
-	}
-
-	/** Baraja la lista y llena el mazo */
-	private void barajarYCrearMazo(MyLinkedList<Carta> lista) {
-		int size = lista.size();
-		if (size == 0)
-			return;
-
-		// Convertir lista a arreglo de nodos para barajar sin alterar MyLinkedList
-		Node<Carta>[] nodos = new Node[size];
-		Node<Carta> current = lista.getFirst();
-		for (int i = 0; i < size; i++) {
-			nodos[i] = current;
-			current = current.getNext();
-		}
-
-		// Barajar tipo Fisher-Yates
-		for (int i = size - 1; i > 0; i--) {
-			int j = random.nextInt(i + 1);
-			Carta temp = nodos[i].getInfo();
-			nodos[i].setInfo(nodos[j].getInfo());
-			nodos[j].setInfo(temp);
-		}
-
-		// Llenar la pila mazo
-		mazo = new StackImpl<>();
-		current = lista.getFirst();
-		while (current != null) {
-			mazo.push(current.getInfo());
-			current = current.getNext();
-		}
-	}
-
-	/** Roba la carta superior */
-	public CartaDTO robarCarta() {
-		if (mazo.size() == 0)
-			return null;
-		Carta carta = mazo.pop();
-		carta.setDisponible(false);
-		cartaRepository.save(carta);
-		return modelMapper.map(carta, CartaDTO.class);
-	}
-
-	/** Devuelve carta al mazo por ID */
-	public void devolverCarta(Long idCarta) {
-		if (idCarta == null)
-			return;
-
-		Optional<Carta> opt = cartaRepository.findById(idCarta);
-		if (opt.isEmpty())
-			return;
-
-		Carta carta = opt.get();
-		carta.setDisponible(true);
-		cartaRepository.save(carta);
-
-		// Extraer mazo a lista temporal
-		MyLinkedList<Carta> temp = new MyLinkedList<>();
-		while (mazo.size() > 0) {
-			temp.addLast(mazo.pop());
-		}
-
-		// Insertar carta devuelta en posición aleatoria
-		int pos = random.nextInt(temp.size() + 1);
-		if (pos == 0) {
-			mazo.push(carta);
-		} else if (pos == temp.size()) {
-			temp.addLast(carta);
-		} else {
-			Node<Carta> nodo = temp.getPos(pos - 1);
-			temp.insert(carta, nodo);
-		}
-
-		// Reconstruir mazo
-		Node<Carta> current = temp.getFirst();
-		while (current != null) {
-			mazo.push(current.getInfo());
-			current = current.getNext();
-		}
-	}
-
-	/** Cantidad de cartas robadas (no disponibles) */
-	public int contarCartasRobadas() {
-		int count = 0;
-		for (Carta c : cartaRepository.findAll()) {
-			if (!c.isDisponible())
-				count++;
-		}
-		return count;
-	}
-
-	/** Estado del mazo y cartas robadas (debug) */
-	public void imprimirEstadoMazo() {
-		System.out.println("📦 Cartas en el mazo:");
-		StackImpl<Carta> temp = new StackImpl<>();
-		while (mazo.size() > 0) {
-			Carta c = mazo.pop();
-			System.out.println("- " + c.getId() + " [" + c.getTipo() + "]");
-			temp.push(c);
-		}
-		while (temp.size() > 0)
-			mazo.push(temp.pop());
-
-		System.out.println("🎴 Cartas robadas:");
-		for (Carta c : cartaRepository.findAll()) {
-			if (!c.isDisponible()) {
-				System.out.println("- " + c.getId() + " [" + c.getTipo() + "]");
-			}
-		}
-	}
-
-	/** Tamaño actual del mazo */
-	public int tamañoMazo() {
-		return mazo.size();
-	}
-
-	/** Resetea todas las cartas y baraja de nuevo */
-	public void resetCartas() {
-		MyLinkedList<Carta> lista = new MyLinkedList<>();
-		for (Carta c : cartaRepository.findAll()) {
-			c.setDisponible(true);
-			cartaRepository.save(c);
-			lista.addLast(c);
-		}
-		barajarYCrearMazo(lista);
-	}
+    /**
+     * Reinicia el estado de todas las cartas y baraja el mazo.
+     */
+    public void resetCartas() {
+        MyLinkedList<Carta> lista = new MyLinkedList<>();
+        for (Carta c : cartaRepository.findAll()) {
+            c.setDisponible(true);
+            cartaRepository.save(c);
+            lista.addLast(c);
+        }
+        barajarYCrearMazo(lista);
+    }
 }

@@ -1057,6 +1057,24 @@ public class PartidaService {
 
 	    return partida.getJugadorActualId();
 	}
+	public Long obtenerAnfitrion(Long partidaId) {
+
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("No existe la partida"));
+
+	    // Cargar la lista de jugadores desde el JSON
+	    MyLinkedList<Long> ordenJugadores = gson.fromJson(
+	            partida.getJugadoresOrdenTurnoJSON(),
+	            new TypeToken<MyLinkedList<Long>>() {}.getType()
+	    );
+
+	    if (ordenJugadores == null || ordenJugadores.size() == 0) {
+	        throw new RuntimeException("La partida no tiene jugadores asignados");
+	    }
+
+	    // El anfitrión siempre es el primero de la lista
+	    return ordenJugadores.getPos(0).getInfo();
+	}
 
 
 }
