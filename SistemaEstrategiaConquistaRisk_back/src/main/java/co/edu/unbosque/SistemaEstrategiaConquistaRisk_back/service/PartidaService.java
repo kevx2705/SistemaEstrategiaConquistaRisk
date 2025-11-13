@@ -196,16 +196,15 @@ public class PartidaService {
 			jugadorService.agregarTropas(idJugador, tropasIniciales);
 		}
 
-		// ✅ 2️⃣ Inicializar territorios usando SOLO el JSON de la partida
-		MyLinkedList<TerritorioDTO> territorios = gson.fromJson(partida.getTerritoriosJSON(),
-				new TypeToken<MyLinkedList<TerritorioDTO>>() {
-				}.getType());
+		// 2️⃣ Inicializar territorios usando cargarTerritorios()
+		MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
 
 		for (int i = 0; i < territorios.size(); i++) {
-			TerritorioDTO t = territorios.getPos(i).getInfo();
-			t.setTropas(0);
-			t.setIdJugador(0L); // sin dueño
+		    TerritorioDTO t = territorios.getPos(i).getInfo();
+		    t.setTropas(0);
+		    t.setIdJugador(0L); // sin dueño
 		}
+
 
 		// ✅ Guardar territorios actualizados
 		partida.setTerritoriosJSON(gson.toJson(territorios));
@@ -399,11 +398,11 @@ public class PartidaService {
 	 * ataques por turno.
 	 */
 	public ResultadoAtaqueDTO atacar(Long partidaId, Long atacanteId, Long territorioAtacanteId,
-			Long territorioDefensorId, int dadosAtacante, int dadosDefensor) {
+			Long territorioDefensorId) {
 
 		// Llama al ataque real
 		ResultadoAtaqueDTO resultado = ataqueService.atacar(partidaId, atacanteId, territorioAtacanteId,
-				territorioDefensorId, dadosAtacante, dadosDefensor);
+				territorioDefensorId);
 
 		// No necesitamos guardar flags ni modificar la partida aquí.
 		// El cálculo de si el jugador conquistó se hará en finalizarTurno().
@@ -1052,5 +1051,12 @@ public class PartidaService {
 
 		return partida.getId();
 	}
+	public Long obtenerJugadorActual(Long partidaId) {
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("No existe la partida"));
+
+	    return partida.getJugadorActualId();
+	}
+
 
 }

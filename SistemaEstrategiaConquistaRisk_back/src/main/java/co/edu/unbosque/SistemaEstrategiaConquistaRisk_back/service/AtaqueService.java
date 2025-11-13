@@ -38,7 +38,7 @@ public class AtaqueService {
 	// MÉTODO PRINCIPAL DE ATAQUE
 	// ============================================================
 	public ResultadoAtaqueDTO atacar(Long partidaId, Long atacanteId, Long territorioAtacanteId,
-			Long territorioDefensorId, int dadosAtacante, int dadosDefensor) {
+			Long territorioDefensorId) {
 
 // -------------------------------
 // 1. Cargar partida
@@ -84,6 +84,9 @@ public class AtaqueService {
 // -------------------------------
 // 5. Lanzar dados
 // -------------------------------
+		int dadosAtacante = Math.min(3, terrAtacante.getTropas() - 1);
+		int dadosDefensor = Math.min(2, terrDefensor.getTropas());
+
 		int[] dadosA = lanzarDados(dadosAtacante);
 		int[] dadosD = lanzarDados(dadosDefensor);
 
