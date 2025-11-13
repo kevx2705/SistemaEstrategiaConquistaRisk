@@ -263,7 +263,7 @@ public class PartidaController {
 
 	@GetMapping("/{partidaId}/anfitrion")
 	public ResponseEntity<Long> obtenerAnfitrion(@PathVariable Long partidaId) {
-		Long anfitrionId = partidaService.obtenerAnfitrion(partidaId);
+		Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
 		return ResponseEntity.ok(anfitrionId);
 	}
 

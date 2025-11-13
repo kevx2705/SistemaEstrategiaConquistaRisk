@@ -1057,24 +1057,26 @@ public class PartidaService {
 
 	    return partida.getJugadorActualId();
 	}
-	public Long obtenerAnfitrion(Long partidaId) {
+	public Long obtenerIdAnfitrion(Long partidaId) {
 
 	    Partida partida = partidaRepository.findById(partidaId)
-	            .orElseThrow(() -> new RuntimeException("No existe la partida"));
+	            .orElseThrow(() -> new RuntimeException("La partida no existe"));
 
-	    // Cargar la lista de jugadores desde el JSON
-	    MyLinkedList<Long> ordenJugadores = gson.fromJson(
+	    // Reconstruir lista de jugadores desde JSON
+	    MyLinkedList<JugadorDTO> jugadores = gson.fromJson(
 	            partida.getJugadoresOrdenTurnoJSON(),
-	            new TypeToken<MyLinkedList<Long>>() {}.getType()
+	            new TypeToken<MyLinkedList<JugadorDTO>>() {}.getType()
 	    );
 
-	    if (ordenJugadores == null || ordenJugadores.size() == 0) {
-	        throw new RuntimeException("La partida no tiene jugadores asignados");
-	    }
+	    if (jugadores == null || jugadores.getFirst() == null)
+	        throw new RuntimeException("La lista de jugadores está vacía.");
 
-	    // El anfitrión siempre es el primero de la lista
-	    return ordenJugadores.getPos(0).getInfo();
+	    // El anfitrión es el primer nodo
+	    Node<JugadorDTO> nodoAnfitrion = jugadores.getFirst();
+
+	    return nodoAnfitrion.getInfo().getId();
 	}
+
 
 
 }
