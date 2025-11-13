@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * Entidad que representa a un jugador en el juego Risk.
@@ -45,6 +46,7 @@ public class Jugador {
     private boolean activo;
 
     /** Lista de cartas que posee el jugador. */
+    @Transient
     private MyLinkedList<Carta> cartas = new MyLinkedList<>();
 
     /**

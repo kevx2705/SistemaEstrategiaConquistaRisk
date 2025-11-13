@@ -11,34 +11,45 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Edge;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 
+/**
+ * Servicio que gestiona la lógica del mapa de territorios del juego.
+ * Proporciona funcionalidades para inicializar el grafo de territorios,
+ * conectar territorios adyacentes, y verificar relaciones entre territorios.
+ */
 @Service
 public class MapaTerritorioService {
 
 	private Graph grafo = new Graph();
-	
+
 	@Autowired
 	private TerritorioService territorioService;
-	
+
+	/**
+	 * Constructor por defecto de la clase MapaTerritorioService.
+	 */
 	public MapaTerritorioService() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Inicializa el mapa de territorios después de que el bean haya sido
+	 * construido. Carga los territorios y sus conexiones.
+	 */
 	@PostConstruct
 	public void inicializarMapa() {
 		inicializarVertices();
 		inicializarAristas();
 	}
 
-	// ============================================================
-	// 1. Cargar todos los territorios como vértices
-	// ============================================================
+	/**
+	 * Inicializa los vértices del grafo con los territorios del juego.
+	 */
 	private void inicializarVertices() {
 		MyLinkedList<TerritorioDTO> territorios = territorioService.obtenerTodos();
 
 		Node<TerritorioDTO> n = territorios.getFirst();
 		while (n != null) {
 
-			// ✅ Vertex SOLO es genérico — tus reglas se respetan
 			Vertex<TerritorioDTO> v = new Vertex<>(n.getInfo());
 			grafo.addVertex(v);
 
@@ -46,9 +57,9 @@ public class MapaTerritorioService {
 		}
 	}
 
-	// ============================================================
-	// 2. Crear aristas según el mapa real de Risk
-	// ============================================================
+	/**
+	 * Inicializa las aristas del grafo conectando los territorios adyacentes.
+	 */
 	private void inicializarAristas() {
 		conectar("Alaska", "Alberta");
 		conectar("Alaska", "Kamchatka");
@@ -246,22 +257,29 @@ public class MapaTerritorioService {
 
 	}
 
+	/**
+	 * Conecta dos territorios en el grafo.
+	 *
+	 * @param nombreA Nombre del primer territorio.
+	 * @param nombreB Nombre del segundo territorio.
+	 */
 	private void conectar(String nombreA, String nombreB) {
 		Vertex<TerritorioDTO> a = findVertexByName(nombreA);
 		Vertex<TerritorioDTO> b = findVertexByName(nombreB);
 
 		if (a != null && b != null) {
 
-			// ✅ Graph NO es genérico → insertEdge acepta Vertex sin tipo
 			grafo.insertEdge(a, b, 1);
 			grafo.insertEdge(b, a, 1);
 		}
 	}
 
-	// ============================================================
-	// 3. Búsqueda de vértices
-	// ============================================================
-
+	/**
+	 * Busca un vértice en el grafo por el identificador del territorio.
+	 *
+	 * @param id Identificador del territorio.
+	 * @return Vertex<TerritorioDTO> Vértice encontrado, o null si no existe.
+	 */
 	public Vertex<TerritorioDTO> findVertexById(Long id) {
 		Node node = grafo.getListOfNodes().getFirst();
 
@@ -280,6 +298,12 @@ public class MapaTerritorioService {
 		return null;
 	}
 
+	/**
+	 * Busca un vértice en el grafo por el nombre del territorio.
+	 *
+	 * @param nombre Nombre del territorio.
+	 * @return Vertex<TerritorioDTO> Vértice encontrado, o null si no existe.
+	 */
 	private Vertex<TerritorioDTO> findVertexByName(String nombre) {
 
 		Node node = grafo.getListOfNodes().getFirst();
@@ -298,9 +322,13 @@ public class MapaTerritorioService {
 		return null;
 	}
 
-	// ============================================================
-	// 4. Obtener vecinos (para ataque)
-	// ============================================================
+	/**
+	 * Obtiene los identificadores de los territorios vecinos de un territorio dado.
+	 *
+	 * @param id Identificador del territorio.
+	 * @return MyLinkedList<Long> Lista enlazada con los identificadores de los
+	 *         territorios vecinos.
+	 */
 	public MyLinkedList<Long> obtenerVecinos(Long id) {
 		MyLinkedList<Long> vecinos = new MyLinkedList<>();
 
@@ -322,6 +350,14 @@ public class MapaTerritorioService {
 		return vecinos;
 	}
 
+	/**
+	 * Verifica si dos territorios son vecinos.
+	 *
+	 * @param idA Identificador del primer territorio.
+	 * @param idB Identificador del segundo territorio.
+	 * @return boolean Verdadero si los territorios son vecinos, falso en caso
+	 *         contrario.
+	 */
 	public boolean sonVecinos(Long idA, Long idB) {
 		MyLinkedList<Long> vecinos = obtenerVecinos(idA);
 
@@ -334,9 +370,15 @@ public class MapaTerritorioService {
 		return false;
 	}
 
-	// ============================================================
-	// 5. BFS para verificar camino entre territorios del mismo jugador
-	// ============================================================
+	/**
+	 * Verifica si existe un camino entre dos territorios controlados por el mismo
+	 * jugador.
+	 *
+	 * @param inicio    Identificador del territorio de inicio.
+	 * @param fin       Identificador del territorio de destino.
+	 * @param jugadorId Identificador del jugador.
+	 * @return boolean Verdadero si existe un camino, falso en caso contrario.
+	 */
 	public boolean existeCamino(Long inicio, Long fin, Long jugadorId) {
 
 		MyLinkedList<Long> visitados = new MyLinkedList<>();
@@ -347,8 +389,7 @@ public class MapaTerritorioService {
 
 		while (!cola.isEmpty()) {
 
-			Long actual = cola.extract(); // ✅ AQUÍ VA extract()
-
+			Long actual = cola.extract();
 			if (actual.equals(fin)) {
 				return true;
 			}
