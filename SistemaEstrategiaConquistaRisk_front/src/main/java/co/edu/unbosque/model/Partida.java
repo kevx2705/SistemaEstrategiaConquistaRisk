@@ -1,241 +1,517 @@
 package co.edu.unbosque.model;
 
-import java.time.LocalDateTime;
-
 import co.edu.unbosque.estructures.MyLinkedList;
 import jakarta.persistence.Column;
 
+/**
+ * Clase que representa una partida en el sistema.
+ * Contiene información sobre el estado, los jugadores, los territorios,
+ * las cartas y otros detalles relevantes de una partida en curso o finalizada.
+ */
 public class Partida {
 
-	private static final long serialVersionUID = 1L;
+    /**
+     * Identificador único de la partida.
+     */
+    private Long id;
 
-	private Long id;
-	private String codigo;
-	private Long anfitrionId;
-	private MyLinkedList<Jugador> jugadores;
-	private String estado;
-	private String fase;
-	private Long jugadorActualId;
-	private int turno;
-	private int totalTropasColocadas;
-	private String codigoHash;
-	private boolean iniciada;
-	/** Estado que indica si la partida ha finalizado. */
-	private boolean finalizada;
+    /**
+     * Código único de la partida.
+     */
+    private String codigo;
 
-	/** Identificador del jugador ganador de la partida. */
-	private Long ganadorId;
+    /**
+     * Identificador del jugador anfitrión de la partida.
+     */
+    private Long anfitrionId;
 
-	/** Representación en JSON de los territorios de la partida. */
-	@Column(columnDefinition = "LONGTEXT")
-	private String territoriosJSON;
+    /**
+     * Lista de jugadores que participan en la partida.
+     */
+    private MyLinkedList<Jugador> jugadores;
 
-	/** Representación en JSON del mazo de cartas de la partida. */
-	private String mazoCartasJSON;
+    /**
+     * Estado actual de la partida.
+     */
+    private String estado;
 
-	/** Representación en JSON del orden de turno de los jugadores. */
-	@Column(columnDefinition = "LONGTEXT")
-	private String jugadoresOrdenTurnoJSON;
+    /**
+     * Fase actual de la partida.
+     */
+    private String fase;
 
-	/** Fecha y hora de inicio de la partida. */
-	private String fechaInicio;
+    /**
+     * Identificador del jugador cuyo turno es actualmente.
+     */
+    private Long jugadorActualId;
 
-	/** Fecha y hora de finalización de la partida. */
-	private String fechaFin;
+    /**
+     * Número del turno actual de la partida.
+     */
+    private int turno;
 
-	// Constructor vacío (requerido por Jackson y JPA)
-	public Partida() {
-	}
+    /**
+     * Total de tropas colocadas en la partida.
+     */
+    private int totalTropasColocadas;
 
-	// Constructor con campos principales
-	public Partida(Long id, String codigo, Long anfitrionId, MyLinkedList<Jugador> jugadores, String estado,
-			String fase, Long jugadorActualId, int turno) {
-		this.id = id;
-		this.codigo = codigo;
-		this.anfitrionId = anfitrionId;
-		this.jugadores = jugadores;
-		this.estado = estado;
-		this.fase = fase;
-		this.jugadorActualId = jugadorActualId;
-		this.turno = turno;
-	}
+    /**
+     * Código hash asociado a la partida.
+     */
+    private String codigoHash;
 
-	public Partida(Long id, String codigo, Long anfitrionId, MyLinkedList<Jugador> jugadores, String estado,
-			String fase, Long jugadorActualId, int turno, int totalTropasColocadas, String codigoHash, boolean iniciada,
-			boolean finalizada, Long ganadorId, String territoriosJSON, String mazoCartasJSON,
-			String jugadoresOrdenTurnoJSON, String fechaInicio, String fechaFin) {
-		super();
-		this.id = id;
-		this.codigo = codigo;
-		this.anfitrionId = anfitrionId;
-		this.jugadores = jugadores;
-		this.estado = estado;
-		this.fase = fase;
-		this.jugadorActualId = jugadorActualId;
-		this.turno = turno;
-		this.totalTropasColocadas = totalTropasColocadas;
-		this.codigoHash = codigoHash;
-		this.iniciada = iniciada;
-		this.finalizada = finalizada;
-		this.ganadorId = ganadorId;
-		this.territoriosJSON = territoriosJSON;
-		this.mazoCartasJSON = mazoCartasJSON;
-		this.jugadoresOrdenTurnoJSON = jugadoresOrdenTurnoJSON;
-		this.fechaInicio = fechaInicio;
-		this.fechaFin = fechaFin;
-	}
+    /**
+     * Indica si la partida ha sido iniciada.
+     */
+    private boolean iniciada;
 
-	public boolean isFinalizada() {
-		return finalizada;
-	}
+    /**
+     * Estado que indica si la partida ha finalizado.
+     */
+    private boolean finalizada;
 
-	public void setFinalizada(boolean finalizada) {
-		this.finalizada = finalizada;
-	}
+    /**
+     * Identificador del jugador ganador de la partida.
+     */
+    private Long ganadorId;
 
-	public Long getGanadorId() {
-		return ganadorId;
-	}
+    /**
+     * Representación en JSON de los territorios de la partida.
+     */
+    @Column(columnDefinition = "LONGTEXT")
+    private String territoriosJSON;
 
-	public void setGanadorId(Long ganadorId) {
-		this.ganadorId = ganadorId;
-	}
+    /**
+     * Representación en JSON del mazo de cartas de la partida.
+     */
+    private String mazoCartasJSON;
 
-	public String getTerritoriosJSON() {
-		return territoriosJSON;
-	}
+    /**
+     * Representación en JSON del orden de turno de los jugadores.
+     */
+    @Column(columnDefinition = "LONGTEXT")
+    private String jugadoresOrdenTurnoJSON;
 
-	public void setTerritoriosJSON(String territoriosJSON) {
-		this.territoriosJSON = territoriosJSON;
-	}
+    /**
+     * Fecha y hora de inicio de la partida.
+     */
+    private String fechaInicio;
 
-	public String getMazoCartasJSON() {
-		return mazoCartasJSON;
-	}
+    /**
+     * Fecha y hora de finalización de la partida.
+     */
+    private String fechaFin;
 
-	public void setMazoCartasJSON(String mazoCartasJSON) {
-		this.mazoCartasJSON = mazoCartasJSON;
-	}
+    /**
+     * Constructor por defecto de la clase Partida.
+     */
+    public Partida() {
+    }
 
-	public String getJugadoresOrdenTurnoJSON() {
-		return jugadoresOrdenTurnoJSON;
-	}
+    /**
+     * Constructor que inicializa una partida con sus atributos básicos.
+     *
+     * @param id               Identificador único de la partida.
+     * @param codigo           Código único de la partida.
+     * @param anfitrionId      Identificador del jugador anfitrión.
+     * @param jugadores        Lista de jugadores participantes.
+     * @param estado           Estado actual de la partida.
+     * @param fase             Fase actual de la partida.
+     * @param jugadorActualId  Identificador del jugador actual.
+     * @param turno            Número del turno actual.
+     */
+    public Partida(Long id, String codigo, Long anfitrionId, MyLinkedList<Jugador> jugadores, String estado,
+            String fase, Long jugadorActualId, int turno) {
+        this.id = id;
+        this.codigo = codigo;
+        this.anfitrionId = anfitrionId;
+        this.jugadores = jugadores;
+        this.estado = estado;
+        this.fase = fase;
+        this.jugadorActualId = jugadorActualId;
+        this.turno = turno;
+    }
 
-	public void setJugadoresOrdenTurnoJSON(String jugadoresOrdenTurnoJSON) {
-		this.jugadoresOrdenTurnoJSON = jugadoresOrdenTurnoJSON;
-	}
+    /**
+     * Constructor que inicializa una partida con todos sus atributos.
+     *
+     * @param id                       Identificador único de la partida.
+     * @param codigo                   Código único de la partida.
+     * @param anfitrionId              Identificador del jugador anfitrión.
+     * @param jugadores                Lista de jugadores participantes.
+     * @param estado                   Estado actual de la partida.
+     * @param fase                     Fase actual de la partida.
+     * @param jugadorActualId          Identificador del jugador actual.
+     * @param turno                    Número del turno actual.
+     * @param totalTropasColocadas     Total de tropas colocadas.
+     * @param codigoHash              Código hash de la partida.
+     * @param iniciada                 Indica si la partida ha sido iniciada.
+     * @param finalizada               Indica si la partida ha finalizado.
+     * @param ganadorId                Identificador del jugador ganador.
+     * @param territoriosJSON          Representación en JSON de los territorios.
+     * @param mazoCartasJSON           Representación en JSON del mazo de cartas.
+     * @param jugadoresOrdenTurnoJSON Representación en JSON del orden de turno.
+     * @param fechaInicio              Fecha y hora de inicio de la partida.
+     * @param fechaFin                 Fecha y hora de finalización de la partida.
+     */
+    public Partida(Long id, String codigo, Long anfitrionId, MyLinkedList<Jugador> jugadores, String estado,
+            String fase, Long jugadorActualId, int turno, int totalTropasColocadas, String codigoHash, boolean iniciada,
+            boolean finalizada, Long ganadorId, String territoriosJSON, String mazoCartasJSON,
+            String jugadoresOrdenTurnoJSON, String fechaInicio, String fechaFin) {
+        super();
+        this.id = id;
+        this.codigo = codigo;
+        this.anfitrionId = anfitrionId;
+        this.jugadores = jugadores;
+        this.estado = estado;
+        this.fase = fase;
+        this.jugadorActualId = jugadorActualId;
+        this.turno = turno;
+        this.totalTropasColocadas = totalTropasColocadas;
+        this.codigoHash = codigoHash;
+        this.iniciada = iniciada;
+        this.finalizada = finalizada;
+        this.ganadorId = ganadorId;
+        this.territoriosJSON = territoriosJSON;
+        this.mazoCartasJSON = mazoCartasJSON;
+        this.jugadoresOrdenTurnoJSON = jugadoresOrdenTurnoJSON;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+    }
 
-	public String getFechaInicio() {
-		return fechaInicio;
-	}
+    /**
+     * Verifica si la partida ha finalizado.
+     *
+     * @return {@code true} si la partida ha finalizado, {@code false} en caso contrario.
+     */
+    public boolean isFinalizada() {
+        return finalizada;
+    }
 
-	public void setFechaInicio(String fechaInicio) {
-		this.fechaInicio = fechaInicio;
-	}
+    /**
+     * Establece si la partida ha finalizado.
+     *
+     * @param finalizada Estado de finalización a establecer.
+     */
+    public void setFinalizada(boolean finalizada) {
+        this.finalizada = finalizada;
+    }
 
-	public String getFechaFin() {
-		return fechaFin;
-	}
+    /**
+     * Obtiene el identificador del jugador ganador de la partida.
+     *
+     * @return Identificador del jugador ganador.
+     */
+    public Long getGanadorId() {
+        return ganadorId;
+    }
 
-	public void setFechaFin(String fechaFin) {
-		this.fechaFin = fechaFin;
-	}
+    /**
+     * Establece el identificador del jugador ganador de la partida.
+     *
+     * @param ganadorId Identificador del jugador ganador a establecer.
+     */
+    public void setGanadorId(Long ganadorId) {
+        this.ganadorId = ganadorId;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    /**
+     * Obtiene la representación en JSON de los territorios de la partida.
+     *
+     * @return Representación en JSON de los territorios.
+     */
+    public String getTerritoriosJSON() {
+        return territoriosJSON;
+    }
 
-	public boolean isIniciada() {
-		return iniciada;
-	}
+    /**
+     * Establece la representación en JSON de los territorios de la partida.
+     *
+     * @param territoriosJSON Representación en JSON de los territorios a establecer.
+     */
+    public void setTerritoriosJSON(String territoriosJSON) {
+        this.territoriosJSON = territoriosJSON;
+    }
 
-	public void setIniciada(boolean iniciada) {
-		this.iniciada = iniciada;
-	}
+    /**
+     * Obtiene la representación en JSON del mazo de cartas de la partida.
+     *
+     * @return Representación en JSON del mazo de cartas.
+     */
+    public String getMazoCartasJSON() {
+        return mazoCartasJSON;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * Establece la representación en JSON del mazo de cartas de la partida.
+     *
+     * @param mazoCartasJSON Representación en JSON del mazo de cartas a establecer.
+     */
+    public void setMazoCartasJSON(String mazoCartasJSON) {
+        this.mazoCartasJSON = mazoCartasJSON;
+    }
 
-	public String getCodigo() {
-		return codigo;
-	}
+    /**
+     * Obtiene la representación en JSON del orden de turno de los jugadores.
+     *
+     * @return Representación en JSON del orden de turno.
+     */
+    public String getJugadoresOrdenTurnoJSON() {
+        return jugadoresOrdenTurnoJSON;
+    }
 
-	public String getCodigoHash() {
-		return codigoHash;
-	}
+    /**
+     * Establece la representación en JSON del orden de turno de los jugadores.
+     *
+     * @param jugadoresOrdenTurnoJSON Representación en JSON del orden de turno a establecer.
+     */
+    public void setJugadoresOrdenTurnoJSON(String jugadoresOrdenTurnoJSON) {
+        this.jugadoresOrdenTurnoJSON = jugadoresOrdenTurnoJSON;
+    }
 
-	public void setCodigoHash(String codigoHash) {
-		this.codigoHash = codigoHash;
-	}
+    /**
+     * Obtiene la fecha y hora de inicio de la partida.
+     *
+     * @return Fecha y hora de inicio de la partida.
+     */
+    public String getFechaInicio() {
+        return fechaInicio;
+    }
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
+    /**
+     * Establece la fecha y hora de inicio de la partida.
+     *
+     * @param fechaInicio Fecha y hora de inicio a establecer.
+     */
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
 
-	public Long getAnfitrionId() {
-		return anfitrionId;
-	}
+    /**
+     * Obtiene la fecha y hora de finalización de la partida.
+     *
+     * @return Fecha y hora de finalización de la partida.
+     */
+    public String getFechaFin() {
+        return fechaFin;
+    }
 
-	public void setAnfitrionId(Long anfitrionId) {
-		this.anfitrionId = anfitrionId;
-	}
+    /**
+     * Establece la fecha y hora de finalización de la partida.
+     *
+     * @param fechaFin Fecha y hora de finalización a establecer.
+     */
+    public void setFechaFin(String fechaFin) {
+        this.fechaFin = fechaFin;
+    }
 
-	public MyLinkedList<Jugador> getJugadores() {
-		return jugadores;
-	}
+    /**
+     * Obtiene el identificador único de la partida.
+     *
+     * @return Identificador único de la partida.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public void setJugadores(MyLinkedList<Jugador> jugadores) {
-		this.jugadores = jugadores;
-	}
+    /**
+     * Verifica si la partida ha sido iniciada.
+     *
+     * @return {@code true} si la partida ha sido iniciada, {@code false} en caso contrario.
+     */
+    public boolean isIniciada() {
+        return iniciada;
+    }
 
-	public String getEstado() {
-		return estado;
-	}
+    /**
+     * Establece si la partida ha sido iniciada.
+     *
+     * @param iniciada Estado de inicio a establecer.
+     */
+    public void setIniciada(boolean iniciada) {
+        this.iniciada = iniciada;
+    }
 
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
+    /**
+     * Establece el identificador único de la partida.
+     *
+     * @param id Identificador único a establecer.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getFase() {
-		return fase;
-	}
+    /**
+     * Obtiene el código único de la partida.
+     *
+     * @return Código único de la partida.
+     */
+    public String getCodigo() {
+        return codigo;
+    }
 
-	public void setFase(String fase) {
-		this.fase = fase;
-	}
+    /**
+     * Obtiene el código hash de la partida.
+     *
+     * @return Código hash de la partida.
+     */
+    public String getCodigoHash() {
+        return codigoHash;
+    }
 
-	public Long getJugadorActualId() {
-		return jugadorActualId;
-	}
+    /**
+     * Establece el código hash de la partida.
+     *
+     * @param codigoHash Código hash a establecer.
+     */
+    public void setCodigoHash(String codigoHash) {
+        this.codigoHash = codigoHash;
+    }
 
-	public void setJugadorActualId(Long jugadorActualId) {
-		this.jugadorActualId = jugadorActualId;
-	}
+    /**
+     * Establece el código único de la partida.
+     *
+     * @param codigo Código único a establecer.
+     */
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
-	public int getTurno() {
-		return turno;
-	}
+    /**
+     * Obtiene el identificador del jugador anfitrión de la partida.
+     *
+     * @return Identificador del jugador anfitrión.
+     */
+    public Long getAnfitrionId() {
+        return anfitrionId;
+    }
 
-	public void setTurno(int turno) {
-		this.turno = turno;
-	}
+    /**
+     * Establece el identificador del jugador anfitrión de la partida.
+     *
+     * @param anfitrionId Identificador del jugador anfitrión a establecer.
+     */
+    public void setAnfitrionId(Long anfitrionId) {
+        this.anfitrionId = anfitrionId;
+    }
 
-	public int getTotalTropasColocadas() {
-		return totalTropasColocadas;
-	}
+    /**
+     * Obtiene la lista de jugadores que participan en la partida.
+     *
+     * @return Lista de jugadores participantes.
+     */
+    public MyLinkedList<Jugador> getJugadores() {
+        return jugadores;
+    }
 
-	public void setTotalTropasColocadas(int totalTropasColocadas) {
-		this.totalTropasColocadas = totalTropasColocadas;
-	}
+    /**
+     * Establece la lista de jugadores que participan en la partida.
+     *
+     * @param jugadores Lista de jugadores a establecer.
+     */
+    public void setJugadores(MyLinkedList<Jugador> jugadores) {
+        this.jugadores = jugadores;
+    }
 
-	// ======================
-	// MÉTODO TO_STRING
-	// ======================
-	@Override
-	public String toString() {
-		return "PartidaDTO{" + "id=" + id + ", codigo='" + codigo + '\'' + ", anfitrionId=" + anfitrionId + ", estado='"
-				+ estado + '\'' + ", fase='" + fase + '\'' + ", turno=" + turno + ", jugadorActualId=" + jugadorActualId
-				+ ", totalTropasColocadas=" + totalTropasColocadas + '}';
-	}
+    /**
+     * Obtiene el estado actual de la partida.
+     *
+     * @return Estado actual de la partida.
+     */
+    public String getEstado() {
+        return estado;
+    }
+
+    /**
+     * Establece el estado actual de la partida.
+     *
+     * @param estado Estado a establecer.
+     */
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    /**
+     * Obtiene la fase actual de la partida.
+     *
+     * @return Fase actual de la partida.
+     */
+    public String getFase() {
+        return fase;
+    }
+
+    /**
+     * Establece la fase actual de la partida.
+     *
+     * @param fase Fase a establecer.
+     */
+    public void setFase(String fase) {
+        this.fase = fase;
+    }
+
+    /**
+     * Obtiene el identificador del jugador cuyo turno es actualmente.
+     *
+     * @return Identificador del jugador actual.
+     */
+    public Long getJugadorActualId() {
+        return jugadorActualId;
+    }
+
+    /**
+     * Establece el identificador del jugador cuyo turno es actualmente.
+     *
+     * @param jugadorActualId Identificador del jugador actual a establecer.
+     */
+    public void setJugadorActualId(Long jugadorActualId) {
+        this.jugadorActualId = jugadorActualId;
+    }
+
+    /**
+     * Obtiene el número del turno actual de la partida.
+     *
+     * @return Número del turno actual.
+     */
+    public int getTurno() {
+        return turno;
+    }
+
+    /**
+     * Establece el número del turno actual de la partida.
+     *
+     * @param turno Número del turno a establecer.
+     */
+    public void setTurno(int turno) {
+        this.turno = turno;
+    }
+
+    /**
+     * Obtiene el total de tropas colocadas en la partida.
+     *
+     * @return Total de tropas colocadas.
+     */
+    public int getTotalTropasColocadas() {
+        return totalTropasColocadas;
+    }
+
+    /**
+     * Establece el total de tropas colocadas en la partida.
+     *
+     * @param totalTropasColocadas Total de tropas colocadas a establecer.
+     */
+    public void setTotalTropasColocadas(int totalTropasColocadas) {
+        this.totalTropasColocadas = totalTropasColocadas;
+    }
+
+    /**
+     * Devuelve una representación en cadena de la partida.
+     *
+     * @return Cadena que representa los atributos principales de la partida.
+     */
+    @Override
+    public String toString() {
+        return "PartidaDTO{" + "id=" + id + ", codigo='" + codigo + '\'' + ", anfitrionId=" + anfitrionId + ", estado='"
+                + estado + '\'' + ", fase='" + fase + '\'' + ", turno=" + turno + ", jugadorActualId=" + jugadorActualId
+                + ", totalTropasColocadas=" + totalTropasColocadas + '}';
+    }
 }

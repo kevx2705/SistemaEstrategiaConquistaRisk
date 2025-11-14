@@ -6,130 +6,170 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
-
 import co.edu.unbosque.estructures.MyLinkedList;
 import co.edu.unbosque.estructures.Node;
 import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.service.JugadorService;
 
-@Named("usuariosBean")
-@ViewScoped
 /**
- * Bean de vista para la administración de usuarios del sistema. Consolida las
- * listas de administradores, profesores y estudiantes obtenidas de los
+ * Bean de vista para la administración de usuarios del sistema.
+ * Consolida las listas de administradores, profesores y estudiantes obtenidas de los
  * servicios REST y permite eliminar usuarios individuales.
  */
+@Named("usuariosBean")
+@ViewScoped
 public class UsuarioBean implements Serializable {
 
-	private MyLinkedList<Jugador> jugadores;
+    /**
+     * Versión serial para la serialización de la clase.
+     */
+    private static final long serialVersionUID = 1L;
 
-	/** Usuario actualmente seleccionado (por ejemplo para mostrar detalles). */
-	private Jugador usuarioSeleccionado;
-	private Node<Jugador> first;
+    /**
+     * Lista de jugadores cargados desde el servicio REST.
+     */
+    private MyLinkedList<Jugador> jugadores;
 
-	/**
-	 * Constructor que dispara la carga inicial de usuarios.
-	 */
-	public UsuarioBean() {
-		cargarUsuarios();
-	}
+    /**
+     * Usuario actualmente seleccionado (por ejemplo para mostrar detalles).
+     */
+    private Jugador usuarioSeleccionado;
 
-	/**
-	 * Carga las listas de usuarios desde los servicios REST y construye una lista
-	 * consolidada. Marcado también como {@link PostConstruct} para garantizar su
-	 * ejecución tras la construcción del bean.
-	 */
-	@PostConstruct
-	public void cargarUsuarios() {
-		jugadores = new MyLinkedList<>();
-		jugadores = JugadorService.doGetAll("http://localhost:8081/jugadores/listar");
-	}
+    /**
+     * Nodo inicial de la lista enlazada de jugadores.
+     */
+    private Node<Jugador> first;
 
-	/**
-	 * Muestra mensajes de estado según el resultado de operaciones con usuarios.
-	 * 
-	 * @param code    Código de estado.
-	 * @param content Mensaje adicional.
-	 */
-	public void showStickyLogin(String code, String content) {
-		if (code.equals("201")) {
-			FacesContext.getCurrentInstance().addMessage("sticky-key",
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Hecho", ", se ha creado el usuario"));
-		} else if (code.equals("406")) {
-			FacesContext.getCurrentInstance().addMessage("sticky-key",
-					new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", content));
-		} else if (code.equals("204")) {
-			FacesContext.getCurrentInstance().addMessage("sticky-key",
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Hecho", ", se ha eliminado el usuario"));
-		} else {
-			FacesContext.getCurrentInstance().addMessage("sticky-key", new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Error Critico", "Error,comuniquese con el administrador"));
-		}
-	}
-	// ==============================
-	// MÉTODOS PERSONALIZADOS
-	// ==============================
+    /**
+     * Constructor que dispara la carga inicial de usuarios.
+     */
+    public UsuarioBean() {
+        cargarUsuarios();
+    }
 
-	/**
-	 * Busca un jugador por nombre y contraseña.
-	 * 
-	 * @param Name   nombre del jugador
-	 * @param password contraseña del jugador
-	 * @return el jugador encontrado o null si no existe
-	 */
-	public Jugador findByNameAndPassword(String Name, String password) {
-		return findByNameAndPasswordRec(first, Name, password);
-	}
+    /**
+     * Carga las listas de usuarios desde los servicios REST y construye una lista
+     * consolidada. Marcado también como {@link PostConstruct} para garantizar su
+     * ejecución tras la construcción del bean.
+     */
+    @PostConstruct
+    public void cargarUsuarios() {
+        jugadores = new MyLinkedList<>();
+        jugadores = JugadorService.doGetAll("http://localhost:8081/jugadores/listar");
+    }
 
-	private Jugador findByNameAndPasswordRec(Node<Jugador> current, String nombre, String password) {
-		if (current == null)
-			return null;
+    /**
+     * Muestra mensajes de estado según el resultado de operaciones con usuarios.
+     *
+     * @param code    Código de estado.
+     * @param content Mensaje adicional.
+     */
+    public void showStickyLogin(String code, String content) {
+        if (code.equals("201")) {
+            FacesContext.getCurrentInstance().addMessage("sticky-key",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Hecho", ", se ha creado el usuario"));
+        } else if (code.equals("406")) {
+            FacesContext.getCurrentInstance().addMessage("sticky-key",
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", content));
+        } else if (code.equals("204")) {
+            FacesContext.getCurrentInstance().addMessage("sticky-key",
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Hecho", ", se ha eliminado el usuario"));
+        } else {
+            FacesContext.getCurrentInstance().addMessage("sticky-key", new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error Critico", "Error,comuniquese con el administrador"));
+        }
+    }
 
-		Jugador jugador = current.getInfo();
-		if (jugador.getCorreo() != null && jugador.getNombre() != null && jugador.getNombre().equalsIgnoreCase(nombre)
-				&& jugador.getContrasena().equals(password)) {
-			return jugador;
-		}
+    /**
+     * Busca un jugador por nombre y contraseña.
+     *
+     * @param Name     Nombre del jugador.
+     * @param password Contraseña del jugador.
+     * @return El jugador encontrado o null si no existe.
+     */
+    public Jugador findByNameAndPassword(String Name, String password) {
+        return findByNameAndPasswordRec(first, Name, password);
+    }
 
-		return findByNameAndPasswordRec(current.getNext(), nombre, password);
-	}
-	
-	/**
-	 * Busca un jugador por su correo (sin distinguir mayúsculas/minúsculas).
-	 * 
-	 * @param correo correo del jugador
-	 * @return jugador encontrado o null si no existe
-	 */
-	public Jugador findByCorreo(String correo) {
-		return findByCorreoRec(first, correo);
-	}
+    /**
+     * Método recursivo para buscar un jugador por nombre y contraseña en la lista enlazada.
+     *
+     * @param current  Nodo actual de la lista.
+     * @param nombre   Nombre del jugador.
+     * @param password Contraseña del jugador.
+     * @return El jugador encontrado o null si no existe.
+     */
+    private Jugador findByNameAndPasswordRec(Node<Jugador> current, String nombre, String password) {
+        if (current == null)
+            return null;
+        Jugador jugador = current.getInfo();
+        if (jugador.getCorreo() != null && jugador.getNombre() != null && jugador.getNombre().equalsIgnoreCase(nombre)
+                && jugador.getContrasena().equals(password)) {
+            return jugador;
+        }
+        return findByNameAndPasswordRec(current.getNext(), nombre, password);
+    }
 
-	private Jugador findByCorreoRec(Node<Jugador> current, String correo) {
-		if (current == null)
-			return null;
+    /**
+     * Busca un jugador por su correo (sin distinguir mayúsculas/minúsculas).
+     *
+     * @param correo Correo del jugador.
+     * @return Jugador encontrado o null si no existe.
+     */
+    public Jugador findByCorreo(String correo) {
+        return findByCorreoRec(first, correo);
+    }
 
-		Jugador jugador = current.getInfo();
-		if (jugador.getCorreo() != null && jugador.getCorreo().equalsIgnoreCase(correo)) {
-			return jugador;
-		}
+    /**
+     * Método recursivo para buscar un jugador por correo en la lista enlazada.
+     *
+     * @param current Nodo actual de la lista.
+     * @param correo  Correo del jugador.
+     * @return Jugador encontrado o null si no existe.
+     */
+    private Jugador findByCorreoRec(Node<Jugador> current, String correo) {
+        if (current == null)
+            return null;
+        Jugador jugador = current.getInfo();
+        if (jugador.getCorreo() != null && jugador.getCorreo().equalsIgnoreCase(correo)) {
+            return jugador;
+        }
+        return findByCorreoRec(current.getNext(), correo);
+    }
 
-		return findByCorreoRec(current.getNext(), correo);
-	}
+    /**
+     * Obtiene la lista de jugadores.
+     *
+     * @return Lista de jugadores.
+     */
+    public MyLinkedList<Jugador> getJugadores() {
+        return jugadores;
+    }
 
-	public MyLinkedList<Jugador> getJugadores() {
-		return jugadores;
-	}
+    /**
+     * Establece la lista de jugadores.
+     *
+     * @param jugadores Lista de jugadores a establecer.
+     */
+    public void setJugadores(MyLinkedList<Jugador> jugadores) {
+        this.jugadores = jugadores;
+    }
 
-	public void setJugadores(MyLinkedList<Jugador> jugadores) {
-		this.jugadores = jugadores;
-	}
+    /**
+     * Obtiene el usuario actualmente seleccionado.
+     *
+     * @return Usuario seleccionado.
+     */
+    public Jugador getUsuarioSeleccionado() {
+        return usuarioSeleccionado;
+    }
 
-	public Jugador getUsuarioSeleccionado() {
-		return usuarioSeleccionado;
-	}
-
-	public void setUsuarioSeleccionado(Jugador usuarioSeleccionado) {
-		this.usuarioSeleccionado = usuarioSeleccionado;
-	}
-
+    /**
+     * Establece el usuario actualmente seleccionado.
+     *
+     * @param usuarioSeleccionado Usuario a seleccionar.
+     */
+    public void setUsuarioSeleccionado(Jugador usuarioSeleccionado) {
+        this.usuarioSeleccionado = usuarioSeleccionado;
+    }
 }

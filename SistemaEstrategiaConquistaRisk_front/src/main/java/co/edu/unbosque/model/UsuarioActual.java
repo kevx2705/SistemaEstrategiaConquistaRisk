@@ -31,4 +31,9 @@ public class UsuarioActual {
 	public static void setUsuarioActual(Jugador usuarioActual) {
 		UsuarioActual.usuarioActual = usuarioActual;
 	}
+	
+	/** constructor vacio */
+	public UsuarioActual() {
+		// TODO Auto-generated constructor stub
+	}
 }

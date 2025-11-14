@@ -1,44 +1,104 @@
 package co.edu.unbosque.model;
 
+/**
+ * Clase que representa un territorio en el juego.
+ * Cada territorio tiene un identificador único, un nombre, un identificador del jugador que lo controla
+ * y la cantidad de tropas desplegadas en él.
+ */
 public class Territorio {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private Long id;
-	private String nombre;
-	private Long idJugador;
-	private int tropas;
 
-	public Long getId() {
-		return id;
-	}
+    /**
+     * Identificador único del territorio.
+     */
+    private Long id;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * Nombre del territorio.
+     */
+    private String nombre;
 
-	public String getNombre() {
-		return nombre;
-	}
+    /**
+     * Identificador del jugador que controla el territorio.
+     */
+    private Long idJugador;
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    /**
+     * Número de tropas desplegadas en el territorio.
+     */
+    private int tropas;
 
-	public Long getIdJugador() {
-		return idJugador;
-	}
+    /**
+     * Obtiene el identificador único del territorio.
+     *
+     * @return Identificador único del territorio.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public void setIdJugador(Long idJugador) {
-		this.idJugador = idJugador;
-	}
+    /**
+     * Establece el identificador único del territorio.
+     *
+     * @param id Identificador único a establecer.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public int getTropas() {
-		return tropas;
+    /**
+     * Obtiene el nombre del territorio.
+     *
+     * @return Nombre del territorio.
+     */
+    public String getNombre() {
+        return nombre;
+    }
+	/** constructor vacio */
+    public Territorio() {
+		// TODO Auto-generated constructor stub
 	}
+    /**
+     * Establece el nombre del territorio.
+     *
+     * @param nombre Nombre a establecer.
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public void setTropas(int tropas) {
-		this.tropas = tropas;
-	}
+    /**
+     * Obtiene el identificador del jugador que controla el territorio.
+     *
+     * @return Identificador del jugador que controla el territorio.
+     */
+    public Long getIdJugador() {
+        return idJugador;
+    }
+
+    /**
+     * Establece el identificador del jugador que controla el territorio.
+     *
+     * @param idJugador Identificador del jugador a establecer.
+     */
+    public void setIdJugador(Long idJugador) {
+        this.idJugador = idJugador;
+    }
+
+    /**
+     * Obtiene el número de tropas desplegadas en el territorio.
+     *
+     * @return Número de tropas en el territorio.
+     */
+    public int getTropas() {
+        return tropas;
+    }
+
+    /**
+     * Establece el número de tropas desplegadas en el territorio.
+     *
+     * @param tropas Número de tropas a establecer.
+     */
+    public void setTropas(int tropas) {
+        this.tropas = tropas;
+    }
 }

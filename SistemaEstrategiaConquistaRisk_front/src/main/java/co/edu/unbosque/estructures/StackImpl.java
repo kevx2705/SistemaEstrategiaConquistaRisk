@@ -14,80 +14,85 @@ import java.util.Queue;
  */
 public class StackImpl<E> implements Stack<E> {
 
-	/** Estructura interna que almacena los elementos de la pila. */
-	private MyDequeList<E> data;
+    /**
+     * Estructura interna que almacena los elementos de la pila.
+     */
+    private MyDequeList<E> data;
 
-	/**
-	 * Constructor por defecto. Crea una pila vacía.
-	 */
-	public StackImpl() {
-		data = new MyDequeList<E>();
-		Queue<String> q = new LinkedList<String>(); // Nota: Esta línea no se utiliza en la implementación.
-	}
+    /**
+     * Constructor por defecto. Crea una pila vacía.
+     */
+    public StackImpl() {
+        data = new MyDequeList<E>();
+        Queue<String> q = new LinkedList<String>();
+    }
 
-	/**
-	 * Inserta un elemento en la parte superior de la pila.
-	 *
-	 * @param info Elemento a insertar en la pila.
-	 */
-	@Override
-	public void push(E info) {
-		data.insertFirst(info);
-	}
+    /**
+     * Inserta un elemento en la parte superior de la pila.
+     *
+     * @param info Elemento a insertar en la pila.
+     */
+    @Override
+    public void push(E info) {
+        data.insertFirst(info);
+    }
 
-	/**
-	 * Elimina y devuelve el elemento en la parte superior de la pila.
-	 *
-	 * @return El elemento eliminado, o {@code null} si la pila está vacía.
-	 */
-	@Override
-	public E pop() {
-		return data.removeFirst();
-	}
+    /**
+     * Elimina y devuelve el elemento en la parte superior de la pila.
+     *
+     * @return El elemento eliminado, o {@code null} si la pila está vacía.
+     */
+    @Override
+    public E pop() {
+        return data.removeFirst();
+    }
 
-	/**
-	 * Devuelve el número de elementos en la pila.
-	 *
-	 * @return Número de elementos en la pila.
-	 */
-	@Override
-	public int size() {
-		return data.size();
-	}
+    /**
+     * Devuelve el número de elementos en la pila.
+     *
+     * @return Número de elementos en la pila.
+     */
+    @Override
+    public int size() {
+        return data.size();
+    }
 
-	// ✅ NUEVO: verificar si la pila está vacía
-	public boolean isEmpty() {
-		return data.size() == 0;
-	}
+    /**
+     * Verifica si la pila está vacía.
+     *
+     * @return {@code true} si la pila está vacía, {@code false} en caso contrario.
+     */
+    public boolean isEmpty() {
+        return data.size() == 0;
+    }
 
-	// ✅ NUEVO: copiar la pila completa sin modificar la original
-	public StackImpl<E> copiar() {
-		StackImpl<E> temp = new StackImpl<>();
-		StackImpl<E> copia = new StackImpl<>();
+    /**
+     * Crea y devuelve una copia exacta de la pila actual.
+     * La pila original no se modifica durante el proceso.
+     *
+     * @return Una nueva pila con los mismos elementos que la pila original.
+     */
+    public StackImpl<E> copiar() {
+        StackImpl<E> temp = new StackImpl<>();
+        StackImpl<E> copia = new StackImpl<>();
+        while (!this.isEmpty()) {
+            temp.push(this.pop());
+        }
+        while (!temp.isEmpty()) {
+            E elem = temp.pop();
+            this.push(elem);
+            copia.push(elem);
+        }
+        return copia;
+    }
 
-		// Paso 1: sacar todo y ponerlo en temp (invierte el orden)
-		while (!this.isEmpty()) {
-			temp.push(this.pop());
-		}
-
-		// Paso 2: restaurar la original y construir la copia
-		while (!temp.isEmpty()) {
-			E elem = temp.pop();
-			this.push(elem); // regreso a la original
-			copia.push(elem); // mismo orden en la copia
-		}
-
-		return copia;
-	}
-
-	/**
-	 * Devuelve una representación en cadena de la pila.
-	 *
-	 * @return Cadena que representa los elementos de la pila.
-	 */
-
-	@Override
-	public String toString() {
-		return data.toString();
-	}
+    /**
+     * Devuelve una representación en cadena de la pila.
+     *
+     * @return Cadena que representa los elementos de la pila.
+     */
+    @Override
+    public String toString() {
+        return data.toString();
+    }
 }
