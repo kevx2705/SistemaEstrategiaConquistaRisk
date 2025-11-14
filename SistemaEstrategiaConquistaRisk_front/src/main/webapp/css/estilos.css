@@ -22,7 +22,13 @@ html, body {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
-
+label {
+      background-color: white !important; 
+      padding: 4px 8px !important;
+      border-radius: 6px !important;
+      font-weight: bold !important;
+      color:black !important;
+    }
 .index-wrapper {
 	background-color: rgba(192, 57, 43, 0.85) !important;
 	padding: 40px !important;

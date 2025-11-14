@@ -1,587 +1,462 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
-    <ui:composition template="template/template.xhtml">
-        <ui:define name="content">
-            <h:form id="mainForm">
-                <div class="risk-background">
-                    <div class="game-wrapper">
-                        <h1 class="game-title">Conquista</h1>
-                        <div class="game-columns">
-                            <div class="left-column">
-                                <div class="game-board">
-                                    <img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
-                                    <!-- Botones de territorios -->
-                                    <p:commandButton
-                                        style="position: absolute; top: 70px; left: 110px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 1)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Alberta')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Alberta" />
+<ui:composition template="template/template.xhtml">
+	<ui:define name="content">
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 80px; left: 542px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 2)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Siberia')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Siberia" />
+		<div class="risk-background">
+			<div class="game-wrapper">
+				<h1 class="game-title">Conquista</h1>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 60px; left: 590px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 3)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Yakutsk')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Yakutsk" />
+				<div class="game-columns">
+					<div class="left-column">
+						<div class="game-board">
+							<img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 130px; left: 500px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 4)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Ural')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Ural" />
+							<button class="territory-point" style="top: 70px; left: 110px;"
+								onclick="showTerritory('Alberta','Jugador 2',4)"></button>
+							<!-- ... más botones ... -->
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 185px; left: 485px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 5)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Afghanistan')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Afghanistan" />
+							<button class="territory-point" style="top: 80px; left: 542px;"
+								onclick="showTerritory('Siberia','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 255px; left: 440px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 6)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Middle East')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Middle East" />
+							<button class="territory-point" style="top: 60px; left: 590px;"
+								onclick="showTerritory('Yakutsk','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 260px; left: 530px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 7)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('India')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar India" />
+							<button class="territory-point" style="top: 130px; left: 500px;"
+								onclick="showTerritory('Ural','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 200px; left: 550px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 8)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('China')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar China" />
+							<button class="territory-point" style="top: 185px; left: 485px;"
+								onclick="showTerritory('Afghanistan','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 150px; left: 590px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 9)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Mongolia')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Mongolia" />
+							<button class="territory-point" style="top: 255px; left: 440px;"
+								onclick="showTerritory('Middle East','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 120px; left: 575px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 10)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Irkutsk')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Irkutsk" />
+							<button class="territory-point" style="top: 260px; left: 530px;"
+								onclick="showTerritory('India','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 259px; left: 585px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 11)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Siam')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Siam" />
+							<button class="territory-point" style="top: 200px; left: 550px;"
+								onclick="showTerritory('China','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 155px; left: 670px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 12)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Japan')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Japan" />
+							<button class="territory-point" style="top: 150px; left: 590px;"
+								onclick="showTerritory('Mongolia','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 60px; left: 650px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 13)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Kamchatka')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Kamchatka" />
+							<button class="territory-point" style="top: 120px; left: 575px;"
+								onclick="showTerritory('Irkutsk','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 100px; left: 100px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 14)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('North West')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar North West" />
+							<button class="territory-point" style="top: 259px; left: 585px;"
+								onclick="showTerritory('Siam','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 70px; left: 40px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 15)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Alaska')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Alaska" />
+							<button class="territory-point" style="top: 155px; left: 670px;"
+								onclick="showTerritory('Japan','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 60px; left: 235px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 16)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Greenland')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Greenland" />
+							<button class="territory-point" style="top: 60px; left: 650px;"
+								onclick="showTerritory('Kamchatka','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 100px; left: 140px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 17)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Ontario')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Ontario" />
+							<button class="territory-point" style="top: 100px; left: 100px;"
+								onclick="showTerritory('Alberta','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 100px; left: 188px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 18)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Quebec')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Quebec" />
+							<!-- North West -->
+							<button class="territory-point" style="top: 70px; left: 110px;"
+								onclick="showTerritory('North West','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 150px; left: 100px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 19)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Western United States')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Western United States" />
+							<button class="territory-point" style="top: 70px; left: 40px;"
+								onclick="showTerritory('Alaska','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 170px; left: 160px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 20)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Eastern United States')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Eastern United States" />
+							<button class="territory-point" style="top: 60px; left: 235px;"
+								onclick="showTerritory('Greenland','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 220px; left: 100px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 21)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Central America')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Central America" />
+							<button class="territory-point" style="top: 100px; left: 140px;"
+								onclick="showTerritory('Ontario','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 275px; left: 150px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 22)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Venezuela')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Venezuela" />
+							<button class="territory-point" style="top: 100px; left: 188px;"
+								onclick="showTerritory('Quebec','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 300px; left: 188px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 23)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Brazil')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Brazil" />
+							<button class="territory-point" style="top: 150px; left: 100px;"
+								onclick="showTerritory('Western United States','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 340px; left: 175px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 24)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Peru')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Peru" />
+							<button class="territory-point" style="top: 170px; left: 160px;"
+								onclick="showTerritory('Eastern United States','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 400px; left: 185px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 25)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Argentina')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Argentina" />
+							<button class="territory-point" style="top: 220px; left: 100px;"
+								onclick="showTerritory('Central America','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 300px; left: 350px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 26)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('North Africa')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar North Africa" />
+							<button class="territory-point" style="top: 275px; left: 150px;"
+								onclick="showTerritory('Venezuela','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 280px; left: 400px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 27)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Egypt')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Egypt" />
+							<button class="territory-point" style="top: 300px; left: 188px;"
+								onclick="showTerritory('Brazil','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 370px; left: 370px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 28)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Congo')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Congo" />
+							<button class="territory-point" style="top: 340px; left: 175px;"
+								onclick="showTerritory('Peru','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 410px; left: 380px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 29)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('South Africa')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar South Africa" />
+							<button class="territory-point" style="top: 400px; left: 185px;"
+								onclick="showTerritory('Argentina','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 340px; left: 410px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 30)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('East Africa')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar East Africa" />
+							<button class="territory-point" style="top: 300px; left: 350px;"
+								onclick="showTerritory('North Africa','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 420px; left: 465px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 31)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Madagascar')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Madagascar" />
+							<button class="territory-point" style="top: 280px; left: 400px;"
+								onclick="showTerritory('Egypt','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 85px; left: 292px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 32)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Iceland')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Iceland" />
+							<button class="territory-point" style="top: 370px; left: 370px;"
+								onclick="showTerritory('Congo','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 150px; left: 292px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 33)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Great Britain')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Great Britain" />
+							<button class="territory-point" style="top: 410px; left: 380px;"
+								onclick="showTerritory('South Africa','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 80px; left: 380px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 34)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Scandinavia')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Scandinavia" />
+							<button class="territory-point" style="top: 340px; left: 410px;"
+								onclick="showTerritory('East Africa','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 200px; left: 310px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 35)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Western Europe')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Western Europe" />
+							<button class="territory-point" style="top: 420px; left: 465px;"
+								onclick="showTerritory('Madagascar','Jugador 1',5)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 200px; left: 350px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 36)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Southern Europe')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Southern Europe" />
+							<button class="territory-point" style="top: 85px; left: 292px;"
+								onclick="showTerritory('Iceland','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 160px; left: 350px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 37)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Northern Europe')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Northern Europe" />
+							<button class="territory-point" style="top: 150px; left: 292px;"
+								onclick="showTerritory('Great Britain','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 120px; left: 420px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 38)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Ukraine')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Ukraine" />
+							<button class="territory-point" style="top: 80px; left: 380px;"
+								onclick="showTerritory('Scadinavia','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 350px; left: 600px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 39)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Indonesia')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Indonesia" />
+							<button class="territory-point" style="top: 200px; left: 310px;"
+								onclick="showTerritory('Western Europe','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 330px; left: 650px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 40)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('New Guinea')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar New Guinea" />
+							<button class="territory-point" style="top: 200px; left: 350px;"
+								onclick="showTerritory('Southern Europe','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 410px; left: 630px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 41)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Western Australia')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Western Australia" />
+							<button class="territory-point" style="top: 160px; left: 350px;"
+								onclick="showTerritory('Northern Europe','Jugador 2',4)"></button>
 
-                                    <p:commandButton
-                                        style="position: absolute; top: 430px; left: 690px; width: 20px; height: 20px;"
-                                        styleClass="territory-point"
-                                        action="#{partidabean.reclamarTerritorio(partidabean.partidaActual.id, UsuarioActual.getUsuarioActual().id, 42)}"
-                                        update=":mainForm"
-                                        oncomplete="showTerritory('Eastern Australia')"
-                                        icon="pi pi-map-marker"
-                                        title="Reclamar Eastern Australia" />
-                                </div>
+							<button class="territory-point" style="top: 120px; left: 420px;"
+								onclick="showTerritory('Ukranie','Jugador 2',4)"></button>
 
-                                <!-- Diálogo de acciones en territorio -->
-                                <p:dialog widgetVar="territoryDialog" modal="true"
-                                          header="Acciones en territorio" styleClass="dialog-risk"
-                                          responsive="true" closable="true" width="400">
-                                    <div class="territory-info">
-                                        <p><strong>Territorio:</strong> <span id="territoryName"></span></p>
-                                        <p><strong>Dueño:</strong> <span id="territoryOwner"></span></p>
-                                        <p><strong>Tropas:</strong> <span id="territoryTroops"></span></p>
-                                    </div>
-                                    <p:separator />
-                                    <div class="dialog-options">
-                                        <p:commandButton value="Atacar" icon="pi pi-bolt" onclick="PF('attackDialog').show()" styleClass="play-button" />
-                                        <p:commandButton value="Mover tropas" icon="pi pi-arrow-right" onclick="PF('moveDialog').show()" styleClass="play-button" />
-                                        <p:commandButton value="Reforzar" icon="pi pi-plus" onclick="PF('reinforceDialog').show()" styleClass="play-button" />
-                                    </div>
-                                </p:dialog>
+							<button class="territory-point" style="top: 350px; left: 600px;"
+								onclick="showTerritory('Indonesia','Jugador 2',4)"></button>
 
-                                <!-- Diálogo de ataque -->
-                                <p:dialog widgetVar="attackDialog" header="Atacar territorio"
-                                          modal="true" closable="true" draggable="true"
-                                          resizable="false" width="450" styleClass="dialog-risk">
-                                    <h:form>
-                                        <p class="modal-title">Selecciona los territorios y tropas para atacar</p>
-                                        <div class="modal-content">
-                                            <h:outputLabel value="Desde (tu territorio):" for="fromTerritory" />
-                                            <h:selectOneMenu id="fromTerritory" value="#{gameBean.fromTerritory}">
-                                                <f:selectItem itemLabel="Selecciona" itemValue="" />
-                                                <f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-                                                               itemLabel="#{t}" itemValue="#{t}" />
-                                            </h:selectOneMenu>
-                                            <h:outputLabel value="Hacia (territorio enemigo):" for="toTerritory" />
-                                            <h:selectOneMenu id="toTerritory" value="#{gameBean.toTerritory}">
-                                                <f:selectItem itemLabel="Selecciona" itemValue="" />
-                                                <f:selectItems value="#{gameBean.territoriosEnemigos}" var="t"
-                                                               itemLabel="#{t}" itemValue="#{t}" />
-                                            </h:selectOneMenu>
-                                            <h:outputLabel value="Tropas a usar:" for="troopsToUse" />
-                                            <p:inputText id="troopsToUse" value="#{gameBean.tropasParaAtacar}" type="number" min="1" max="3" />
-                                            <p class="modal-note">Regla: Máximo 3 dados para atacar. Debes dejar al menos 1 tropa en el territorio origen.</p>
-                                            <div class="modal-buttons">
-                                                <p:commandButton value="Confirmar ataque"
-                                                                   action="#{gameBean.confirmarAtaque}"
-                                                                   update=""
-                                                                   styleClass="btn-action"
-                                                                   oncomplete="PF('attackDialog').hide()" />
-                                                <p:commandButton value="Cancelar"
-                                                                   onclick="PF('attackDialog').hide()"
-                                                                   styleClass="btn-cancel" />
-                                            </div>
-                                        </div>
-                                    </h:form>
-                                </p:dialog>
+							<button class="territory-point" style="top: 330px; left: 650px;"
+								onclick="showTerritory('Nueva Guinea','Jugador 2',4)"></button>
 
-                                <!-- Diálogo de movimiento -->
-                                <p:dialog widgetVar="moveDialog" header="Mover tropas"
-                                          modal="true" closable="true" draggable="true"
-                                          resizable="false" width="450" styleClass="dialog-risk">
-                                    <h:form>
-                                        <p class="modal-title">Selecciona los territorios para mover tropas</p>
-                                        <div class="modal-content">
-                                            <h:outputLabel value="Desde (tu territorio):" for="fromMoveTerritory" />
-                                            <h:selectOneMenu id="fromMoveTerritory" value="#{gameBean.fromMoveTerritory}">
-                                                <f:selectItem itemLabel="Selecciona" itemValue="" />
-                                                <f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-                                                               itemLabel="#{t}" itemValue="#{t}" />
-                                            </h:selectOneMenu>
-                                            <h:outputLabel value="Hacia (territorio aliado):" for="toMoveTerritory" />
-                                            <h:selectOneMenu id="toMoveTerritory" value="#{gameBean.toMoveTerritory}">
-                                                <f:selectItem itemLabel="Selecciona" itemValue="" />
-                                                <f:selectItems value="#{gameBean.territoriosConectados}" var="t"
-                                                               itemLabel="#{t}" itemValue="#{t}" />
-                                            </h:selectOneMenu>
-                                            <h:outputLabel value="Tropas a mover:" for="troopsToMove" />
-                                            <p:inputText id="troopsToMove" value="#{gameBean.tropasAMover}" type="number" min="1" max="10" />
-                                            <p class="modal-note">Regla: Solo entre territorios conectados y debes dejar al menos 1 tropa en el origen.</p>
-                                            <div class="modal-buttons">
-                                                <p:commandButton value="Confirmar movimiento"
-                                                                   action="#{gameBean.confirmarMovimiento}"
-                                                                   update="@form"
-                                                                   styleClass="btn-action"
-                                                                   oncomplete="PF('moveDialog').hide()" />
-                                                <p:commandButton value="Cancelar"
-                                                                   onclick="PF('moveDialog').hide()"
-                                                                   styleClass="btn-cancel" />
-                                            </div>
-                                        </div>
-                                    </h:form>
-                                </p:dialog>
+							<button class="territory-point" style="top: 410px; left: 630px;"
+								onclick="showTerritory('Australia occidental','Jugador 2',4)"></button>
 
-                                <!-- Diálogo de refuerzo -->
-                                <p:dialog widgetVar="reinforceDialog" header="Reforzar territorio"
-                                          modal="true" closable="true" draggable="true"
-                                          resizable="false" width="450" styleClass="dialog-risk">
-                                    <h:form>
-                                        <p class="modal-title">Agrega tropas a uno de tus territorios</p>
-                                        <div class="modal-content">
-                                            <h:outputLabel value="Territorio a reforzar:" for="reinforceTerritory" />
-                                            <h:selectOneMenu id="reinforceTerritory" value="#{gameBean.territorioAReforzar}">
-                                                <f:selectItem itemLabel="Selecciona" itemValue="" />
-                                                <f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-                                                               itemLabel="#{t}" itemValue="#{t}" />
-                                            </h:selectOneMenu>
-                                            <h:outputLabel value="Tropas a agregar:" for="troopsToAdd" />
-                                            <p:inputText id="troopsToAdd" value="#{gameBean.tropasAReforzar}" type="number" min="1" max="5" />
-                                            <p class="modal-note">Regla: Reforzar solo al inicio del turno con tropas disponibles.</p>
-                                            <div class="modal-buttons">
-                                                <p:commandButton value="Confirmar refuerzo"
-                                                                   action="#{gameBean.confirmarRefuerzo}"
-                                                                   update="@form"
-                                                                   styleClass="btn-action"
-                                                                   oncomplete="PF('reinforceDialog').hide()" />
-                                                <p:commandButton value="Cancelar"
-                                                                   onclick="PF('reinforceDialog').hide()"
-                                                                   styleClass="btn-cancel" />
-                                            </div>
-                                        </div>
-                                    </h:form>
-                                </p:dialog>
+							<button class="territory-point" style="top: 430px; left: 690px;"
+								onclick="showTerritory('Australia oriental','Jugador 2',4)"></button>
+						</div>
+						<h:outputLabel for="territorio" value="Selecciona un territorio:" />
 
-                                <div>
-                                    <button class="btn-show-players" onclick="PF('playersDialog').show()">Ver jugadores en partida</button>
-                                </div>
-                            </div>
+						<h:selectOneMenu id="territorio"
+							value="#{partidabean.territorioSeleccionadoId}">
+							<f:selectItem itemLabel="Seleccione un territorio" itemValue="" />
+							<f:selectItem itemLabel="Venezuela" itemValue="#{1}" />
+							<f:selectItem itemLabel="Perú" itemValue="#{2}" />
+							<f:selectItem itemLabel="Argentina" itemValue="#{3}" />
+							<f:selectItem itemLabel="Brasil" itemValue="#{4}" />
+							<f:selectItem itemLabel="Alaska" itemValue="#{5}" />
+							<f:selectItem itemLabel="Alberta" itemValue="#{6}" />
+							<f:selectItem itemLabel="Ontario" itemValue="#{7}" />
+							<f:selectItem itemLabel="Quebec" itemValue="#{8}" />
+							<f:selectItem itemLabel="Territorio del Noroeste"
+								itemValue="#{9}" />
+							<f:selectItem itemLabel="Groenlandia" itemValue="#{10}" />
+							<f:selectItem itemLabel="Oeste de EE.UU." itemValue="#{11}" />
+							<f:selectItem itemLabel="Este de EE.UU." itemValue="#{12}" />
+							<f:selectItem itemLabel="América Central" itemValue="#{13}" />
+							<f:selectItem itemLabel="Islandia" itemValue="#{14}" />
+							<f:selectItem itemLabel="Escandinavia" itemValue="#{15}" />
+							<f:selectItem itemLabel="Gran Bretaña" itemValue="#{16}" />
+							<f:selectItem itemLabel="Europa del Norte" itemValue="#{17}" />
+							<f:selectItem itemLabel="Europa del Sur" itemValue="#{18}" />
+							<f:selectItem itemLabel="Europa Occidental" itemValue="#{19}" />
+							<f:selectItem itemLabel="Ucrania" itemValue="#{20}" />
+							<f:selectItem itemLabel="Egipto" itemValue="#{21}" />
+							<f:selectItem itemLabel="África Oriental" itemValue="#{22}" />
+							<f:selectItem itemLabel="Congo" itemValue="#{23}" />
+							<f:selectItem itemLabel="África del Norte" itemValue="#{24}" />
+							<f:selectItem itemLabel="Sudáfrica" itemValue="#{25}" />
+							<f:selectItem itemLabel="Madagascar" itemValue="#{26}" />
+							<f:selectItem itemLabel="Oriente Medio" itemValue="#{27}" />
+							<f:selectItem itemLabel="India" itemValue="#{28}" />
+							<f:selectItem itemLabel="Siam" itemValue="#{29}" />
+							<f:selectItem itemLabel="China" itemValue="#{30}" />
+							<f:selectItem itemLabel="Mongolia" itemValue="#{31}" />
+							<f:selectItem itemLabel="Irkutsk" itemValue="#{32}" />
+							<f:selectItem itemLabel="Yakutsk" itemValue="#{33}" />
+							<f:selectItem itemLabel="Kamchatka" itemValue="#{34}" />
+							<f:selectItem itemLabel="Japón" itemValue="#{35}" />
+							<f:selectItem itemLabel="Afganistán" itemValue="#{36}" />
+							<f:selectItem itemLabel="Siberia" itemValue="#{37}" />
+							<f:selectItem itemLabel="Ural" itemValue="#{38}" />
+							<f:selectItem itemLabel="Indonesia" itemValue="#{39}" />
+							<f:selectItem itemLabel="Nueva Guinea" itemValue="#{40}" />
+							<f:selectItem itemLabel="Australia Occidental" itemValue="#{41}" />
+							<f:selectItem itemLabel="Australia Oriental" itemValue="#{42}" />
 
-                            <div class="right-column">
-                                <!-- Panel de dados -->
-                                <p:panel header="Dados de ataque y defensa">
-                                    <div class="dice-container">
-                                        <div class="dice-group">
-                                            <p>Atacante (máx 3):</p>
-                                            <div class="dice attacker-dice">
-                                                <ui:repeat value="#{gameBean.attackerDice}" var="die">
-                                                    <span class="die">#{die}</span>
-                                                </ui:repeat>
-                                            </div>
-                                        </div>
-                                        <div class="dice-group">
-                                            <p>Defensor (máx 2):</p>
-                                            <div class="dice defender-dice">
-                                                <ui:repeat value="#{gameBean.defenderDice}" var="die">
-                                                    <span class="die">#{die}</span>
-                                                </ui:repeat>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p:commandButton value="Lanzar dados" action="#{gameBean.rollDice}"
-                                                      update="" styleClass="btn-roll" />
-                                </p:panel>
+							<!-- Llamada al método del bean cuando se selecciona un territorio -->
+							<f:ajax listener="#{partidabean.reclamarTerritorioSeleccionado}"
+								render="@form" />
+						</h:selectOneMenu>
 
-                                <!-- Panel de turno -->
-                                <p:panel "turnInfo" header="Turno actual">
-                                    <p><strong>Jugador:</strong> <span>#{gameBean.currentPlayer}</span></p>
-                                    <p><strong>Territorios controlados:</strong> <span>#{gameBean.territories}</span></p>
-                                    <p><strong>Tropas disponibles:</strong> <span>#{gameBean.troops}</span></p>
-                                    <p:commandButton value="Terminar turno" action="#{gameBean.nextTurn}"
-                                                      update=" :playersDialog" styleClass="btn-turn" />
-                                </p:panel>
 
-                                <!-- Diálogo de jugadores -->
-                                <p:dialog widgetVar="playersDialog" modal="true"
-                                          header="Jugadores en partida" styleClass="dialog-risk"
-                                          responsive="true" closable="true" width="500">
-                                    <div class="player-cards-row">
-                                        <ui:repeat value="#{gameBean.players}" var="player" varStatus="status">
-                                            <div class="player-card #{status.index == gameBean.currentPlayerIndex ? 'active-player' : ''}">
-                                                <div class="player-info">
-                                                    <p class="player-name">#{player}</p>
-                                                    <p class="player-territories">Territorios: #{gameBean.getTerritoriosPorJugador(player)}</p>
-                                                    <p class="player-troops">Tropas: #{gameBean.getTropasPorJugador(player)}</p>
-                                                </div>
-                                            </div>
-                                        </ui:repeat>
-                                    </div>
-                                </p:dialog>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </h:form>
 
-            <script>
-                function showTerritory(name) {
-                    document.getElementById('territoryName').textContent = name;
-                    PF('territoryDialog').show();
-                }
-            </script>
-        </ui:define>
-    </ui:composition>
+
+						<p:dialog widgetVar="territoryDialog" modal="true"
+							header="Acciones en territorio" styleClass="dialog-risk"
+							responsive="true" closable="true" width="400">
+							<div class="territory-info">
+								<p>
+									<strong>Territorio:</strong> <span id="territoryName"></span>
+								</p>
+								<p>
+									<strong>Dueño:</strong> <span id="territoryOwner"></span>
+								</p>
+								<p>
+									<strong>Tropas:</strong> <span id="territoryTroops"></span>
+								</p>
+							</div>
+
+							<p:separator />
+
+							<div class="dialog-options">
+								<p:commandButton value="Atacar" icon="pi pi-bolt"
+									onclick="PF('attackDialog').show()" styleClass="play-button" />
+
+								<p:commandButton value="Mover tropas" icon="pi pi-arrow-right"
+									onclick="PF('moveDialog').show()" styleClass="play-button" />
+
+								<p:commandButton value="Reforzar" icon="pi pi-plus"
+									onclick="PF('reinforceDialog').show()" styleClass="play-button" />
+							</div>
+						</p:dialog>
+
+						<!-- Diálogo de ataque -->
+						<p:dialog widgetVar="attackDialog" header="Atacar territorio"
+							modal="true" closable="true" draggable="true" resizable="false"
+							width="450" styleClass="dialog-risk">
+							<h:form>
+								<p class="modal-title">Selecciona los territorios y tropas
+									para atacar</p>
+
+								<div class="modal-content">
+									<h:outputLabel value="Desde (tu territorio):"
+										for="fromTerritory" />
+									<h:selectOneMenu id="fromTerritory"
+										value="#{gameBean.fromTerritory}">
+										<f:selectItem itemLabel="Selecciona" itemValue="" />
+										<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+											itemLabel="#{t}" itemValue="#{t}" />
+									</h:selectOneMenu>
+
+									<h:outputLabel value="Hacia (territorio enemigo):"
+										for="toTerritory" />
+									<h:selectOneMenu id="toTerritory"
+										value="#{gameBean.toTerritory}">
+										<f:selectItem itemLabel="Selecciona" itemValue="" />
+										<f:selectItems value="#{gameBean.territoriosEnemigos}" var="t"
+											itemLabel="#{t}" itemValue="#{t}" />
+									</h:selectOneMenu>
+
+									<h:outputLabel value="Tropas a usar:" for="troopsToUse" />
+									<p:inputText id="troopsToUse"
+										value="#{gameBean.tropasParaAtacar}" type="number" min="1"
+										max="3" />
+
+									<p class="modal-note">Regla: Máximo 3 dados para atacar.
+										Debes dejar al menos 1 tropa en el territorio origen.</p>
+
+									<div class="modal-buttons">
+										<p:commandButton value="Confirmar ataque"
+											action="#{gameBean.confirmarAtaque}"
+											update=":dicePanel :turnInfo" styleClass="btn-action"
+											oncomplete="PF('attackDialog').hide()" />
+
+										<p:commandButton value="Cancelar"
+											onclick="PF('attackDialog').hide()" styleClass="btn-cancel" />
+									</div>
+								</div>
+							</h:form>
+						</p:dialog>
+
+						<!-- Diálogo de movimiento -->
+						<p:dialog widgetVar="moveDialog" header="Mover tropas"
+							modal="true" closable="true" draggable="true" resizable="false"
+							width="450" styleClass="dialog-risk">
+							<h:form>
+								<p class="modal-title">Selecciona los territorios para mover
+									tropas</p>
+
+								<div class="modal-content">
+									<h:outputLabel value="Desde (tu territorio):"
+										for="fromMoveTerritory" />
+									<h:selectOneMenu id="fromMoveTerritory"
+										value="#{gameBean.fromMoveTerritory}">
+										<f:selectItem itemLabel="Selecciona" itemValue="" />
+										<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+											itemLabel="#{t}" itemValue="#{t}" />
+									</h:selectOneMenu>
+
+									<h:outputLabel value="Hacia (territorio aliado):"
+										for="toMoveTerritory" />
+									<h:selectOneMenu id="toMoveTerritory"
+										value="#{gameBean.toMoveTerritory}">
+										<f:selectItem itemLabel="Selecciona" itemValue="" />
+										<f:selectItems value="#{gameBean.territoriosConectados}"
+											var="t" itemLabel="#{t}" itemValue="#{t}" />
+									</h:selectOneMenu>
+
+									<h:outputLabel value="Tropas a mover:" for="troopsToMove" />
+									<p:inputText id="troopsToMove" value="#{gameBean.tropasAMover}"
+										type="number" min="1" max="10" />
+
+									<p class="modal-note">Regla: Solo entre territorios
+										conectados y debes dejar al menos 1 tropa en el origen.</p>
+
+									<div class="modal-buttons">
+										<p:commandButton value="Confirmar movimiento"
+											action="#{gameBean.confirmarMovimiento}" update="@form"
+											styleClass="btn-action" oncomplete="PF('moveDialog').hide()" />
+
+										<p:commandButton value="Cancelar"
+											onclick="PF('moveDialog').hide()" styleClass="btn-cancel" />
+									</div>
+								</div>
+							</h:form>
+						</p:dialog>
+
+						<!-- Diálogo de refuerzo -->
+						<p:dialog widgetVar="reinforceDialog" header="Reforzar territorio"
+							modal="true" closable="true" draggable="true" resizable="false"
+							width="450" styleClass="dialog-risk">
+							<h:form>
+								<p class="modal-title">Agrega tropas a uno de tus
+									territorios</p>
+
+								<div class="modal-content">
+									<h:outputLabel value="Territorio a reforzar:"
+										for="reinforceTerritory" />
+									<h:selectOneMenu id="reinforceTerritory"
+										value="#{gameBean.territorioAReforzar}">
+										<f:selectItem itemLabel="Selecciona" itemValue="" />
+										<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+											itemLabel="#{t}" itemValue="#{t}" />
+									</h:selectOneMenu>
+
+									<h:outputLabel value="Tropas a agregar:" for="troopsToAdd" />
+									<p:inputText id="troopsToAdd"
+										value="#{gameBean.tropasAReforzar}" type="number" min="1"
+										max="5" />
+
+									<p class="modal-note">Regla: Reforzar solo al inicio del
+										turno con tropas disponibles.</p>
+
+									<div class="modal-buttons">
+										<p:commandButton value="Confirmar refuerzo"
+											action="#{gameBean.confirmarRefuerzo}" update="@form"
+											styleClass="btn-action"
+											oncomplete="PF('reinforceDialog').hide()" />
+
+										<p:commandButton value="Cancelar"
+											onclick="PF('reinforceDialog').hide()"
+											styleClass="btn-cancel" />
+									</div>
+								</div>
+							</h:form>
+						</p:dialog>
+
+						<div>
+							<button class="btn-show-players"
+								onclick="PF('playersDialog').show()">Ver jugadores en
+								partida</button>
+						</div>
+					</div>
+
+					<div class="right-column">
+						<!-- Panel de dados -->
+						<p:panel id="dicePanel" header="Dados de ataque y defensa">
+							<div class="dice-container">
+								<div class="dice-group">
+									<p>Atacante (máx 3):</p>
+									<div class="dice attacker-dice">
+										<ui:repeat value="#{gameBean.attackerDice}" var="die">
+											<span class="die">#{die}</span>
+										</ui:repeat>
+									</div>
+								</div>
+
+								<div class="dice-group">
+									<p>Defensor (máx 2):</p>
+									<div class="dice defender-dice">
+										<ui:repeat value="#{gameBean.defenderDice}" var="die">
+											<span class="die">#{die}</span>
+										</ui:repeat>
+									</div>
+								</div>
+							</div>
+
+							<p:commandButton value="Lanzar dados"
+								action="#{gameBean.rollDice}" update=":dicePanel"
+								styleClass="btn-roll" />
+						</p:panel>
+
+						<!-- Panel de turno -->
+						<p:panel id="turnInfo" header="Turno actual">
+							<p>
+								<strong>Jugador:</strong> <span>#{gameBean.currentPlayer}</span>
+							</p>
+							<p>
+								<strong>Territorios controlados:</strong> <span>#{gameBean.territories}</span>
+							</p>
+							<p>
+								<strong>Tropas disponibles:</strong> <span>#{gameBean.troops}</span>
+							</p>
+
+							<p:commandButton value="Terminar turno"
+								action="#{gameBean.nextTurn}"
+								update=":turnInfo :dicePanel :playersDialog"
+								styleClass="btn-turn" />
+						</p:panel>
+
+						<!-- Diálogo de jugadores -->
+						<p:dialog widgetVar="playersDialog" modal="true"
+							header="Jugadores en partida" styleClass="dialog-risk"
+							responsive="true" closable="true" width="500">
+							<div class="player-cards-row">
+								<ui:repeat value="#{gameBean.players}" var="player"
+									varStatus="status">
+									<div
+										class="player-card #{status.index == gameBean.currentPlayerIndex ? 'active-player' : ''}">
+										<div class="player-info">
+											<p class="player-name">#{player}</p>
+											<p class="player-territories">Territorios:
+												#{gameBean.getTerritoriosPorJugador(player)}</p>
+											<p class="player-troops">Tropas:
+												#{gameBean.getTropasPorJugador(player)}</p>
+										</div>
+									</div>
+								</ui:repeat>
+							</div>
+						</p:dialog>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function showTerritory(name, owner, troops) {
+				document.getElementById('territoryName').textContent = name;
+				document.getElementById('territoryOwner').textContent = owner;
+				document.getElementById('territoryTroops').textContent = troops;
+				PF('territoryDialog').show();
+			}
+		</script>
+
+	</ui:define>
+</ui:composition>
 </html>
