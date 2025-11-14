@@ -3,34 +3,40 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-
 import org.springframework.stereotype.Service;
-
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Jugador;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+/**
+ * Servicio que gestiona la generación de informes en formato PDF
+ * para las partidas finalizadas del juego Risk.
+ */
 @Service
 public class PDFService {
 
+    /**
+     * Genera un informe PDF con los resultados de una partida finalizada.
+     *
+     * @param partida La partida finalizada.
+     * @param jugadores Lista enlazada de jugadores que participaron en la partida.
+     * @return byte[] Arreglo de bytes que representa el PDF generado.
+     * @throws Exception Si ocurre un error durante la generación del PDF.
+     */
     public byte[] generarPDFPartida(Partida partida, MyLinkedList<Jugador> jugadores) throws Exception {
         PDDocument document = new PDDocument();
         PDPage page = new PDPage(PDRectangle.LETTER);
         document.addPage(page);
-
         PDPageContentStream content = new PDPageContentStream(document, page);
+
         float y = 750;
         float margin = 50;
 
-        // ------------------------------
-        // Encabezado rojo
-        // ------------------------------
         content.setNonStrokingColor(200, 30, 30);
         content.addRect(margin, y - 30, page.getMediaBox().getWidth() - 2 * margin, 30);
         content.fill();
@@ -45,10 +51,6 @@ public class PDFService {
         y -= 60;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        // ------------------------------
-        // Datos básicos
-        // ------------------------------
         content.beginText();
         content.setNonStrokingColor(0, 0, 0);
         content.setFont(PDType1Font.HELVETICA, 12);
@@ -64,13 +66,10 @@ public class PDFService {
         long minutos = duracion.toMinutes() % 60;
         content.newLineAtOffset(0, -15);
         content.showText("Duración: " + horas + "h " + minutos + "m");
-
         content.endText();
+
         y -= 75;
 
-        // ------------------------------
-        // Ganador
-        // ------------------------------
         Jugador ganador = null;
         for (int i = 0; i < jugadores.size(); i++) {
             Jugador j = jugadores.getPos(i).getInfo();
@@ -107,9 +106,6 @@ public class PDFService {
             y -= 70;
         }
 
-        // ------------------------------
-        // Resumen por jugador
-        // ------------------------------
         content.beginText();
         content.setFont(PDType1Font.HELVETICA_BOLD, 14);
         content.newLineAtOffset(margin, y);
@@ -120,7 +116,8 @@ public class PDFService {
 
         for (int i = 0; i < jugadores.size(); i++) {
             Jugador j = jugadores.getPos(i).getInfo();
-            if (ganador != null && j.getId().equals(ganador.getId())) continue;
+            if (ganador != null && j.getId().equals(ganador.getId()))
+                continue;
 
             content.setNonStrokingColor(245, 245, 245);
             content.addRect(margin, y - 50, page.getMediaBox().getWidth() - 2 * margin, 50);
@@ -150,17 +147,14 @@ public class PDFService {
                 y = 750;
             }
         }
-
-        // ------------------------------
-        // Observaciones
-        // ------------------------------
-        if (y < 100) { // espacio insuficiente
+        if (y < 100) {
             content.close();
             page = new PDPage(PDRectangle.LETTER);
             document.addPage(page);
             content = new PDPageContentStream(document, page);
             y = 750;
         }
+
         content.beginText();
         content.setFont(PDType1Font.HELVETICA_BOLD, 14);
         content.newLineAtOffset(margin, y);

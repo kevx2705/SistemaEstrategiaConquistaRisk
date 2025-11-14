@@ -9,9 +9,9 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.Continente
 import org.modelmapper.ModelMapper;
 
 /**
- * Servicio que gestiona la lógica relacionada con los continentes del juego.
- * Proporciona funcionalidades para obtener todos los continentes,
- * buscar un continente por su nombre y obtener el bonus de tropas por continente.
+ * Servicio que gestiona la lógica relacionada con los continentes del juego Risk.
+ * Proporciona funcionalidades para obtener, buscar y calcular bonificaciones de tropas
+ * asociadas a los continentes.
  */
 @Service
 public class ContinenteService {
@@ -23,9 +23,10 @@ public class ContinenteService {
     private ModelMapper mapper;
 
     /**
-     * Obtiene todos los continentes y los convierte a DTO.
+     * Obtiene todos los continentes registrados en el sistema y los convierte a objetos DTO.
      *
-     * @return MyLinkedList<ContinenteDTO> Lista enlazada de continentes en formato DTO.
+     * @return {@code MyLinkedList<ContinenteDTO>} Lista enlazada de continentes en formato DTO.
+     *         Nunca es {@code null}, pero puede estar vacía si no hay continentes registrados.
      */
     public MyLinkedList<ContinenteDTO> obtenerTodos() {
         MyLinkedList<ContinenteDTO> listaDTO = new MyLinkedList<>();
@@ -37,10 +38,12 @@ public class ContinenteService {
     }
 
     /**
-     * Obtiene el bonus de tropas por conquistar un continente específico.
+     * Obtiene el bonus de tropas asignado por conquistar un continente específico.
+     * Los valores de bonus están basados en las reglas oficiales del juego Risk.
      *
-     * @param nombreContinente Nombre del continente.
-     * @return int Bonus de tropas correspondientes al continente.
+     * @param nombreContinente Nombre del continente para el cual se desea obtener el bonus.
+     * @return {@code int} Bonus de tropas correspondientes al continente.
+     *         Retorna 0 si el nombre del continente no coincide con ninguno de los definidos.
      */
     public int getBonusPorContinente(String nombreContinente) {
         return switch (nombreContinente) {
@@ -53,10 +56,11 @@ public class ContinenteService {
     }
 
     /**
-     * Busca un continente por su nombre.
+     * Busca un continente por su nombre y lo retorna en formato DTO.
      *
-     * @param nombre Nombre del continente a buscar.
-     * @return ContinenteDTO El continente encontrado en formato DTO, o null si no se encuentra.
+     * @param nombre Nombre del continente a buscar. La búsqueda no es sensible a mayúsculas/minúsculas.
+     * @return {@code ContinenteDTO} El continente encontrado en formato DTO,
+     *         o {@code null} si no se encuentra ningún continente con el nombre especificado.
      */
     public ContinenteDTO buscarPorNombre(String nombre) {
         for (Continente c : continenteRepository.findAll()) {

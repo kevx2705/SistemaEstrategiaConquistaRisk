@@ -1,26 +1,22 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.CartaDTO;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.CartaService;
 
 /**
  * Controlador REST para la gestión de cartas en el juego Risk.
  * <p>
- * Permite inicializar el mazo, robar y devolver cartas, 
+ * Permite inicializar el mazo, robar y devolver cartas,
  * además de resetear todas las cartas disponibles.
  * </p>
  */
@@ -35,7 +31,7 @@ public class CartaController {
     /**
      * Inicializa el mazo de cartas disponibles y lo baraja.
      *
-     * @return mensaje de confirmación.
+     * @return {@code ResponseEntity<String>} con un mensaje de confirmación.
      */
     @PostMapping("/inicializar")
     public ResponseEntity<String> inicializarMazo() {
@@ -43,6 +39,15 @@ public class CartaController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Mazo inicializado y barajado correctamente");
     }
+
+    /**
+     * Imprime el estado actual del mazo en la consola.
+     * <p>
+     * <b>Nota:</b> Este endpoint es para depuración y no retorna información sensible.
+     * </p>
+     *
+     * @return {@code ResponseEntity<String>} con un mensaje de confirmación.
+     */
     @GetMapping("/debug/mazo")
     public ResponseEntity<String> debugMazo() {
         cartaService.imprimirEstadoMazo();
@@ -52,7 +57,9 @@ public class CartaController {
     /**
      * Roba la carta superior del mazo (si hay disponibles).
      *
-     * @return carta robada como {@link CartaDTO}.
+     * @return {@code ResponseEntity<CartaDTO>} con la carta robada.
+     *         Retorna {@code 200 OK} con la carta si hay disponibles,
+     *         o {@code 204 NO_CONTENT} si el mazo está vacío.
      */
     @GetMapping("/robar")
     public ResponseEntity<CartaDTO> robarCarta() {
@@ -65,8 +72,8 @@ public class CartaController {
     /**
      * Devuelve una carta al mazo y la remezcla.
      *
-     * @param carta carta devuelta por el jugador.
-     * @return mensaje de confirmación.
+     * @param carta Identificador de la carta a devolver.
+     * @return {@code ResponseEntity<String>} con un mensaje de confirmación.
      */
     @PostMapping("/devolver")
     public ResponseEntity<String> devolverCarta(@RequestBody Long carta) {
@@ -75,15 +82,21 @@ public class CartaController {
     }
 
     /**
-     * Devuelve la cantidad actual de cartas en el mazo.
+     * Devuelve la cantidad actual de cartas disponibles en el mazo.
      *
-     * @return número total de cartas disponibles.
+     * @return {@code ResponseEntity<Integer>} con el número total de cartas disponibles.
      */
     @GetMapping("/tamano")
     public ResponseEntity<Integer> tamañoMazo() {
         int tamaño = cartaService.tamañoMazo();
         return ResponseEntity.ok(tamaño);
     }
+
+    /**
+     * Cuenta la cantidad total de cartas que han sido robadas hasta el momento.
+     *
+     * @return {@code ResponseEntity<Integer>} con la cantidad de cartas robadas.
+     */
     @GetMapping("/robadas")
     public ResponseEntity<Integer> contarCartasRobadas() {
         int cantidad = cartaService.contarCartasRobadas();
@@ -92,8 +105,12 @@ public class CartaController {
 
     /**
      * Restaura todas las cartas como disponibles y reconstruye el mazo.
+     * <p>
+     * Este método reinicia el estado de todas las cartas y reconstruye el mazo
+     * con todas las cartas disponibles, útil para reiniciar una partida.
+     * </p>
      *
-     * @return mensaje indicando que el mazo fue reseteado.
+     * @return {@code ResponseEntity<String>} con un mensaje de confirmación.
      */
     @PutMapping("/reset")
     public ResponseEntity<String> resetCartas() {

@@ -17,9 +17,9 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.EmailService;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.JugadorService;
 
 /**
- * Controlador REST para la gestión de jugadores.
- * Proporciona endpoints para crear, listar, actualizar, eliminar y gestionar jugadores,
- * así como manejar sus tropas y cartas.
+ * Controlador REST para la gestión de jugadores en el sistema.
+ * Proporciona endpoints para crear, listar, actualizar, eliminar y gestionar
+ * jugadores, así como manejar sus tropas y cartas.
  */
 @RestController
 @RequestMapping("/jugadores")
@@ -37,16 +37,17 @@ public class JugadorController {
     /**
      * Crea un nuevo jugador con los datos proporcionados.
      *
-     * @param nombre     Nombre del jugador.
-     * @param correo     Correo electrónico del jugador.
-     * @param contrasena Contraseña del jugador.
-     * @return ResponseEntity con un mensaje de éxito o error.
-     *         Códigos de estado posibles: 201 (creado), 406 (datos no aceptables), 500 (error interno).
-     * @throws MailException       Si el correo no es válido.
-     * @throws TextException       Si el nombre contiene caracteres no permitidos.
-     * @throws CharacterException  Si la contraseña no cumple con la longitud mínima.
-     * @throws NumberException     Si la contraseña no contiene números.
-     * @throws SymbolException     Si la contraseña no contiene símbolos especiales.
+     * @param nombre     Nombre del jugador. Solo debe contener letras.
+     * @param correo     Correo electrónico del jugador. Debe ser un correo válido.
+     * @param contrasena Contraseña del jugador. Debe cumplir con los requisitos de seguridad:
+     *                   al menos 8 caracteres, un número y un símbolo especial.
+     * @return {@code ResponseEntity<String>} con un mensaje de éxito o error.
+     *         Códigos de estado posibles:
+     *         <ul>
+     *           <li>{@code 201} si el jugador fue creado con éxito.</li>
+     *           <li>{@code 406} si los datos no son aceptables (nombre en uso, correo en uso, datos inválidos).</li>
+     *           <li>{@code 500} si ocurre un error interno del servidor.</li>
+     *         </ul>
      */
     @PostMapping(path = "/crear")
     public ResponseEntity<String> crearJugador(
@@ -62,7 +63,6 @@ public class JugadorController {
             dto.setCorreo(correo);
             dto.setContrasena(contrasena);
             int status = jugadorService.create(dto);
-            emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
             if (status == 0) {
                 emailService.enviarCorreoRegistroHTML(dto.getCorreo(), dto.getNombre());
                 return ResponseEntity.status(201).body("Jugador creado con éxito");
@@ -98,9 +98,10 @@ public class JugadorController {
     }
 
     /**
-     * Lista todos los jugadores registrados.
+     * Lista todos los jugadores registrados en el sistema.
      *
-     * @return ResponseEntity con la lista de jugadores.
+     * @return {@code ResponseEntity<MyLinkedList<JugadorDTO>>} con la lista de jugadores.
+     *         El cuerpo de la respuesta contiene una lista enlazada de objetos {@link JugadorDTO}.
      */
     @GetMapping("/listar")
     public ResponseEntity<MyLinkedList<JugadorDTO>> listarJugadores() {
@@ -111,8 +112,10 @@ public class JugadorController {
     /**
      * Elimina un jugador por su identificador.
      *
-     * @param id Identificador del jugador a eliminar.
-     * @return ResponseEntity con un mensaje de éxito o error.
+     * @param id Identificador único del jugador a eliminar.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito o error.
+     *         Retorna {@code 200 OK} si el jugador fue eliminado con éxito,
+     *         o {@code 404 Not Found} si el jugador no fue encontrado.
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
@@ -123,11 +126,13 @@ public class JugadorController {
     }
 
     /**
-     * Actualiza los datos de un jugador.
+     * Actualiza los datos de un jugador existente.
      *
-     * @param id  Identificador del jugador a actualizar.
-     * @param dto Objeto JugadorDTO con los nuevos datos.
-     * @return ResponseEntity con un mensaje de éxito o error.
+     * @param id  Identificador único del jugador a actualizar.
+     * @param dto Objeto {@link JugadorDTO} con los nuevos datos del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito o error.
+     *         Retorna {@code 200 OK} si el jugador fue actualizado con éxito,
+     *         o {@code 404 Not Found} si el jugador no fue encontrado.
      */
     @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody JugadorDTO dto) {
@@ -138,9 +143,9 @@ public class JugadorController {
     }
 
     /**
-     * Cuenta la cantidad total de jugadores registrados.
+     * Cuenta la cantidad total de jugadores registrados en el sistema.
      *
-     * @return ResponseEntity con el número total de jugadores.
+     * @return {@code ResponseEntity<Long>} con el número total de jugadores.
      */
     @GetMapping("/count")
     public ResponseEntity<Long> count() {
@@ -150,8 +155,9 @@ public class JugadorController {
     /**
      * Verifica si existe un jugador con el identificador proporcionado.
      *
-     * @param id Identificador del jugador.
-     * @return ResponseEntity con el resultado de la verificación.
+     * @param id Identificador único del jugador.
+     * @return {@code ResponseEntity<Boolean>} con el resultado de la verificación.
+     *         Retorna {@code true} si el jugador existe, o {@code false} en caso contrario.
      */
     @GetMapping("/exists/{id}")
     public ResponseEntity<Boolean> exists(@PathVariable Long id) {
@@ -163,28 +169,29 @@ public class JugadorController {
      *
      * @param correo     Correo electrónico del jugador.
      * @param contrasena Contraseña del jugador.
-     * @return ResponseEntity con un mensaje de éxito o error.
+     * @return {@code ResponseEntity<?>} con el identificador del jugador si las credenciales son correctas,
+     *         o un mensaje de error si no lo son.
+     *         Retorna {@code 200 OK} si el inicio de sesión es exitoso,
+     *         o {@code 401 Unauthorized} si las credenciales son incorrectas.
      * @throws MailException Si el correo no es válido.
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String correo, @RequestParam String contrasena) {
         JugadorDTO jugador = jugadorService.findByCorreoAndContrasena(correo, contrasena);
-
         if (jugador != null) {
-            return ResponseEntity.ok(jugador.getId());  
+            return ResponseEntity.ok(jugador.getId());
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Correo o contraseña incorrectos");
         }
     }
 
-
     /**
-     * Agrega tropas a un jugador.
+     * Agrega una cantidad específica de tropas a un jugador.
      *
-     * @param id       Identificador del jugador.
-     * @param cantidad Cantidad de tropas a agregar.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id       Identificador único del jugador.
+     * @param cantidad Cantidad de tropas a agregar. Debe ser un número positivo.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PutMapping("/{id}/agregar-tropas/{cantidad}")
     public ResponseEntity<?> agregarTropas(@PathVariable Long id, @PathVariable int cantidad) {
@@ -193,11 +200,11 @@ public class JugadorController {
     }
 
     /**
-     * Quita tropas a un jugador.
+     * Quita una cantidad específica de tropas a un jugador.
      *
-     * @param id       Identificador del jugador.
-     * @param cantidad Cantidad de tropas a quitar.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id       Identificador único del jugador.
+     * @param cantidad Cantidad de tropas a quitar. Debe ser un número positivo y no exceder las tropas actuales del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PutMapping("/{id}/quitar-tropas/{cantidad}")
     public ResponseEntity<?> quitarTropas(@PathVariable Long id, @PathVariable int cantidad) {
@@ -208,8 +215,8 @@ public class JugadorController {
     /**
      * Resetea las tropas de un jugador a cero.
      *
-     * @param id Identificador del jugador.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id Identificador único del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PutMapping("/{id}/reset-tropas")
     public ResponseEntity<?> resetTropas(@PathVariable Long id) {
@@ -220,9 +227,9 @@ public class JugadorController {
     /**
      * Asigna una carta a un jugador.
      *
-     * @param id    Identificador del jugador.
-     * @param carta Objeto Carta a asignar.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id    Identificador único del jugador.
+     * @param carta Objeto {@link Carta} a asignar al jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PostMapping("/{id}/dar-carta")
     public ResponseEntity<?> darCarta(@PathVariable Long id, @RequestBody Carta carta) {
@@ -231,11 +238,11 @@ public class JugadorController {
     }
 
     /**
-     * Quita una carta de un jugador según su índice.
+     * Quita una carta de un jugador según su índice en la lista de cartas.
      *
-     * @param id    Identificador del jugador.
-     * @param index Índice de la carta a quitar.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id    Identificador único del jugador.
+     * @param index Índice de la carta a quitar en la lista de cartas del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @DeleteMapping("/{id}/quitar-carta/{index}")
     public ResponseEntity<?> quitarCarta(@PathVariable Long id, @PathVariable int index) {
@@ -244,10 +251,10 @@ public class JugadorController {
     }
 
     /**
-     * Desactiva un jugador.
+     * Desactiva un jugador, impidiendo que pueda participar en nuevas partidas.
      *
-     * @param id Identificador del jugador.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id Identificador único del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PutMapping("/{id}/desactivar")
     public ResponseEntity<?> desactivarJugador(@PathVariable Long id) {
@@ -256,10 +263,10 @@ public class JugadorController {
     }
 
     /**
-     * Activa un jugador.
+     * Activa un jugador previamente desactivado.
      *
-     * @param id Identificador del jugador.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id Identificador único del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PutMapping("/{id}/activar")
     public ResponseEntity<?> activarJugador(@PathVariable Long id) {
@@ -268,10 +275,11 @@ public class JugadorController {
     }
 
     /**
-     * Resetea todos los datos de un jugador.
+     * Resetea todos los datos de un jugador a sus valores iniciales.
+     * Esto incluye tropas, cartas y cualquier otro atributo modificable.
      *
-     * @param id Identificador del jugador.
-     * @return ResponseEntity con un mensaje de éxito.
+     * @param id Identificador único del jugador.
+     * @return {@code ResponseEntity<?>} con un mensaje de éxito.
      */
     @PutMapping("/{id}/reset")
     public ResponseEntity<?> resetJugador(@PathVariable Long id) {
