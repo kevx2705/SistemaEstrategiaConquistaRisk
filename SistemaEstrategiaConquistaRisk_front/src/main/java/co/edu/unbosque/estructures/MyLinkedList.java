@@ -269,13 +269,17 @@ public class MyLinkedList<E> implements Serializable, Iterable<E> {
 		};
 	}
 
+	public void clear() {
+		first = null;
+	}
+
 	public String[] toArray(String[] array) {
-		int size = size(); 
+		int size = size();
 		String[] result = (array.length >= size) ? array : new String[size];
-		Node<E> current = first; 
+		Node<E> current = first;
 		int i = 0;
 		while (current != null) {
-			result[i++] = current.getInfo().toString(); 
+			result[i++] = current.getInfo().toString();
 			current = current.getNext();
 		}
 		return result;

@@ -4,43 +4,44 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-
 <ui:composition template="template/template.xhtml">
 	<ui:define name="content">
 		<div class="risk-background">
 			<div class="setup-wrapper">
 				<h1 class="setup-title">Selección de grupo</h1>
 				<p class="setup-subtitle">Elije la cantidad de jugadores</p>
-
 				<h:form id="setupForm">
 					<p:panel header="Configuración de jugadores"
 						styleClass="setup-panel" style="max-width:420px; margin:auto;">
-
 						<!-- Selección de cantidad -->
 						<p:panelGrid columns="2" style="width:100%; text-align:center;"
 							columnClasses="col-label,col-spinner">
 							<p:outputLabel for="numJugadores" value="Cantidad de jugadores:"
 								style="font-weight:bold;" />
-
-							<h:inputText id="numJugadores" value="#{gameBean.numJugadores}"
-								type="number" min="2" max="6"
-								style="width:80px; text-align:center; border-radius:8px;">
-								<f:ajax listener="#{gameBean.actualizarJugadores}"
-									render="@form" />
-							</h:inputText>
+							<h:inputText id="numJugadores"
+								value="#{partidabean.cantidadJugadores}" type="number" min="2"
+								max="5"
+								style="width:80px; text-align:center; border-radius:8px;" />
 						</p:panelGrid>
-
-
 						<p:outputPanel id="playerNamesPanel">
 							<p:panel header="" styleClass="setup-panel"
 								style="margin-top:10px;">
-
-								<p:commandButton value="Iniciar Partida"
-									action="#{gameBean.iniciarPartida}" update="@form"
+								<!-- BOTÓN CREAR PARTIDA (visible solo si NO hay partida creada) -->
+								<p:commandButton value="Crear Partida"
+									action="#{partidabean.crearPartida}" update="playerNamesPanel"
 									styleClass="btn-start ui-button-success"
-									style="margin-top:15px; font-weight:bold; border-radius:10px;" />
+									style="margin-top:15px; font-weight:bold; border-radius:10px;"
+									rendered="#{not partidabean.partidaIniciada}" />
+
+								<!-- BOTÓN IR AL TABLERO (visible solo si la partida fue creada) -->
+								<p:commandButton value="Ir al Tablero"
+									action="#{partidabean.irAlTablero}"
+									rendered="#{partidabean.partidaIniciada}" ajax="false"
+									styleClass="ui-button-info"
+									style="margin-top:20px; font-weight:bold; border-radius:10px;" />
 							</p:panel>
 						</p:outputPanel>
+
 					</p:panel>
 				</h:form>
 			</div>

@@ -27,60 +27,62 @@ public class LogInBean implements Serializable {
 	private MyLinkedList<Jugador> listUsers = new MyLinkedList<>();
 
 	public String iniciarSesion() {
-		if (user == null || user.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-			showStickyLogin("400", "Usuario y contraseña son obligatorios");
-			return null;
-		}
-
-		try {
-			String backendUrl = "http://localhost:8081/jugadores/login?correo=" + URLEncoder.encode(user, "UTF-8")
-					+ "&contrasena=" + URLEncoder.encode(password, "UTF-8");
-
-			URL url = new URL(backendUrl);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("POST");
-			connection.setDoOutput(true);
-
-			int responseCode = connection.getResponseCode();
-			BufferedReader reader = new BufferedReader(
-					new InputStreamReader((responseCode >= 200 && responseCode < 400) ? connection.getInputStream()
-							: connection.getErrorStream()));
-
-			StringBuilder response = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				response.append(line);
-			}
-			reader.close();
-
-			String mensaje = response.toString();
-
-			switch (responseCode) {
-			case 200:
+	    if (user == null || user.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+	        showStickyLogin("400", "Usuario y contraseña son obligatorios");
+	        return null;
+	    }
+	    try {
+	        String backendUrl = "http://localhost:8081/jugadores/login?correo=" + URLEncoder.encode(user, "UTF-8")
+	                + "&contrasena=" + URLEncoder.encode(password, "UTF-8");
+	        URL url = new URL(backendUrl);
+	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	        connection.setRequestMethod("POST");
+	        connection.setDoOutput(true);
+	        int responseCode = connection.getResponseCode();
+	        BufferedReader reader = new BufferedReader(
+	                new InputStreamReader((responseCode >= 200 && responseCode < 400) ? connection.getInputStream()
+	                        : connection.getErrorStream()));
+	        StringBuilder response = new StringBuilder();
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            response.append(line);
+	        }
+	        reader.close();
+	        String mensaje = response.toString();
+	        switch (responseCode) {
+	        case 200:
+	            // La respuesta es solo el ID del jugador (como String)
+	            Long idJugador = Long.parseLong(mensaje.trim());
 	            showStickyLogin("200", "Sesión iniciada exitosamente");
 	            this.sesionIniciada = new Jugador();
-	            this.sesionIniciada.setCorreo(user); 
-	            UsuarioActual.setUsuarioActual(this.sesionIniciada); 
+	            this.sesionIniciada.setCorreo(user);
+	            this.sesionIniciada.setId(idJugador); // Asignar el ID obtenido del backend
+	            UsuarioActual.setUsuarioActual(this.sesionIniciada);
+	            System.out.println("ID del usuario guardado: " + idJugador); // Depuración
 	            return "/grupo.xhtml?faces-redirect=true";
-			case 400:
-				showStickyLogin("400", "Correo y contraseña son obligatorios");
-				break;
-			case 401:
-				showStickyLogin("401", "Correo o contraseña incorrectos");
-				break;
-			case 406:
-				showStickyLogin("406", "Correo inválido. Use gmail, hotmail, outlook o unbosque.edu.co");
-				break;
-			default:
-				showStickyLogin("500", "Error interno del servidor");
-				break;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			showStickyLogin("500", "Error interno del servidor");
-		}
-		return null;
+	        case 400:
+	            showStickyLogin("400", "Correo y contraseña son obligatorios");
+	            break;
+	        case 401:
+	            showStickyLogin("401", "Correo o contraseña incorrectos");
+	            break;
+	        case 406:
+	            showStickyLogin("406", "Correo inválido. Use gmail, hotmail, outlook o unbosque.edu.co");
+	            break;
+	        default:
+	            showStickyLogin("500", "Error interno del servidor");
+	            break;
+	        }
+	    } catch (NumberFormatException e) {
+	        e.printStackTrace();
+	        showStickyLogin("500", "Error al procesar la respuesta del servidor");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        showStickyLogin("500", "Error interno del servidor");
+	    }
+	    return null;
 	}
+
 
 	private void showStickyLogin(String code, String content) {
 		FacesMessage.Severity severity;

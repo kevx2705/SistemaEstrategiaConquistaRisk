@@ -37,14 +37,22 @@ public class RegisterBean implements Serializable{
 	        showStickyLogin("406", "Las contraseñas no coinciden");
 	        return;
 	    }
+
 	    try {
 	        System.out.println("Datos a guardar (antes de encriptar):");
 	        System.out.println("Nombre: " + fullName);
 	        System.out.println("Correo: " + email);
 	        System.out.println("Contraseña: " + password);
 
-	        String url = "http://localhost:8081/jugadores/crear" + "?nombre=" + fullName + "&correo=" + email
-	                + "&contrasena=" + password;
+	        String nombreEnc = URLEncoder.encode(fullName, StandardCharsets.UTF_8.toString());
+	        String correoEnc = URLEncoder.encode(email, StandardCharsets.UTF_8.toString());
+	        String passEnc   = URLEncoder.encode(password, StandardCharsets.UTF_8.toString());
+
+	        String url = "http://localhost:8081/jugadores/crear"
+	                + "?nombre=" + nombreEnc
+	                + "&correo=" + correoEnc
+	                + "&contrasena=" + passEnc;
+
 	        String respuesta = JugadorService.doPostJson("", url);
 	        System.out.println("Respuesta del servidor: " + respuesta);
 
@@ -56,11 +64,13 @@ public class RegisterBean implements Serializable{
 	        if (codigo.equals("201")) {
 	            limpiarCampos();
 	        }
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        showStickyLogin("500", "Error al procesar el registro");
 	    }
 	}
+
 
 
 	private void limpiarCampos() {
