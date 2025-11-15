@@ -312,7 +312,7 @@ public class PartidaService {
     public ResultadoAtaqueDTO atacar(Long partidaId, Long atacanteId, Long territorioAtacanteId, Long territorioDefensorId) {
         ResultadoAtaqueDTO resultado = ataqueService.atacar(partidaId, atacanteId, territorioAtacanteId, territorioDefensorId);
         return resultado;
-    }
+    }  
 
     /**
      * Finaliza el turno de un jugador y pasa al siguiente.
@@ -964,4 +964,43 @@ public class PartidaService {
         Node<JugadorDTO> nodoAnfitrion = jugadores.getFirst();
         return nodoAnfitrion.getInfo().getId();
     }
+    public MyLinkedList<TerritorioDTO> obtenerTerritoriosPorJugador(Long partidaId, Long jugadorId) {
+        Partida partida = partidaRepository.findById(partidaId)
+            .orElseThrow(() -> new RuntimeException("No existe la partida con ese ID."));
+
+        Type listType = TypeToken.getParameterized(MyLinkedList.class, TerritorioDTO.class).getType();
+        MyLinkedList<TerritorioDTO> todosTerritorios = gson.fromJson(partida.getTerritoriosJSON(), listType);
+        MyLinkedList<TerritorioDTO> territoriosJugador = new MyLinkedList<>();
+
+        for (int i = 0; i < todosTerritorios.size(); i++) {
+            TerritorioDTO t = todosTerritorios.get(i);
+            if (t.getIdJugador() != null && t.getIdJugador().equals(jugadorId)) {
+                territoriosJugador.add(t);
+            }
+        }
+
+        return territoriosJugador;
+    }
+    @Transactional(readOnly = true)
+    public MyLinkedList<TerritorioDTO> obtenerTodosLosTerritoriosDisponibles(Long partidaId) {
+
+        Partida partida = partidaRepository.findById(partidaId)
+                .orElseThrow(() -> new RuntimeException("La partida no existe"));
+
+        Type listType = new TypeToken<MyLinkedList<TerritorioDTO>>() {}.getType();
+        MyLinkedList<TerritorioDTO> territorios = gson.fromJson(partida.getTerritoriosJSON(), listType);
+
+        MyLinkedList<TerritorioDTO> disponibles = new MyLinkedList<>();
+
+        for (int i = 0; i < territorios.size(); i++) {
+            TerritorioDTO t = territorios.get(i);
+            if (t.getIdJugador() == 0L) {
+                disponibles.add(t);
+            }
+        }
+
+        return disponibles;
+    }
+
+
 }

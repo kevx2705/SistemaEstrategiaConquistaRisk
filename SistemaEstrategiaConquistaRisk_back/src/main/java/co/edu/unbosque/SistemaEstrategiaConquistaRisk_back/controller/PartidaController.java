@@ -114,15 +114,12 @@ public class PartidaController {
 	 * @param atacanteId           Identificador del jugador atacante.
 	 * @param territorioAtacanteId Identificador del territorio atacante.
 	 * @param territorioDefensorId Identificador del territorio defensor.
-	 * @param dadosAtacante        Número de dados que usará el atacante.
-	 * @param dadosDefensor        Número de dados que usará el defensor.
 	 * @return ResponseEntity con el resultado del ataque en formato
 	 *         ResultadoAtaqueDTO.
 	 */
 	@PostMapping("/{id}/atacar")
 	public ResponseEntity<ResultadoAtaqueDTO> atacar(@PathVariable Long id, @RequestParam Long atacanteId,
-			@RequestParam Long territorioAtacanteId, @RequestParam Long territorioDefensorId,
-			@RequestParam int dadosAtacante, @RequestParam int dadosDefensor) {
+			@RequestParam Long territorioAtacanteId, @RequestParam Long territorioDefensorId) {
 		return ResponseEntity.ok(partidaService.atacar(id, atacanteId, territorioAtacanteId, territorioDefensorId));
 	}
 
@@ -266,5 +263,20 @@ public class PartidaController {
 		Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
 		return ResponseEntity.ok(anfitrionId);
 	}
+	@GetMapping("/partidas/{partidaId}/territorios/jugador/{jugadorId}")
+	public ResponseEntity<MyLinkedList<TerritorioDTO>> getTerritoriosJugador(
+	        @PathVariable Long partidaId,
+	        @PathVariable Long jugadorId) {
+
+	    MyLinkedList<TerritorioDTO> territorios =
+	            partidaService.obtenerTerritoriosPorJugador(partidaId, jugadorId);
+
+	    return ResponseEntity.ok(territorios);
+	}
+	@GetMapping("/{id}/territorios/disponibles")
+	public ResponseEntity<MyLinkedList<TerritorioDTO>> obtenerDisponibles(@PathVariable Long id) {
+	    return ResponseEntity.ok(partidaService.obtenerTodosLosTerritoriosDisponibles(id));
+	}
+
 
 }
