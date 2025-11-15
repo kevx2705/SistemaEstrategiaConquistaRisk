@@ -172,6 +172,7 @@ public class PartidaBean implements Serializable {
 							j.setCartas(cartas);
 
 							jugadoresEnPartida.addLast(j);
+							System.out.println(jugadoresEnPartida.toString());
 						}
 					}
 				}
