@@ -476,20 +476,25 @@
 								header="Jugadores en partida" responsive="true" closable="true"
 								width="500" styleClass="dialog-risk">
 								<div class="player-cards-row">
-									<div class="player-card active-player">
-										<div class="player-info">
-											<p class="player-name">Hachi</p>
-											<p class="player-territories">Territorios: 5</p>
-											<p class="player-troops">Tropas: 7</p>
-										</div>
-									</div>
+									
 									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">Maxito</p>
-											<p class="player-territories">Territorios: 3</p>
-											<p class="player-troops">Tropas: 8</p>
-										</div>
-									</div>
+    <div class="player-info">
+        <p class="player-territories">Territorios: #{partidabean.jugador1.territoriosControlados}</p>
+        <p class="player-troops">Tropas: #{partidabean.jugador1.tropasDisponibles}</p>
+        <p class="player-name">#{partidabean.jugador1.nombre}</p>
+    </div>
+</div>
+
+<div class="player-card">
+    <div class="player-info">
+        <p class="player-territories">Territorios: #{partidabean.jugador2.territoriosControlados}</p>
+        <p class="player-troops">Tropas: #{partidabean.jugador2.tropasDisponibles}</p>
+        <p class="player-name">#{partidabean.jugador2.nombre}</p>
+    </div>
+</div>
+									
+
+									
 								</div>
 							</p:dialog>
 
