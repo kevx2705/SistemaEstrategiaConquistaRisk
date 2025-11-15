@@ -12,8 +12,6 @@
 
 		<div class="risk-background">
 			<div class="game-wrapper">
-				<h1 class="game-title">Conquista</h1>
-
 				<div class="game-columns">
 					<div class="left-column">
 						<div class="game-board">
@@ -322,7 +320,8 @@
 						<h:form id="gameForm">
 							<p:growl id="messages" showDetail="true" />
 
-							<p:panel id="turnInfo" header="Turno actual">
+							<p:panel id="turnInfo" header="Turno actual"
+								styleClass="panel-risk">
 								<p>
 									<strong>Jugador:</strong> <span>Hachi</span>
 								</p>
@@ -337,8 +336,8 @@
 							<h1></h1>
 
 							<p:panel id="faseTerritoriosPanel" header="Refuerzos"
-								widgetVar="faseTerritorios" style="display: block;">
-								<h:outputText value="Turno del jugador: Hachi" />
+								widgetVar="faseTerritorios" style="display: block;"
+								styleClass="panel-risk">
 								<p:spinner id="spinnerTropas" value="3" min="1" max="10"
 									style="margin: 10px 0;" />
 								<p:selectOneMenu id="territoriosJugadorRefuerzos"
@@ -347,36 +346,39 @@
 									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
 									<f:selectItem itemLabel="Perú" itemValue="Perú" />
 								</p:selectOneMenu>
-								<p:commandButton value="Continuar a fase 1..."
+								<br></br>
+								<br></br>
+								<p:commandButton value="Continuar a fase 1 >"
 									onclick="cambiarFase('ataque'); return false;" />
 							</p:panel>
 
 							<p:panel id="faseAtaquePanel" header="Ataque"
-								widgetVar="faseAtaque" style="display: none;">
-								<h:outputText value="Turno del jugador: Hachi" />
+								widgetVar="faseAtaque" style="display: none;"
+								styleClass="panel-risk">
+								<p>Desde:</p>
 								<p:selectOneMenu id="territorioOrigenAtaque"
 									onchange="updateTerritoriosVecinos()">
-									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
 									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
 									<f:selectItem itemLabel="Perú" itemValue="Perú" />
 								</p:selectOneMenu>
+								<p>Hasta:</p>
 								<p:selectOneMenu id="territorioDestinoAtaque">
-									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
 									<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
 									<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
 								</p:selectOneMenu>
 
-								<p:spinner id="tropasAtaque" value="2" min="1" max="3"
-									style="margin: 10px 0;" />
+
 								<p:commandButton value="Atacar"
 									onclick="PF('diceDialog').show();" style="margin-top: 10px;" />
-								<p:commandButton value="Continuar a fase 2..."
+								<br></br>
+								<br></br>
+								<p:commandButton value="Continuar a fase 2 >"
 									onclick="cambiarFase('movimiento'); return false;" />
 							</p:panel>
 
 							<p:panel id="faseMovimientoPanel" header="Movimiento"
-								widgetVar="faseMovimiento" style="display: none;">
-								<h:outputText value="Turno del jugador: Hachi" />
+								widgetVar="faseMovimiento" style="display: none;"
+								styleClass="panel-risk">
 								<p:selectOneMenu id="territorioOrigenMovimiento"
 									onchange="updateTerritoriosVecinos()">
 									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
@@ -391,23 +393,25 @@
 								<p:spinner id="tropasMovimiento" value="1" min="1" max="10"
 									style="margin: 10px 0;" />
 								<p:commandButton value="Mover tropas" style="margin-top: 10px;" />
+								<br></br>
+								<br></br>
 								<p:commandButton value="Terminar turno"
 									onclick="cambiarFase('territorios'); return false;" />
 							</p:panel>
 
 							<p:dialog id="dicePanel" header="Dados de ataque y defensa"
 								widgetVar="diceDialog" modal="true" closable="true"
-								style="display: none;">
+								style="display: none;" styleClass="dialog-risk">
 								<div class="dice-container">
 									<div class="dice-group">
-										<p>Atacante (máx 3):</p>
+										<p>Atacante (máx 3)</p>
 										<div class="dice attacker-dice">
 											<span class="die">1</span> <span class="die">2</span> <span
 												class="die">3</span>
 										</div>
 									</div>
 									<div class="dice-group">
-										<p>Defensor (máx 2):</p>
+										<p>Defensor (máx 2)</p>
 										<div class="dice defender-dice">
 											<span class="die">1</span> <span class="die">2</span>
 										</div>
@@ -419,8 +423,8 @@
 
 
 							<p:dialog widgetVar="playersDialog" modal="true"
-								header="Jugadores en partida" styleClass="dialog-risk"
-								responsive="true" closable="true" width="500">
+								header="Jugadores en partida" responsive="true" closable="true"
+								width="500" styleClass="dialog-risk">
 								<div class="player-cards-row">
 									<div class="player-card active-player">
 										<div class="player-info">

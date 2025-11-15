@@ -22,13 +22,15 @@ html, body {
 	overflow-y: auto;
 	overflow-x: hidden;
 }
+
 label {
-      background-color: white !important; 
-      padding: 4px 8px !important;
-      border-radius: 6px !important;
-      font-weight: bold !important;
-      color:black !important;
-    }
+	background-color: white !important;
+	padding: 4px 8px !important;
+	border-radius: 6px !important;
+	font-weight: bold !important;
+	color: black !important;
+}
+
 .index-wrapper {
 	background-color: rgba(192, 57, 43, 0.85) !important;
 	padding: 40px !important;
@@ -240,6 +242,10 @@ label {
 	color: #2c3e50 !important;
 }
 
+.txtWhite {
+	color: white !important;
+}
+
 .dialog-risk .ui-dialog-content {
 	background-color: #540f07 !important;
 	color: white !important;
@@ -249,6 +255,22 @@ label {
 }
 
 .dialog-risk .ui-dialog-titlebar {
+	background-color: #c0392b !important;
+	color: white !important;
+	border-radius: 12px 12px 0 0 !important;
+	font-weight: bold !important;
+	text-align: center !important;
+}
+
+.panel-risk .ui-panel-content {
+	background-color: #540f07 !important;
+	color: white !important;
+	padding: 30px !important;
+	border-radius: 0 0 12px 12px !important;
+	text-align: center !important;
+}
+
+.panel-risk .ui-panel-titlebar {
 	background-color: #c0392b !important;
 	color: white !important;
 	border-radius: 12px 12px 0 0 !important;
@@ -601,13 +623,24 @@ label {
 }
 
 .btn-show-players {
-	background-color: #6f1a10 important;
+	background-color: #e09936 !important;
 	color: white;
 	border: none;
 	padding: 10px 15px;
 	border-radius: 6px;
 	font-size: 1em;
 	cursor: pointer;
+}
+
+body .ui-button {
+	background: #c0392b !important;
+	color: #fff;
+	border: 1px solid #94261b;
+	margin: 0;
+	outline: 0 none;
+	border-radius: 4px;
+	transition: background-color .2s, color .2s, border-color .2s,
+		box-shadow .2s, opacity .2s;
 }
 
 .dialog-risk .player-card {
@@ -857,7 +890,12 @@ label {
 .dice-group p {
 	font-weight: bold;
 	margin-bottom: 8px;
-	color: #333;
+	color: white;
+}
+
+.btns {
+	background-color: #c0392b !important;
+	color: white !important;
 }
 
 .dice {
