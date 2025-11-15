@@ -337,7 +337,7 @@
 							<h1></h1>
 
 							<p:panel id="faseTerritoriosPanel" header="Refuerzos"
-								style="display: block;">
+								widgetVar="faseTerritorios" style="display: block;">
 								<h:outputText value="Turno del jugador: Hachi" />
 								<p:spinner id="spinnerTropas" value="3" min="1" max="10"
 									style="margin: 10px 0;" />
@@ -348,12 +348,11 @@
 									<f:selectItem itemLabel="Perú" itemValue="Perú" />
 								</p:selectOneMenu>
 								<p:commandButton value="Continuar a fase 1..."
-									onclick="PF('faseTerritorios').hide(); PF('faseAtaque').show();"
-									style="margin-top: 10px;" />
+									onclick="cambiarFase('ataque'); return false;" />
 							</p:panel>
 
 							<p:panel id="faseAtaquePanel" header="Ataque"
-								style="display: none;">
+								widgetVar="faseAtaque" style="display: none;">
 								<h:outputText value="Turno del jugador: Hachi" />
 								<p:selectOneMenu id="territorioOrigenAtaque"
 									onchange="updateTerritoriosVecinos()">
@@ -372,12 +371,11 @@
 								<p:commandButton value="Atacar"
 									onclick="PF('diceDialog').show();" style="margin-top: 10px;" />
 								<p:commandButton value="Continuar a fase 2..."
-									onclick="PF('faseAtaque').hide(); PF('faseMovimiento').show(); PF('diceDialog').hide();"
-									style="margin-top: 10px; float: right;" />
+									onclick="cambiarFase('movimiento'); return false;" />
 							</p:panel>
 
 							<p:panel id="faseMovimientoPanel" header="Movimiento"
-								style="display: none;">
+								widgetVar="faseMovimiento" style="display: none;">
 								<h:outputText value="Turno del jugador: Hachi" />
 								<p:selectOneMenu id="territorioOrigenMovimiento"
 									onchange="updateTerritoriosVecinos()">
@@ -394,8 +392,7 @@
 									style="margin: 10px 0;" />
 								<p:commandButton value="Mover tropas" style="margin-top: 10px;" />
 								<p:commandButton value="Terminar turno"
-									onclick="PF('faseMovimiento').hide(); PF('faseTerritorios').show();"
-									style="margin-top: 10px; float: right;" />
+									onclick="cambiarFase('territorios'); return false;" />
 							</p:panel>
 
 							<p:dialog id="dicePanel" header="Dados de ataque y defensa"
@@ -458,12 +455,18 @@
 				PF('territoryDialog').show();
 			}
 
-			function updateTerritoriosJugador() {
-				console.log("Actualizando territorios del jugador...");
-			}
+			function cambiarFase(fase) {
+				document.getElementById('gameForm:faseTerritoriosPanel').style.display = 'none';
+				document.getElementById('gameForm:faseAtaquePanel').style.display = 'none';
+				document.getElementById('gameForm:faseMovimientoPanel').style.display = 'none';
 
-			function updateTerritoriosVecinos() {
-				console.log("Actualizando territorios vecinos...");
+				if (fase === 'territorios') {
+					document.getElementById('gameForm:faseTerritoriosPanel').style.display = 'block';
+				} else if (fase === 'ataque') {
+					document.getElementById('gameForm:faseAtaquePanel').style.display = 'block';
+				} else if (fase === 'movimiento') {
+					document.getElementById('gameForm:faseMovimientoPanel').style.display = 'block';
+				}
 			}
 		</script>
 	</ui:define>
