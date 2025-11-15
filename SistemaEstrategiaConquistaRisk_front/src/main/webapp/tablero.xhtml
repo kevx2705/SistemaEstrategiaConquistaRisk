@@ -149,59 +149,7 @@
 							<button class="territory-point" style="top: 430px; left: 690px;"
 								onclick="showTerritory('Australia oriental','Jugador 2',4)"></button>
 						</div>
-						<h:outputLabel for="territorio" value="Selecciona un territorio:" />
 
-						<h:selectOneMenu id="territorio"
-							value="#{partidabean.territorioSeleccionadoId}">
-							<f:selectItem itemLabel="Seleccione un territorio" itemValue="" />
-							<f:selectItem itemLabel="Venezuela" itemValue="#{1}" />
-							<f:selectItem itemLabel="Perú" itemValue="#{2}" />
-							<f:selectItem itemLabel="Argentina" itemValue="#{3}" />
-							<f:selectItem itemLabel="Brasil" itemValue="#{4}" />
-							<f:selectItem itemLabel="Alaska" itemValue="#{5}" />
-							<f:selectItem itemLabel="Alberta" itemValue="#{6}" />
-							<f:selectItem itemLabel="Ontario" itemValue="#{7}" />
-							<f:selectItem itemLabel="Quebec" itemValue="#{8}" />
-							<f:selectItem itemLabel="Territorio del Noroeste"
-								itemValue="#{9}" />
-							<f:selectItem itemLabel="Groenlandia" itemValue="#{10}" />
-							<f:selectItem itemLabel="Oeste de EE.UU." itemValue="#{11}" />
-							<f:selectItem itemLabel="Este de EE.UU." itemValue="#{12}" />
-							<f:selectItem itemLabel="América Central" itemValue="#{13}" />
-							<f:selectItem itemLabel="Islandia" itemValue="#{14}" />
-							<f:selectItem itemLabel="Escandinavia" itemValue="#{15}" />
-							<f:selectItem itemLabel="Gran Bretaña" itemValue="#{16}" />
-							<f:selectItem itemLabel="Europa del Norte" itemValue="#{17}" />
-							<f:selectItem itemLabel="Europa del Sur" itemValue="#{18}" />
-							<f:selectItem itemLabel="Europa Occidental" itemValue="#{19}" />
-							<f:selectItem itemLabel="Ucrania" itemValue="#{20}" />
-							<f:selectItem itemLabel="Egipto" itemValue="#{21}" />
-							<f:selectItem itemLabel="África Oriental" itemValue="#{22}" />
-							<f:selectItem itemLabel="Congo" itemValue="#{23}" />
-							<f:selectItem itemLabel="África del Norte" itemValue="#{24}" />
-							<f:selectItem itemLabel="Sudáfrica" itemValue="#{25}" />
-							<f:selectItem itemLabel="Madagascar" itemValue="#{26}" />
-							<f:selectItem itemLabel="Oriente Medio" itemValue="#{27}" />
-							<f:selectItem itemLabel="India" itemValue="#{28}" />
-							<f:selectItem itemLabel="Siam" itemValue="#{29}" />
-							<f:selectItem itemLabel="China" itemValue="#{30}" />
-							<f:selectItem itemLabel="Mongolia" itemValue="#{31}" />
-							<f:selectItem itemLabel="Irkutsk" itemValue="#{32}" />
-							<f:selectItem itemLabel="Yakutsk" itemValue="#{33}" />
-							<f:selectItem itemLabel="Kamchatka" itemValue="#{34}" />
-							<f:selectItem itemLabel="Japón" itemValue="#{35}" />
-							<f:selectItem itemLabel="Afganistán" itemValue="#{36}" />
-							<f:selectItem itemLabel="Siberia" itemValue="#{37}" />
-							<f:selectItem itemLabel="Ural" itemValue="#{38}" />
-							<f:selectItem itemLabel="Indonesia" itemValue="#{39}" />
-							<f:selectItem itemLabel="Nueva Guinea" itemValue="#{40}" />
-							<f:selectItem itemLabel="Australia Occidental" itemValue="#{41}" />
-							<f:selectItem itemLabel="Australia Oriental" itemValue="#{42}" />
-
-							<!-- Llamada al método del bean cuando se selecciona un territorio -->
-							<f:ajax listener="#{partidabean.reclamarTerritorioSeleccionado}"
-								render="@form" />
-						</h:selectOneMenu>
 
 
 
@@ -226,7 +174,6 @@
 
 						</p:dialog>
 
-						<!-- Diálogo de ataque -->
 						<p:dialog widgetVar="attackDialog" header="Atacar territorio"
 							modal="true" closable="true" draggable="true" resizable="false"
 							width="450" styleClass="dialog-risk">
@@ -264,8 +211,11 @@
 									<div class="modal-buttons">
 										<p:commandButton value="Confirmar ataque"
 											action="#{gameBean.confirmarAtaque}"
-											update=":dicePanel :turnInfo" styleClass="btn-action"
+											update="gameForm:dicePanel gameForm:turnInfo"
+											styleClass="btn-action"
 											oncomplete="PF('attackDialog').hide()" />
+
+
 
 										<p:commandButton value="Cancelar"
 											onclick="PF('attackDialog').hide()" styleClass="btn-cancel" />
@@ -274,7 +224,6 @@
 							</h:form>
 						</p:dialog>
 
-						<!-- Diálogo de movimiento -->
 						<p:dialog widgetVar="moveDialog" header="Mover tropas"
 							modal="true" closable="true" draggable="true" resizable="false"
 							width="450" styleClass="dialog-risk">
@@ -320,7 +269,6 @@
 							</h:form>
 						</p:dialog>
 
-						<!-- Diálogo de refuerzo -->
 						<p:dialog widgetVar="reinforceDialog" header="Reforzar territorio"
 							modal="true" closable="true" draggable="true" resizable="false"
 							width="450" styleClass="dialog-risk">
@@ -361,78 +309,142 @@
 						</p:dialog>
 
 						<div>
+
+							<h1></h1>
 							<button class="btn-show-players"
 								onclick="PF('playersDialog').show()">Ver jugadores en
 								partida</button>
+
 						</div>
 					</div>
 
 					<div class="right-column">
-						<!-- Panel de dados -->
-						<p:panel id="dicePanel" header="Dados de ataque y defensa">
-							<div class="dice-container">
-								<div class="dice-group">
-									<p>Atacante (máx 3):</p>
-									<div class="dice attacker-dice">
-										<ui:repeat value="#{gameBean.attackerDice}" var="die">
-											<span class="die">#{die}</span>
-										</ui:repeat>
-									</div>
-								</div>
+						<h:form id="gameForm">
+							<p:growl id="messages" showDetail="true" />
 
-								<div class="dice-group">
-									<p>Defensor (máx 2):</p>
-									<div class="dice defender-dice">
-										<ui:repeat value="#{gameBean.defenderDice}" var="die">
-											<span class="die">#{die}</span>
-										</ui:repeat>
-									</div>
-								</div>
-							</div>
+							<p:panel id="turnInfo" header="Turno actual">
+								<p>
+									<strong>Jugador:</strong> <span>Hachi</span>
+								</p>
+								<p>
+									<strong>Territorios:</strong> <span>5</span>
+								</p>
+								<p>
+									<strong>Tropas disponibles:</strong> <span>7</span>
+								</p>
+							</p:panel>
 
-							<p:commandButton value="Lanzar dados"
-								action="#{gameBean.rollDice}" update=":dicePanel"
-								styleClass="btn-roll" />
-						</p:panel>
+							<h1></h1>
 
-						<!-- Panel de turno -->
-						<p:panel id="turnInfo" header="Turno actual">
-							<p>
-								<strong>Jugador:</strong> <span>#{gameBean.currentPlayer}</span>
-							</p>
-							<p>
-								<strong>Territorios controlados:</strong> <span>#{gameBean.territories}</span>
-							</p>
-							<p>
-								<strong>Tropas disponibles:</strong> <span>#{gameBean.troops}</span>
-							</p>
+							<p:panel id="faseTerritoriosPanel" header="Refuerzos"
+								style="display: block;">
+								<h:outputText value="Turno del jugador: Hachi" />
+								<p:spinner id="spinnerTropas" value="3" min="1" max="10"
+									style="margin: 10px 0;" />
+								<p:selectOneMenu id="territoriosJugadorRefuerzos"
+									onchange="updateTerritoriosJugador()">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+									<f:selectItem itemLabel="Perú" itemValue="Perú" />
+								</p:selectOneMenu>
+								<p:commandButton value="Continuar a fase 1..."
+									onclick="PF('faseTerritorios').hide(); PF('faseAtaque').show();"
+									style="margin-top: 10px;" />
+							</p:panel>
 
-							<p:commandButton value="Terminar turno"
-								action="#{gameBean.nextTurn}"
-								update=":turnInfo :dicePanel :playersDialog"
-								styleClass="btn-turn" />
-						</p:panel>
+							<p:panel id="faseAtaquePanel" header="Ataque"
+								style="display: none;">
+								<h:outputText value="Turno del jugador: Hachi" />
+								<p:selectOneMenu id="territorioOrigenAtaque"
+									onchange="updateTerritoriosVecinos()">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+									<f:selectItem itemLabel="Perú" itemValue="Perú" />
+								</p:selectOneMenu>
+								<p:selectOneMenu id="territorioDestinoAtaque">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
+									<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
+								</p:selectOneMenu>
 
-						<!-- Diálogo de jugadores -->
-						<p:dialog widgetVar="playersDialog" modal="true"
-							header="Jugadores en partida" styleClass="dialog-risk"
-							responsive="true" closable="true" width="500">
-							<div class="player-cards-row">
-								<ui:repeat value="#{gameBean.players}" var="player"
-									varStatus="status">
-									<div
-										class="player-card #{status.index == gameBean.currentPlayerIndex ? 'active-player' : ''}">
-										<div class="player-info">
-											<p class="player-name">#{player}</p>
-											<p class="player-territories">Territorios:
-												#{gameBean.getTerritoriosPorJugador(player)}</p>
-											<p class="player-troops">Tropas:
-												#{gameBean.getTropasPorJugador(player)}</p>
+								<p:spinner id="tropasAtaque" value="2" min="1" max="3"
+									style="margin: 10px 0;" />
+								<p:commandButton value="Atacar"
+									onclick="PF('diceDialog').show();" style="margin-top: 10px;" />
+								<p:commandButton value="Continuar a fase 2..."
+									onclick="PF('faseAtaque').hide(); PF('faseMovimiento').show(); PF('diceDialog').hide();"
+									style="margin-top: 10px; float: right;" />
+							</p:panel>
+
+							<p:panel id="faseMovimientoPanel" header="Movimiento"
+								style="display: none;">
+								<h:outputText value="Turno del jugador: Hachi" />
+								<p:selectOneMenu id="territorioOrigenMovimiento"
+									onchange="updateTerritoriosVecinos()">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+									<f:selectItem itemLabel="Perú" itemValue="Perú" />
+								</p:selectOneMenu>
+								<p:selectOneMenu id="territorioDestinoMovimiento">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
+									<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
+								</p:selectOneMenu>
+								<p:spinner id="tropasMovimiento" value="1" min="1" max="10"
+									style="margin: 10px 0;" />
+								<p:commandButton value="Mover tropas" style="margin-top: 10px;" />
+								<p:commandButton value="Terminar turno"
+									onclick="PF('faseMovimiento').hide(); PF('faseTerritorios').show();"
+									style="margin-top: 10px; float: right;" />
+							</p:panel>
+
+							<p:dialog id="dicePanel" header="Dados de ataque y defensa"
+								widgetVar="diceDialog" modal="true" closable="true"
+								style="display: none;">
+								<div class="dice-container">
+									<div class="dice-group">
+										<p>Atacante (máx 3):</p>
+										<div class="dice attacker-dice">
+											<span class="die">1</span> <span class="die">2</span> <span
+												class="die">3</span>
 										</div>
 									</div>
-								</ui:repeat>
-							</div>
-						</p:dialog>
+									<div class="dice-group">
+										<p>Defensor (máx 2):</p>
+										<div class="dice defender-dice">
+											<span class="die">1</span> <span class="die">2</span>
+										</div>
+									</div>
+								</div>
+								<p:commandButton value="Lanzar Dados" styleClass="btn-roll" />
+							</p:dialog>
+
+
+
+							<p:dialog widgetVar="playersDialog" modal="true"
+								header="Jugadores en partida" styleClass="dialog-risk"
+								responsive="true" closable="true" width="500">
+								<div class="player-cards-row">
+									<div class="player-card active-player">
+										<div class="player-info">
+											<p class="player-name">Hachi</p>
+											<p class="player-territories">Territorios: 5</p>
+											<p class="player-troops">Tropas: 7</p>
+										</div>
+									</div>
+									<div class="player-card">
+										<div class="player-info">
+											<p class="player-name">Maxito</p>
+											<p class="player-territories">Territorios: 3</p>
+											<p class="player-troops">Tropas: 8</p>
+										</div>
+									</div>
+								</div>
+							</p:dialog>
+
+
+
+						</h:form>
 					</div>
 				</div>
 			</div>
@@ -445,8 +457,15 @@
 				document.getElementById('territoryTroops').textContent = troops;
 				PF('territoryDialog').show();
 			}
-		</script>
 
+			function updateTerritoriosJugador() {
+				console.log("Actualizando territorios del jugador...");
+			}
+
+			function updateTerritoriosVecinos() {
+				console.log("Actualizando territorios vecinos...");
+			}
+		</script>
 	</ui:define>
 </ui:composition>
 </html>
