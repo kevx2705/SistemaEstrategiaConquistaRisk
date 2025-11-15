@@ -6,6 +6,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,12 @@ import org.primefaces.PrimeFaces;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import co.edu.unbosque.estructures.MyLinkedList;
+import co.edu.unbosque.estructures.Node;
 import co.edu.unbosque.model.Carta;
 import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.model.Partida;
 import co.edu.unbosque.model.UsuarioActual;
+import co.edu.unbosque.model.persistence.TerritorioDTO;
 import co.edu.unbosque.util.HttpClientUtil;
 
 /**
@@ -68,11 +71,14 @@ public class PartidaBean implements Serializable {
 	 * ID del territorio actualmente seleccionado.
 	 */
 	private Long territorioSeleccionadoId;
-
 	/**
 	 * URL base para las solicitudes al backend relacionadas con partidas.
 	 */
 	private final String BASE_URL = "http://localhost:8081/partida";
+	private MyLinkedList<TerritorioDTO> territoriosDisponibles; // lista original
+	private TerritorioDTO[] territoriosDisponiblesArray; // array para el selectOneMenu
+	private TerritorioDTO territorioSeleccionado; // objeto seleccionado
+	private List<TerritorioDTO> territoriosDisponiblesList;
 
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
@@ -180,39 +186,41 @@ public class PartidaBean implements Serializable {
 
 			inicializarJuego();
 			irAlTablero();
+			cargarTerritoriosDisponibles();
+			System.out.println(territoriosDisponiblesList);
 
 		} catch (Exception e) {
 			showMessage("Error", "No se pudo crear la partida: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
+
 	public List<Jugador> getJugadoresParaFront() {
-	    List<Jugador> lista = new ArrayList<>();
-	    for (int i = 0; i < jugadoresEnPartida.size(); i++) {
-	        lista.add(jugadoresEnPartida.get(i));
-	    }
-	    return lista;
+		List<Jugador> lista = new ArrayList<>();
+		for (int i = 0; i < jugadoresEnPartida.size(); i++) {
+			lista.add(jugadoresEnPartida.get(i));
+		}
+		return lista;
 	}
-	
+
 	public Jugador getJugador1() {
-	    return jugadoresEnPartida.size() > 0 ? jugadoresEnPartida.get(0) : null;
+		return jugadoresEnPartida.size() > 0 ? jugadoresEnPartida.get(0) : null;
 	}
 
 	public Jugador getJugador2() {
-	    return jugadoresEnPartida.size() > 1 ? jugadoresEnPartida.get(1) : null;
+		return jugadoresEnPartida.size() > 1 ? jugadoresEnPartida.get(1) : null;
 	}
 
 	public Jugador getJugador3() {
-	    return jugadoresEnPartida.size() > 2 ? jugadoresEnPartida.get(2) : null;
+		return jugadoresEnPartida.size() > 2 ? jugadoresEnPartida.get(2) : null;
 	}
 
 	public Jugador getJugador4() {
-	    return jugadoresEnPartida.size() > 3 ? jugadoresEnPartida.get(3) : null;
+		return jugadoresEnPartida.size() > 3 ? jugadoresEnPartida.get(3) : null;
 	}
 
 	public Jugador getJugador5() {
-	    return jugadoresEnPartida.size() > 4 ? jugadoresEnPartida.get(4) : null;
+		return jugadoresEnPartida.size() > 4 ? jugadoresEnPartida.get(4) : null;
 	}
 
 	/**
@@ -317,6 +325,32 @@ public class PartidaBean implements Serializable {
 		}
 	}
 
+	public void cargarTerritoriosDisponibles() {
+	    try {
+	        if (partidaActual == null) {
+	            showMessage("Error", "No hay partida activa");
+	            return;
+	        }
+
+	        String url = BASE_URL + "/" + partidaActual.getId() + "/territorios/disponibles";
+	        String response = HttpClientUtil.get(url);
+
+	        TerritorioDTO[] array = mapper.readValue(response, TerritorioDTO[].class);
+
+	        this.territoriosDisponiblesList = Arrays.asList(array);
+
+	        System.out.println("Territorios cargados: " + territoriosDisponiblesList.size());
+
+	        // Actualizar componente
+	        PrimeFaces.current().ajax().update("gameform:territoriosJugadorRefuerzos");
+
+	    } catch (Exception e) {
+	        showMessage("Error", "No se pudieron cargar los territorios: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+
+
 	/**
 	 * Redirige al tablero de juego.
 	 * 
@@ -354,8 +388,6 @@ public class PartidaBean implements Serializable {
 	public void setPartidaActual(Partida partidaActual) {
 		this.partidaActual = partidaActual;
 	}
-	
-	
 
 	public MyLinkedList<Jugador> getJugadoresEnPartida() {
 		return jugadoresEnPartida;
@@ -373,7 +405,7 @@ public class PartidaBean implements Serializable {
 	public MyLinkedList<String> getNombresJugadores() {
 		return nombresJugadores;
 	}
-	
+
 	/**
 	 * Establece la lista de nombres de los jugadores.
 	 * 
@@ -484,6 +516,41 @@ public class PartidaBean implements Serializable {
 
 	public void setMapper(ObjectMapper mapper) {
 		this.mapper = mapper;
+	}
+
+	public MyLinkedList<TerritorioDTO> getTerritoriosDisponibles() {
+		return territoriosDisponibles;
+	}
+
+	public void setTerritoriosDisponibles(MyLinkedList<TerritorioDTO> territoriosDisponibles) {
+		this.territoriosDisponibles = territoriosDisponibles;
+	}
+
+	public TerritorioDTO[] getTerritoriosDisponiblesArray() {
+		return territoriosDisponiblesArray;
+	}
+
+	public void setTerritoriosDisponiblesArray(TerritorioDTO[] territoriosDisponiblesArray) {
+		this.territoriosDisponiblesArray = territoriosDisponiblesArray;
+	}
+
+	public TerritorioDTO getTerritorioSeleccionado() {
+		return territorioSeleccionado;
+	}
+
+	public void setTerritorioSeleccionado(TerritorioDTO territorioSeleccionado) {
+		this.territorioSeleccionado = territorioSeleccionado;
+	}
+
+	public List<TerritorioDTO> getTerritoriosDisponiblesList() {
+		if (territoriosDisponiblesList == null) {
+			territoriosDisponiblesList = new ArrayList<>();
+		}
+		return territoriosDisponiblesList;
+	}
+
+	public void setTerritoriosDisponiblesList(List<TerritorioDTO> territoriosDisponiblesList) {
+		this.territoriosDisponiblesList = territoriosDisponiblesList;
 	}
 
 }

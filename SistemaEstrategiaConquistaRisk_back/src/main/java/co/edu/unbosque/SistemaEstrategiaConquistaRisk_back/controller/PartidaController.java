@@ -1,5 +1,6 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.*;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.PartidaService;
 
 /**
@@ -274,8 +276,19 @@ public class PartidaController {
 	    return ResponseEntity.ok(territorios);
 	}
 	@GetMapping("/{id}/territorios/disponibles")
-	public ResponseEntity<MyLinkedList<TerritorioDTO>> obtenerDisponibles(@PathVariable Long id) {
-	    return ResponseEntity.ok(partidaService.obtenerTodosLosTerritoriosDisponibles(id));
+	public ResponseEntity<List<TerritorioDTO>> obtenerDisponibles(@PathVariable Long id) {
+
+	    MyLinkedList<TerritorioDTO> lista = partidaService.obtenerTodosLosTerritoriosDisponibles(id);
+
+	    List<TerritorioDTO> listaNormal = new ArrayList<>();
+
+	    Node<TerritorioDTO> current = lista.getFirst();
+	    while (current != null) {
+	        listaNormal.add(current.getInfo());
+	        current = current.getNext();
+	    }
+
+	    return ResponseEntity.ok(listaNormal);
 	}
 
 

@@ -21,6 +21,7 @@ public class Territorio {
      * Identificador del jugador que controla el territorio.
      */
     private Long idJugador;
+    private Long idContinente;
 
     /**
      * Número de tropas desplegadas en el territorio.
@@ -101,4 +102,13 @@ public class Territorio {
     public void setTropas(int tropas) {
         this.tropas = tropas;
     }
+
+	public Long getIdContinente() {
+		return idContinente;
+	}
+
+	public void setIdContinente(Long idContinente) {
+		this.idContinente = idContinente;
+	}
+    
 }

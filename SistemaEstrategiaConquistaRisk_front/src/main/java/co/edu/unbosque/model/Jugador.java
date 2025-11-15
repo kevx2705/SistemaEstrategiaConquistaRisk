@@ -19,15 +19,8 @@ public class Jugador extends Usuario {
 	private int index;
 
 	/**
-	 * Constructor vacío de la clase Jugador.
-	 * 
-	 * /** Identificador único del jugador.
+	 * /** Color asignado al jugador en el juego.
 	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	/** Color asignado al jugador en el juego. */
 	private String color;
 
 	/** Cantidad de tropas disponibles para el jugador. */
@@ -58,14 +51,11 @@ public class Jugador extends Usuario {
 		super(nombre, correo, edad, contrasena);
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 
-	public Jugador(String nombre, String correo, int edad, String contrasena, int index, Long id, String color,
-			int tropasDisponibles, int territoriosControlados, boolean activo, MyLinkedList<Carta> cartas) {
-		super(nombre, correo, edad, contrasena);
+	public Jugador(int index, String color, int tropasDisponibles, int territoriosControlados, boolean activo,
+			MyLinkedList<Carta> cartas) {
+		super();
 		this.index = index;
-		this.id = id;
 		this.color = color;
 		this.tropasDisponibles = tropasDisponibles;
 		this.territoriosControlados = territoriosControlados;
@@ -133,14 +123,6 @@ public class Jugador extends Usuario {
 		this.index = index;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getColor() {
 		return color;
 	}
@@ -180,6 +162,5 @@ public class Jugador extends Usuario {
 	public void setCartas(MyLinkedList<Carta> cartas) {
 		this.cartas = cartas;
 	}
-	
-	
+
 }
