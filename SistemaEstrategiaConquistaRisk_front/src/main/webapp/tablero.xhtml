@@ -406,14 +406,9 @@
 								<br />
 								<br />
 
-								<p:commandButton
-    value="Reclamar"
-    action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
-    update="gameForm mensajes"
-    process="@this territoriosJugadorRefuerzos spinnerTropas"
-    onstart="this.disabled=true;"
-    oncomplete="this.disabled=false;" />
-
+								<p:commandButton value="Reclamar"
+									action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
+									update="gameForm" process="@form" />
 
 
 							</p:panel>
