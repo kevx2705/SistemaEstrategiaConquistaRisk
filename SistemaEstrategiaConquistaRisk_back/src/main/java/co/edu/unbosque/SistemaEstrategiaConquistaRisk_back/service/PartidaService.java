@@ -238,36 +238,80 @@ public class PartidaService {
 	 */
 	@Transactional
 	public void reclamarTerritorio(Long partidaId, Long jugadorId, Long territorioId) {
-		Partida partida = partidaRepository.findById(partidaId)
-				.orElseThrow(() -> new RuntimeException("No existe la partida"));
-		if (!partida.getJugadorActualId().equals(jugadorId)) {
-			throw new RuntimeException("No es el turno de este jugador");
-		}
-		MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
-		MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
-		TerritorioDTO territorioElegido = null;
-		for (int i = 0; i < territorios.size(); i++) {
-			TerritorioDTO t = territorios.getPos(i).getInfo();
-			if (t.getId().equals(territorioId)) {
-				territorioElegido = t;
-				break;
-			}
-		}
-		if (territorioElegido == null) {
-			throw new RuntimeException("Territorio no encontrado");
-		}
-		if (territorioElegido.getIdJugador() != 0L) {
-			throw new RuntimeException("Territorio ya asignado");
-		}
-		territorioElegido.setIdJugador(jugadorId);
-		territorioElegido.setTropas(1);
-		jugadorService.quitarTropas(jugadorId, 1);
-		jugadorService.agregarTerritorio(jugadorId);
-		Long siguiente = obtenerSiguienteJugador(ordenJugadores, jugadorId);
-		partida.setJugadorActualId(siguiente);
-		partida.setTerritoriosJSON(gson.toJson(territorios));
-		partidaRepository.save(partida);
+
+	    System.out.println("=== Intentando reclamar territorio ===");
+	    System.out.println("Partida ID: " + partidaId);
+	    System.out.println("Jugador ID: " + jugadorId);
+	    System.out.println("Territorio ID: " + territorioId);
+
+	    // Buscar partida
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
+
+	    System.out.println("✔ Partida encontrada. Jugador actual: " + partida.getJugadorActualId());
+
+	    // Verificar turno
+	    if (!partida.getJugadorActualId().equals(jugadorId)) {
+	        throw new RuntimeException("❌ No es el turno del jugador con ID: " + jugadorId);
+	    }
+
+	    // Cargar orden de jugadores
+	    MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
+
+	    // Cargar territorios
+	    MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
+
+	    System.out.println("✔ Territorios cargados: " + territorios.size());
+
+	    TerritorioDTO territorioElegido = null;
+
+	    // Buscar territorio
+	    for (int i = 0; i < territorios.size(); i++) {
+	        TerritorioDTO t = territorios.getPos(i).getInfo();
+	        if (t.getId().equals(territorioId)) {
+	            territorioElegido = t;
+	            break;
+	        }
+	    }
+
+	    // Territorio no existe
+	    if (territorioElegido == null) {
+	        throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado.");
+	    }
+
+	    System.out.println("✔ Territorio encontrado. Jugador asignado actual: " + territorioElegido.getIdJugador());
+
+	    // Ya reclamado
+	    if (!territorioElegido.getIdJugador().equals(0L)) {
+	        throw new RuntimeException("❌ El territorio ya está asignado a un jugador.");
+	    }
+
+	    // Reclamar territorio
+	    territorioElegido.setIdJugador(jugadorId);
+	    territorioElegido.setTropas(1);
+
+	    System.out.println("✔ Territorio reclamado exitosamente.");
+
+	    // Actualizar jugador
+	    jugadorService.quitarTropas(jugadorId, 1);
+	    jugadorService.agregarTerritorio(jugadorId);
+
+	    System.out.println("✔ Tropas actualizadas y territorio agregado al jugador.");
+
+	    // Cambiar turno
+	    Long siguiente = obtenerSiguienteJugador(ordenJugadores, jugadorId);
+	    partida.setJugadorActualId(siguiente);
+
+	    System.out.println("✔ Siguiente jugador: " + siguiente);
+
+	    // Guardar cambios
+	    partida.setTerritoriosJSON(gson.toJson(territorios));
+	    partidaRepository.save(partida);
+
+	    System.out.println("✔ Cambios guardados en la partida.");
+	    System.out.println("=== Reclamo de territorio finalizado ===");
 	}
+
 
 	/**
 	 * Inicia la fase de colocación de tropas iniciales.

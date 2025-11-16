@@ -2,14 +2,18 @@ package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.*;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.entity.Partida;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedList;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service.PartidaService;
+import jakarta.persistence.EntityNotFoundException;
 
 /**
  * Controlador REST para la gestión de partidas en el juego Risk. Proporciona
@@ -75,12 +79,46 @@ public class PartidaController {
 	 * @return ResponseEntity sin contenido si la operación fue exitosa.
 	 */
 	@PostMapping("/{id}/reclamar")
-	public ResponseEntity<Void> reclamarTerritorio(@PathVariable Long id, @RequestParam Long jugadorId,
+	public ResponseEntity<?> reclamarTerritorio(@PathVariable Long id, @RequestParam Long jugadorId,
 			@RequestParam Long territorioId) {
-		partidaService.reclamarTerritorio(id, jugadorId, territorioId);
-		return ResponseEntity.ok().build();
+
+		System.out.println("=== Controller: Reclamar Territorio ===");
+		System.out.println("Partida ID: " + id + ", Jugador ID: " + jugadorId + ", Territorio ID: " + territorioId);
+
+		try {
+
+			partidaService.reclamarTerritorio(id, jugadorId, territorioId);
+
+			return ResponseEntity.ok().body(Map.of("mensaje", "Territorio reclamado correctamente", "jugadorId",
+					jugadorId, "territorioId", territorioId));
+
+		} catch (RuntimeException e) {
+
+			String mensaje = e.getMessage();
+
+			System.out.println("❌ Error en reclamarTerritorio: " + mensaje);
+
+			if (mensaje.contains("No existe la partida")) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", mensaje));
+			}
+
+			if (mensaje.contains("Territorio no encontrado")) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", mensaje));
+			}
+
+			if (mensaje.contains("No es el turno")) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(Map.of("error", mensaje, "turnoActual", "No coincide con jugador " + jugadorId));
+			}
+
+			if (mensaje.contains("Territorio ya asignado")) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", mensaje));
+			}
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("error", "Error inesperado: " + mensaje));
+		}
 	}
-	
+
 	/**
 	 * Obtiene la lista de jugadores de una partida específica.
 	 *
@@ -89,11 +127,10 @@ public class PartidaController {
 	 */
 	@GetMapping("/{partidaId}/jugadores")
 	public ResponseEntity<MyLinkedList<JugadorDTO>> obtenerJugadoresPartida(@PathVariable Long partidaId) {
-	    MyLinkedList<JugadorDTO> jugadores = partidaService.obtenerJugadoresPorPartida(partidaId);
-	    return ResponseEntity.ok(jugadores);
+		MyLinkedList<JugadorDTO> jugadores = partidaService.obtenerJugadoresPorPartida(partidaId);
+		return ResponseEntity.ok(jugadores);
 	}
 
-	
 	/**
 	 * Inicia la fase de refuerzo en una partida.
 	 *
@@ -278,31 +315,30 @@ public class PartidaController {
 		Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
 		return ResponseEntity.ok(anfitrionId);
 	}
+
 	@GetMapping("/partidas/{partidaId}/territorios/jugador/{jugadorId}")
-	public ResponseEntity<MyLinkedList<TerritorioDTO>> getTerritoriosJugador(
-	        @PathVariable Long partidaId,
-	        @PathVariable Long jugadorId) {
+	public ResponseEntity<MyLinkedList<TerritorioDTO>> getTerritoriosJugador(@PathVariable Long partidaId,
+			@PathVariable Long jugadorId) {
 
-	    MyLinkedList<TerritorioDTO> territorios =
-	            partidaService.obtenerTerritoriosPorJugador(partidaId, jugadorId);
+		MyLinkedList<TerritorioDTO> territorios = partidaService.obtenerTerritoriosPorJugador(partidaId, jugadorId);
 
-	    return ResponseEntity.ok(territorios);
+		return ResponseEntity.ok(territorios);
 	}
+
 	@GetMapping("/{id}/territorios/disponibles")
 	public ResponseEntity<List<TerritorioDTO>> obtenerDisponibles(@PathVariable Long id) {
 
-	    MyLinkedList<TerritorioDTO> lista = partidaService.obtenerTodosLosTerritoriosDisponibles(id);
+		MyLinkedList<TerritorioDTO> lista = partidaService.obtenerTodosLosTerritoriosDisponibles(id);
 
-	    List<TerritorioDTO> listaNormal = new ArrayList<>();
+		List<TerritorioDTO> listaNormal = new ArrayList<>();
 
-	    Node<TerritorioDTO> current = lista.getFirst();
-	    while (current != null) {
-	        listaNormal.add(current.getInfo());
-	        current = current.getNext();
-	    }
+		Node<TerritorioDTO> current = lista.getFirst();
+		while (current != null) {
+			listaNormal.add(current.getInfo());
+			current = current.getNext();
+		}
 
-	    return ResponseEntity.ok(listaNormal);
+		return ResponseEntity.ok(listaNormal);
 	}
-
 
 }
