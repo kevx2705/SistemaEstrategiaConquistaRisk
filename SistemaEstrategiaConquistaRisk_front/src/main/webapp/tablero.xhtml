@@ -14,161 +14,252 @@
 			<div class="game-wrapper">
 				<div class="game-columns">
 					<div class="left-column">
+
 						<div class="game-board">
-							<img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
-							<!-- América del Sur -->
-							<button class="territory-point" style="top: 275px; left: 150px;"
-								onclick="showTerritory(1)"></button>
-							<!-- Venezuela -->
-							<button class="territory-point" style="top: 340px; left: 175px;"
-								onclick="showTerritory(2)"></button>
-							<!-- Perú -->
-							<button class="territory-point" style="top: 400px; left: 185px;"
-								onclick="showTerritory(3)"></button>
-							<!-- Argentina -->
-							<button class="territory-point" style="top: 300px; left: 188px;"
-								onclick="showTerritory(4)"></button>
-							<!-- Brasil -->
+							<h:form id="mapForm">
+								<img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
+								<!-- América del Sur -->
+								<p:commandButton styleClass="territory-point"
+									style="top: 275px; left: 150px;"
+									action="#{partidabean.cargarTerritorioPorId(1)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 340px; left: 175px;"
+									action="#{partidabean.cargarTerritorioPorId(2)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 400px; left: 185px;"
+									action="#{partidabean.cargarTerritorioPorId(3)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 300px; left: 188px;"
+									action="#{partidabean.cargarTerritorioPorId(4)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
 
-							<!-- América del Norte -->
-							<button class="territory-point" style="top: 60px; left: 40px;"
-								onclick="showTerritory(5)"></button>
-							<!-- Alaska -->
-							<button class="territory-point" style="top: 70px; left: 110px;"
-								onclick="showTerritory(6)"></button>
-							<!-- Alberta -->
-							<button class="territory-point" style="top: 100px; left: 140px;"
-								onclick="showTerritory(7)"></button>
-							<!-- Ontario -->
-							<button class="territory-point" style="top: 100px; left: 188px;"
-								onclick="showTerritory(8)"></button>
-							<!-- Quebec -->
-							<button class="territory-point" style="top: 70px; left: 110px;"
-								onclick="showTerritory(9)"></button>
-							<!-- Territorio del Noroeste -->
-							<button class="territory-point" style="top: 60px; left: 235px;"
-								onclick="showTerritory(10)"></button>
-							<!-- Groenlandia -->
-							<button class="territory-point" style="top: 150px; left: 100px;"
-								onclick="showTerritory(11)"></button>
-							<!-- Oeste de EE.UU. -->
-							<button class="territory-point" style="top: 170px; left: 160px;"
-								onclick="showTerritory(12)"></button>
-							<!-- Este de EE.UU. -->
-							<button class="territory-point" style="top: 220px; left: 100px;"
-								onclick="showTerritory(13)"></button>
-							<!-- América Central -->
+								<!-- América del Norte -->
+								<p:commandButton styleClass="territory-point"
+									style="top: 60px; left: 40px;"
+									action="#{partidabean.cargarTerritorioPorId(5)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 70px; left: 110px;"
+									action="#{partidabean.cargarTerritorioPorId(6)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 100px; left: 140px;"
+									action="#{partidabean.cargarTerritorioPorId(7)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 100px; left: 188px;"
+									action="#{partidabean.cargarTerritorioPorId(8)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 70px; left: 110px;"
+									action="#{partidabean.cargarTerritorioPorId(9)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 60px; left: 235px;"
+									action="#{partidabean.cargarTerritorioPorId(10)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 150px; left: 100px;"
+									action="#{partidabean.cargarTerritorioPorId(11)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 170px; left: 160px;"
+									action="#{partidabean.cargarTerritorioPorId(12)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 220px; left: 100px;"
+									action="#{partidabean.cargarTerritorioPorId(13)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
 
-							<!-- África -->
-							<button class="territory-point" style="top: 280px; left: 400px;"
-								onclick="showTerritory(21)"></button>
-							<!-- Egipto -->
-							<button class="territory-point" style="top: 340px; left: 410px;"
-								onclick="showTerritory(22)"></button>
-							<!-- África Oriental -->
-							<button class="territory-point" style="top: 370px; left: 370px;"
-								onclick="showTerritory(23)"></button>
-							<!-- Congo -->
-							<button class="territory-point" style="top: 300px; left: 350px;"
-								onclick="showTerritory(24)"></button>
-							<!-- África del Norte -->
-							<button class="territory-point" style="top: 410px; left: 380px;"
-								onclick="showTerritory(25)"></button>
-							<!-- Sudáfrica -->
-							<button class="territory-point" style="top: 420px; left: 465px;"
-								onclick="showTerritory(26)"></button>
-							<!-- Madagascar -->
+								<!-- Europa -->
+								<p:commandButton styleClass="territory-point"
+									style="top: 85px; left: 292px;"
+									action="#{partidabean.cargarTerritorioPorId(14)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 80px; left: 380px;"
+									action="#{partidabean.cargarTerritorioPorId(15)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 150px; left: 292px;"
+									action="#{partidabean.cargarTerritorioPorId(16)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 160px; left: 350px;"
+									action="#{partidabean.cargarTerritorioPorId(17)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 200px; left: 350px;"
+									action="#{partidabean.cargarTerritorioPorId(18)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 200px; left: 310px;"
+									action="#{partidabean.cargarTerritorioPorId(19)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 120px; left: 420px;"
+									action="#{partidabean.cargarTerritorioPorId(20)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
 
-							<!-- Europa -->
-							<button class="territory-point" style="top: 85px; left: 292px;"
-								onclick="showTerritory(14)"></button>
-							<!-- Islandia -->
-							<button class="territory-point" style="top: 80px; left: 380px;"
-								onclick="showTerritory(15)"></button>
-							<!-- Escandinavia -->
-							<button class="territory-point" style="top: 150px; left: 292px;"
-								onclick="showTerritory(16)"></button>
-							<!-- Gran Bretaña -->
-							<button class="territory-point" style="top: 160px; left: 350px;"
-								onclick="showTerritory(17)"></button>
-							<!-- Europa del Norte -->
-							<button class="territory-point" style="top: 200px; left: 350px;"
-								onclick="showTerritory(18)"></button>
-							<!-- Europa del Sur -->
-							<button class="territory-point" style="top: 200px; left: 310px;"
-								onclick="showTerritory(19)"></button>
-							<!-- Europa Occidental -->
-							<button class="territory-point" style="top: 120px; left: 420px;"
-								onclick="showTerritory(20)"></button>
-							<!-- Ucrania -->
+								<!-- África -->
+								<p:commandButton styleClass="territory-point"
+									style="top: 280px; left: 400px;"
+									action="#{partidabean.cargarTerritorioPorId(21)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 340px; left: 410px;"
+									action="#{partidabean.cargarTerritorioPorId(22)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 370px; left: 370px;"
+									action="#{partidabean.cargarTerritorioPorId(23)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 300px; left: 350px;"
+									action="#{partidabean.cargarTerritorioPorId(24)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 410px; left: 380px;"
+									action="#{partidabean.cargarTerritorioPorId(25)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 420px; left: 465px;"
+									action="#{partidabean.cargarTerritorioPorId(26)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
 
-							<!-- Asia -->
-							<button class="territory-point" style="top: 185px; left: 485px;"
-								onclick="showTerritory(36)"></button>
-							<!-- Afganistán -->
-							<button class="territory-point" style="top: 255px; left: 440px;"
-								onclick="showTerritory(27)"></button>
-							<!-- Oriente Medio -->
-							<button class="territory-point" style="top: 260px; left: 530px;"
-								onclick="showTerritory(28)"></button>
-							<!-- India -->
-							<button class="territory-point" style="top: 259px; left: 585px;"
-								onclick="showTerritory(29)"></button>
-							<!-- Siam -->
-							<button class="territory-point" style="top: 200px; left: 550px;"
-								onclick="showTerritory(30)"></button>
-							<!-- China -->
-							<button class="territory-point" style="top: 150px; left: 590px;"
-								onclick="showTerritory(31)"></button>
-							<!-- Mongolia -->
-							<button class="territory-point" style="top: 120px; left: 575px;"
-								onclick="showTerritory(32)"></button>
-							<!-- Irkutsk -->
-							<button class="territory-point" style="top: 60px; left: 590px;"
-								onclick="showTerritory(33)"></button>
-							<!-- Yakutsk -->
-							<button class="territory-point" style="top: 60px; left: 650px;"
-								onclick="showTerritory(34)"></button>
-							<!-- Kamchatka -->
-							<button class="territory-point" style="top: 155px; left: 670px;"
-								onclick="showTerritory(35)"></button>
-							<!-- Japón -->
-							<button class="territory-point" style="top: 130px; left: 500px;"
-								onclick="showTerritory(38)"></button>
-							<!-- Ural -->
+								<!-- Asia -->
+								<p:commandButton styleClass="territory-point"
+									style="top: 185px; left: 485px;"
+									action="#{partidabean.cargarTerritorioPorId(36)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 255px; left: 440px;"
+									action="#{partidabean.cargarTerritorioPorId(27)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 260px; left: 530px;"
+									action="#{partidabean.cargarTerritorioPorId(28)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 259px; left: 585px;"
+									action="#{partidabean.cargarTerritorioPorId(29)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 200px; left: 550px;"
+									action="#{partidabean.cargarTerritorioPorId(30)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 150px; left: 590px;"
+									action="#{partidabean.cargarTerritorioPorId(31)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 120px; left: 575px;"
+									action="#{partidabean.cargarTerritorioPorId(32)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 60px; left: 590px;"
+									action="#{partidabean.cargarTerritorioPorId(33)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 60px; left: 650px;"
+									action="#{partidabean.cargarTerritorioPorId(34)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 155px; left: 670px;"
+									action="#{partidabean.cargarTerritorioPorId(35)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 130px; left: 500px;"
+									action="#{partidabean.cargarTerritorioPorId(38)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
 
-							<!-- Oceanía -->
-							<button class="territory-point" style="top: 350px; left: 600px;"
-								onclick="showTerritory(39)"></button>
-							<!-- Indonesia -->
-							<button class="territory-point" style="top: 330px; left: 650px;"
-								onclick="showTerritory(40)"></button>
-							<!-- Nueva Guinea -->
-							<button class="territory-point" style="top: 410px; left: 630px;"
-								onclick="showTerritory(41)"></button>
-							<!-- Australia Occidental -->
-							<button class="territory-point" style="top: 430px; left: 690px;"
-								onclick="showTerritory(42)"></button>
-							<!-- Australia Oriental -->
-
+								<!-- Oceanía -->
+								<p:commandButton styleClass="territory-point"
+									style="top: 350px; left: 600px;"
+									action="#{partidabean.cargarTerritorioPorId(39)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 330px; left: 650px;"
+									action="#{partidabean.cargarTerritorioPorId(40)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 410px; left: 630px;"
+									action="#{partidabean.cargarTerritorioPorId(41)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+								<p:commandButton styleClass="territory-point"
+									style="top: 430px; left: 690px;"
+									action="#{partidabean.cargarTerritorioPorId(42)}"
+									update=":territoryDialog"
+									oncomplete="PF('territoryDialog').show()" />
+							</h:form>
 						</div>
 
 
 
 
 
-						<p:dialog widgetVar="territoryDialog" modal="true"
+						<p:dialog id="territoryDialog" widgetVar="territoryDialog" modal="true"
 							header="Acciones en territorio" styleClass="dialog-risk"
 							responsive="true" closable="true" width="400">
+
 							<div class="territory-info">
 								<p>
-									<strong>Territorio:</strong> <span id="territoryName"></span>
+									<strong>Territorio:</strong>
+									<h:outputText
+										value="#{partidabean.territorioSeleccionado.nombre}" />
 								</p>
 								<p>
-									<strong>Dueño:</strong> <span id="territoryOwner"></span>
+									<strong>Dueño:</strong>
+									<h:outputText
+										value="#{partidabean.territorioSeleccionado.idJugador}" />
 								</p>
 								<p>
-									<strong>Tropas:</strong> <span id="territoryTroops"></span>
+									<strong>Tropas:</strong>
+									<h:outputText
+										value="#{partidabean.territorioSeleccionado.tropas}" />
 								</p>
 							</div>
 
@@ -176,6 +267,7 @@
 
 
 						</p:dialog>
+
 
 						<p:dialog widgetVar="attackDialog" header="Atacar territorio"
 							modal="true" closable="true" draggable="true" resizable="false"
