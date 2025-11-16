@@ -126,9 +126,17 @@ public class PartidaController {
 	 * @return ResponseEntity con la lista enlazada de jugadores en formato DTO.
 	 */
 	@GetMapping("/{partidaId}/jugadores")
-	public ResponseEntity<MyLinkedList<JugadorDTO>> obtenerJugadoresPartida(@PathVariable Long partidaId) {
-		MyLinkedList<JugadorDTO> jugadores = partidaService.obtenerJugadoresPorPartida(partidaId);
-		return ResponseEntity.ok(jugadores);
+	public ResponseEntity<List<JugadorDTO>> obtenerJugadoresPartida(@PathVariable Long partidaId) {
+	    MyLinkedList<JugadorDTO> jugadoresLinkedList = partidaService.obtenerJugadoresPorPartida(partidaId);
+
+	    List<JugadorDTO> jugadoresList = new ArrayList<>();
+	    Node<JugadorDTO> current = jugadoresLinkedList.getFirst();
+	    while (current != null) {
+	        jugadoresList.add(current.getInfo());
+	        current = current.getNext();
+	    }
+
+	    return ResponseEntity.ok(jugadoresList);
 	}
 
 	/**
