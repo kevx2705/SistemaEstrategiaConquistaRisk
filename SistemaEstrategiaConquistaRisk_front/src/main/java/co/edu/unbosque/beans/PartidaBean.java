@@ -267,35 +267,30 @@ public class PartidaBean implements Serializable {
 	}
 
 	public JugadorDTO cargarDatosAnfitrion() {
-		try {
-			if (partidaActual == null || partidaActual.getId() == null) {
-				showMessage("Error", "No hay partida activa");
-				return null;
-			}
-
-			Long partidaId = partidaActual.getId();
-			String url = BASE_URL + "/" + partidaId + "/anfitrion/datos";
-
-			String json = HttpClientUtil.get(url);
-			if (json == null || json.isEmpty()) {
-				showMessage("Error", "No se recibieron datos del anfitrión");
-				return null;
-			}
-
-			JugadorDTO anfitrion = gson.fromJson(json, JugadorDTO.class);
-
-			System.out.println("Anfitrión ID: " + anfitrion.getId());
-			System.out.println("Nombre: " + anfitrion.getNombre());
-			System.out.println("Correo: " + anfitrion.getCorreo());
-			System.out.println("Color: " + anfitrion.getColor());
-
-			return anfitrion;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			showMessage("Error", "No se pudieron cargar los datos del anfitrión");
-			return null;
-		}
+	    try {
+	        if (partidaActual == null || partidaActual.getId() == null) {
+	            showMessage("Error", "No hay partida activa");
+	            return null;
+	        }
+	        Long partidaId = partidaActual.getId();
+	        String url = BASE_URL + "/" + partidaId + "/anfitrion/datos";
+	        String json = HttpClientUtil.get(url);
+	        if (json == null || json.isEmpty()) {
+	            showMessage("Error", "No se recibieron datos del anfitrión");
+	            return null;
+	        }
+	        // Cambia Jugador por JugadorDTO
+	        JugadorDTO anfitrion = gson.fromJson(json, JugadorDTO.class);
+	        System.out.println("Anfitrión ID: " + anfitrion.getId());
+	        System.out.println("Nombre: " + anfitrion.getNombre());
+	        System.out.println("Correo: " + anfitrion.getCorreo());
+	        System.out.println("Color: " + anfitrion.getColor());
+	        return anfitrion;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        showMessage("Error", "No se pudieron cargar los datos del anfitrión");
+	        return null;
+	    }
 	}
 
 	public void reforzarTerritorio(Long territorioId) {
