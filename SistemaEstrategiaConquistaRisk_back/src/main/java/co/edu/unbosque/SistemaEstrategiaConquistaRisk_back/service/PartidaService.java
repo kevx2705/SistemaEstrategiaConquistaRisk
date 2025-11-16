@@ -31,6 +31,8 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.MyLinkedL
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.estrucutres.Node;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.JugadorRepository;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.PartidaRepository;
+import jakarta.persistence.EntityNotFoundException;
+
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -95,56 +97,76 @@ public class PartidaService {
 	 * @throws RuntimeException Si el anfitrión no existe o ya está en una partida.
 	 */
 	public Partida crearPartida(Long anfitrionId, String[] otrosNombres) {
-		Jugador anfitrion = jugadorRepository.findById(anfitrionId)
-				.orElseThrow(() -> new RuntimeException("No existe el jugador anfitrión"));
 
-		if (anfitrion.isActivo()) {
-			throw new RuntimeException("El anfitrión ya está participando en otra partida.");
-		}
+	    try {
 
-		anfitrion.setColor("ROJO");
-		jugadorRepository.save(anfitrion);
-		jugadorService.activarJugador(anfitrion.getId());
+	        Jugador anfitrion = jugadorRepository.findById(anfitrionId)
+	                .orElseThrow(() -> new EntityNotFoundException("No existe el jugador anfitrión"));
 
-		Partida partida = new Partida();
-		partida.setIniciada(true);
-		partida.setFinalizada(false);
-		partida.setFechaInicio(LocalDateTime.now());
-		partida.setCodigoHash(UUID.randomUUID().toString());
-		partida.setJugadorActualId(anfitrionId);
+	        if (anfitrion.isActivo()) {
+	            throw new IllegalStateException("El anfitrión está en una partida.");
+	        }
 
-		MyLinkedList<JugadorDTO> jugadoresDTO = new MyLinkedList<>();
-		JugadorDTO dtoAnfitrion = modelMapper.map(anfitrion, JugadorDTO.class);
-		dtoAnfitrion.setTropasDisponibles(0);
-		dtoAnfitrion.setTerritoriosControlados(0);
-		dtoAnfitrion.setCartas(new MyLinkedList<>());
-		jugadoresDTO.addLast(dtoAnfitrion);
+	        anfitrion.setColor("ROJO");
+	        jugadorRepository.save(anfitrion);
+	        jugadorService.activarJugador(anfitrion.getId());
 
-		String[] colores = { "ROJO", "AZUL", "VERDE", "AMARILLO", "NEGRO", "BLANCO" };
-		if (otrosNombres.length + 1 > colores.length) {
-			throw new RuntimeException("Hay más jugadores que colores disponibles.");
-		}
+	        Partida partida = new Partida();
+	        partida.setIniciada(true);
+	        partida.setFinalizada(false);
+	        partida.setFechaInicio(LocalDateTime.now());
+	        partida.setCodigoHash(UUID.randomUUID().toString());
+	        partida.setJugadorActualId(anfitrionId);
 
-		int colorIndex = 1;
-		for (String nombre : otrosNombres) {
-			if (nombre == null || nombre.trim().isEmpty())
-				continue;
-			Jugador nuevo = jugadorService.crearJugadorTemporal(nombre, colores[colorIndex++]);
-			JugadorDTO dto = modelMapper.map(nuevo, JugadorDTO.class);
-			dto.setTropasDisponibles(0);
-			dto.setTerritoriosControlados(0);
-			dto.setCartas(new MyLinkedList<>());
-			jugadoresDTO.addLast(dto);
-		}
+	        MyLinkedList<JugadorDTO> jugadoresDTO = new MyLinkedList<>();
+	        JugadorDTO dtoAnfitrion = modelMapper.map(anfitrion, JugadorDTO.class);
+	        dtoAnfitrion.setTropasDisponibles(0);
+	        dtoAnfitrion.setTerritoriosControlados(0);
+	        dtoAnfitrion.setCartas(new MyLinkedList<>());
+	        jugadoresDTO.addLast(dtoAnfitrion);
 
-		String jsonJugadores = JsonUtil.toJson(jugadoresDTO);
-		partida.setJugadoresOrdenTurnoJSON(jsonJugadores);
+	        String[] colores = { "ROJO", "AZUL", "VERDE", "AMARILLO", "NEGRO", "BLANCO" };
 
-		String mazoJSON = cartaService.inicializarMazoParaPartida();
-		partida.setMazoCartasJSON(mazoJSON);
+	        if (otrosNombres.length + 1 > colores.length) {
+	            throw new IllegalArgumentException("Hay más jugadores que colores disponibles.");
+	        }
 
-		return partidaRepository.save(partida);
+	        int colorIndex = 1;
+	        for (String nombre : otrosNombres) {
+	            if (nombre == null || nombre.trim().isEmpty())
+	                continue;
+
+	            Jugador nuevo = jugadorService.crearJugadorTemporal(nombre, colores[colorIndex++]);
+	            JugadorDTO dto = modelMapper.map(nuevo, JugadorDTO.class);
+	            dto.setTropasDisponibles(0);
+	            dto.setTerritoriosControlados(0);
+	            dto.setCartas(new MyLinkedList<>());
+	            jugadoresDTO.addLast(dto);
+	        }
+
+	        String jsonJugadores = JsonUtil.toJson(jugadoresDTO);
+	        partida.setJugadoresOrdenTurnoJSON(jsonJugadores);
+
+	        String mazoJSON = cartaService.inicializarMazoParaPartida();
+	        partida.setMazoCartasJSON(mazoJSON);
+
+	        return partidaRepository.save(partida);
+
+	    } catch (EntityNotFoundException ex) {
+	        throw ex;
+
+	    } catch (IllegalStateException ex) {
+	        throw ex;
+
+	    } catch (IllegalArgumentException ex) {
+	        throw ex;
+
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	        throw new RuntimeException("Error inesperado al crear partida: " + ex.getMessage());
+	    }
 	}
+
 
 	/**
 	 * Crea un DTO de partida a partir de una partida creada.
@@ -158,7 +180,7 @@ public class PartidaService {
 		PartidaDTO dto = modelMapper.map(partida, PartidaDTO.class);
 		return dto;
 	}
-	
+
 	/**
 	 * Obtiene la lista de jugadores de una partida específica, en formato DTO.
 	 *
@@ -167,29 +189,29 @@ public class PartidaService {
 	 * @throws RuntimeException Si la partida no existe o no tiene jugadores.
 	 */
 	public MyLinkedList<JugadorDTO> obtenerJugadoresPorPartida(Long partidaId) {
-	    Partida partida = partidaRepository.findById(partidaId)
-	            .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
-	    if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
-	        throw new RuntimeException("La partida no tiene jugadores definidos");
-	    }
-	    Type tipoLista = new TypeToken<MyLinkedList<JugadorDTO>>() {}.getType();
-	    MyLinkedList<JugadorDTO> jugadoresDTO = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
-	    MyLinkedList<JugadorDTO> respuesta = new MyLinkedList<>();
-	    Node<JugadorDTO> current = jugadoresDTO.getFirst();
-	    while (current != null) {
-	        JugadorDTO jDto = current.getInfo();
-	        JugadorDTO jRespuesta = new JugadorDTO();
-	        jRespuesta.setId(jDto.getId());
-	        jRespuesta.setNombre(jDto.getNombre());
-	        jRespuesta.setColor(jDto.getColor());
-	        jRespuesta.setTropasDisponibles(jDto.getTropasDisponibles());
-	        jRespuesta.setTerritoriosControlados(jDto.getTerritoriosControlados());
-	        respuesta.addLast(jRespuesta);
-	        current = current.getNext();
-	    }
-	    return respuesta;
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+		if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
+			throw new RuntimeException("La partida no tiene jugadores definidos");
+		}
+		Type tipoLista = new TypeToken<MyLinkedList<JugadorDTO>>() {
+		}.getType();
+		MyLinkedList<JugadorDTO> jugadoresDTO = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
+		MyLinkedList<JugadorDTO> respuesta = new MyLinkedList<>();
+		Node<JugadorDTO> current = jugadoresDTO.getFirst();
+		while (current != null) {
+			JugadorDTO jDto = current.getInfo();
+			JugadorDTO jRespuesta = new JugadorDTO();
+			jRespuesta.setId(jDto.getId());
+			jRespuesta.setNombre(jDto.getNombre());
+			jRespuesta.setColor(jDto.getColor());
+			jRespuesta.setTropasDisponibles(jDto.getTropasDisponibles());
+			jRespuesta.setTerritoriosControlados(jDto.getTerritoriosControlados());
+			respuesta.addLast(jRespuesta);
+			current = current.getNext();
+		}
+		return respuesta;
 	}
-
 
 	/**
 	 * Inicializa el juego con tropas iniciales y prepara los territorios.
@@ -199,54 +221,51 @@ public class PartidaService {
 	@Transactional
 	public void inicializarJuego(Long partidaId) {
 
-	    Partida partida = partidaRepository.findById(partidaId)
-	            .orElseThrow(() -> new RuntimeException("No existe la partida"));
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("No existe la partida"));
 
-	    MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
-	    int numJugadores = ordenJugadores.size();
+		MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
+		int numJugadores = ordenJugadores.size();
 
-	    int tropasIniciales;
-	    switch (numJugadores) {
-	        case 2 -> tropasIniciales = 40;
-	        case 3 -> tropasIniciales = 35;
-	        case 4 -> tropasIniciales = 30;
-	        case 5 -> tropasIniciales = 25;
-	        case 6 -> tropasIniciales = 20;
-	        default -> throw new RuntimeException("Número de jugadores no válido");
-	    }
+		int tropasIniciales;
+		switch (numJugadores) {
+		case 2 -> tropasIniciales = 40;
+		case 3 -> tropasIniciales = 35;
+		case 4 -> tropasIniciales = 30;
+		case 5 -> tropasIniciales = 25;
+		case 6 -> tropasIniciales = 20;
+		default -> throw new RuntimeException("Número de jugadores no válido");
+		}
 
-	    for (int i = 0; i < numJugadores; i++) {
-	        Long idJugador = ordenJugadores.getPos(i).getInfo();
-	        jugadorService.agregarTropas(idJugador, tropasIniciales);
-	    }
+		for (int i = 0; i < numJugadores; i++) {
+			Long idJugador = ordenJugadores.getPos(i).getInfo();
+			jugadorService.agregarTropas(idJugador, tropasIniciales);
+		}
 
-	    MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
-	    for (int i = 0; i < territorios.size(); i++) {
-	        TerritorioDTO t = territorios.getPos(i).getInfo();
-	        t.setTropas(0);
-	        t.setIdJugador(0L);
-	    }
-	    partida.setTerritoriosJSON(gson.toJson(territorios));
+		MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
+		for (int i = 0; i < territorios.size(); i++) {
+			TerritorioDTO t = territorios.getPos(i).getInfo();
+			t.setTropas(0);
+			t.setIdJugador(0L);
+		}
+		partida.setTerritoriosJSON(gson.toJson(territorios));
 
-	    MyLinkedList<JugadorDTO> jugadores = JsonUtil.fromJson(
-	            partida.getJugadoresOrdenTurnoJSON(),
-	            JugadorDTO.class
-	    );
+		MyLinkedList<JugadorDTO> jugadores = JsonUtil.fromJson(partida.getJugadoresOrdenTurnoJSON(), JugadorDTO.class);
 
-	    for (int i = 0; i < jugadores.size(); i++) {
-	        JugadorDTO dto = jugadores.getPos(i).getInfo();
-	        dto.setTropasDisponibles(tropasIniciales);
-	        dto.setTerritoriosControlados(0); 
-	        dto.setCartas(new MyLinkedList<>()); 
-	    }
+		for (int i = 0; i < jugadores.size(); i++) {
+			JugadorDTO dto = jugadores.getPos(i).getInfo();
+			dto.setTropasDisponibles(tropasIniciales);
+			dto.setTerritoriosControlados(0);
+			dto.setCartas(new MyLinkedList<>());
+			dto.setActivo(true);
+		}
 
-	    partida.setJugadoresOrdenTurnoJSON(JsonUtil.toJson(jugadores));
+		partida.setJugadoresOrdenTurnoJSON(JsonUtil.toJson(jugadores));
 
-	    partida.setJugadorActualId(ordenJugadores.getPos(0).getInfo());
+		partida.setJugadorActualId(ordenJugadores.getPos(0).getInfo());
 
-	    partidaRepository.save(partida);
+		partidaRepository.save(partida);
 	}
-
 
 	/**
 	 * Permite a un jugador reclamar un territorio durante la fase de
@@ -261,83 +280,81 @@ public class PartidaService {
 	@Transactional
 	public void reclamarTerritorio(Long partidaId, Long jugadorId, Long territorioId) {
 
-	    System.out.println("=== Intentando reclamar territorio ===");
-	    System.out.println("Partida ID: " + partidaId);
-	    System.out.println("Jugador ID: " + jugadorId);
-	    System.out.println("Territorio ID: " + territorioId);
+		System.out.println("=== Intentando reclamar territorio ===");
+		System.out.println("Partida ID: " + partidaId);
+		System.out.println("Jugador ID: " + jugadorId);
+		System.out.println("Territorio ID: " + territorioId);
 
-	    // Buscar partida
-	    Partida partida = partidaRepository.findById(partidaId)
-	            .orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
+		// Buscar partida
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
 
-	    System.out.println("✔ Partida encontrada. Jugador actual: " + partida.getJugadorActualId());
+		System.out.println("✔ Partida encontrada. Jugador actual: " + partida.getJugadorActualId());
 
-	    // Verificar turno
-	    if (!partida.getJugadorActualId().equals(jugadorId)) {
-	        throw new RuntimeException("❌ No es el turno del jugador con ID: " + jugadorId);
-	    }
+		// Verificar turno
+		if (!partida.getJugadorActualId().equals(jugadorId)) {
+			throw new RuntimeException("❌ No es el turno del jugador con ID: " + jugadorId);
+		}
 
-	    // Cargar orden de jugadores
-	    MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
+		// Cargar orden de jugadores
+		MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
 
-	    // Cargar territorios
-	    MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
+		// Cargar territorios
+		MyLinkedList<TerritorioDTO> territorios = cargarTerritorios(partida);
 
-	    System.out.println("✔ Territorios cargados: " + territorios.size());
+		System.out.println("✔ Territorios cargados: " + territorios.size());
 
-	    // Buscar territorio
-	    TerritorioDTO territorioElegido = null;
-	    for (int i = 0; i < territorios.size(); i++) {
-	        TerritorioDTO t = territorios.getPos(i).getInfo();
-	        if (t.getId().equals(territorioId)) {
-	            territorioElegido = t;
-	            break;
-	        }
-	    }
+		// Buscar territorio
+		TerritorioDTO territorioElegido = null;
+		for (int i = 0; i < territorios.size(); i++) {
+			TerritorioDTO t = territorios.getPos(i).getInfo();
+			if (t.getId().equals(territorioId)) {
+				territorioElegido = t;
+				break;
+			}
+		}
 
-	    if (territorioElegido == null) {
-	        throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado.");
-	    }
+		if (territorioElegido == null) {
+			throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado.");
+		}
 
-	    if (!territorioElegido.getIdJugador().equals(0L)) {
-	        throw new RuntimeException("❌ El territorio ya está asignado a un jugador.");
-	    }
+		if (!territorioElegido.getIdJugador().equals(0L)) {
+			throw new RuntimeException("❌ El territorio ya está asignado a un jugador.");
+		}
 
-	    // Reclamar territorio
-	    territorioElegido.setIdJugador(jugadorId);
-	    territorioElegido.setTropas(1);
-	    System.out.println("✔ Territorio reclamado exitosamente.");
+		// Reclamar territorio
+		territorioElegido.setIdJugador(jugadorId);
+		territorioElegido.setTropas(1);
+		System.out.println("✔ Territorio reclamado exitosamente.");
 
-	    // Actualizar jugador en tabla
-	    jugadorService.quitarTropas(jugadorId, 1);
-	    jugadorService.agregarTerritorio(jugadorId);
-	    System.out.println("✔ Tropas actualizadas y territorio agregado al jugador.");
+		// Actualizar jugador en tabla
+		jugadorService.quitarTropas(jugadorId, 1);
+		jugadorService.agregarTerritorio(jugadorId);
+		System.out.println("✔ Tropas actualizadas y territorio agregado al jugador.");
 
-	    // Cambiar turno
-	    Long siguiente = obtenerSiguienteJugador(ordenJugadores, jugadorId);
-	    partida.setJugadorActualId(siguiente);
-	    System.out.println("✔ Siguiente jugador: " + siguiente);
+		// Cambiar turno
+		Long siguiente = obtenerSiguienteJugador(ordenJugadores, jugadorId);
+		partida.setJugadorActualId(siguiente);
+		System.out.println("✔ Siguiente jugador: " + siguiente);
 
-	    // --- Actualizar JSON de territorios ---
-	    partida.setTerritoriosJSON(gson.toJson(territorios));
+		// --- Actualizar JSON de territorios ---
+		partida.setTerritoriosJSON(gson.toJson(territorios));
 
-	    // --- Actualizar JSON de jugadores COMPLETO ---
-	    MyLinkedList<Jugador> jugadoresActualizados = new MyLinkedList<>();
-	    for (int i = 0; i < ordenJugadores.size(); i++) {
-	        Long id = ordenJugadores.getPos(i).getInfo();
-	        Jugador j = jugadorService.getJugadorById(id); // Obtener todos los datos actuales de la tabla
-	        jugadoresActualizados.add(j); // Guardamos la entidad completa
-	    }
-	    // Serializar todos los campos del jugador
-	    partida.setJugadoresOrdenTurnoJSON(gson.toJson(jugadoresActualizados));
+		// --- Actualizar JSON de jugadores COMPLETO ---
+		MyLinkedList<Jugador> jugadoresActualizados = new MyLinkedList<>();
+		for (int i = 0; i < ordenJugadores.size(); i++) {
+			Long id = ordenJugadores.getPos(i).getInfo();
+			Jugador j = jugadorService.getJugadorById(id); // Obtener todos los datos actuales de la tabla
+			jugadoresActualizados.add(j); // Guardamos la entidad completa
+		}
+		// Serializar todos los campos del jugador
+		partida.setJugadoresOrdenTurnoJSON(gson.toJson(jugadoresActualizados));
 
-	    // Guardar partida
-	    partidaRepository.save(partida);
-	    System.out.println("✔ Cambios guardados en la partida.");
-	    System.out.println("=== Reclamo de territorio finalizado ===");
+		// Guardar partida
+		partidaRepository.save(partida);
+		System.out.println("✔ Cambios guardados en la partida.");
+		System.out.println("=== Reclamo de territorio finalizado ===");
 	}
-
-
 
 	/**
 	 * Inicia la fase de colocación de tropas iniciales.
@@ -1153,33 +1170,33 @@ public class PartidaService {
 
 		return disponibles;
 	}
+
 	@Transactional(readOnly = true)
 	public TerritorioDTO obtenerTerritorioPorId(Long partidaId, Long territorioId) {
-	    // Buscar la partida
-	    Partida partida = partidaRepository.findById(partidaId)
-	            .orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
+		// Buscar la partida
+		Partida partida = partidaRepository.findById(partidaId)
+				.orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
 
-	    // Leer el JSON de territorios
-	    String territoriosJSON = partida.getTerritoriosJSON();
-	    if (territoriosJSON == null || territoriosJSON.isEmpty()) {
-	        throw new RuntimeException("❌ La partida no tiene territorios cargados.");
-	    }
+		// Leer el JSON de territorios
+		String territoriosJSON = partida.getTerritoriosJSON();
+		if (territoriosJSON == null || territoriosJSON.isEmpty()) {
+			throw new RuntimeException("❌ La partida no tiene territorios cargados.");
+		}
 
-	    // Convertir JSON a MyLinkedList<TerritorioDTO>
-	    Type tipoLista = new TypeToken<MyLinkedList<TerritorioDTO>>() {}.getType();
-	    MyLinkedList<TerritorioDTO> territorios = gson.fromJson(territoriosJSON, tipoLista);
+		// Convertir JSON a MyLinkedList<TerritorioDTO>
+		Type tipoLista = new TypeToken<MyLinkedList<TerritorioDTO>>() {
+		}.getType();
+		MyLinkedList<TerritorioDTO> territorios = gson.fromJson(territoriosJSON, tipoLista);
 
-	    // Buscar el territorio por ID
-	    for (int i = 0; i < territorios.size(); i++) {
-	        TerritorioDTO t = territorios.getPos(i).getInfo();
-	        if (t.getId().equals(territorioId)) {
-	            return t;
-	        }
-	    }
+		// Buscar el territorio por ID
+		for (int i = 0; i < territorios.size(); i++) {
+			TerritorioDTO t = territorios.getPos(i).getInfo();
+			if (t.getId().equals(territorioId)) {
+				return t;
+			}
+		}
 
-	    throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado en la partida.");
+		throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado en la partida.");
 	}
-
-	
 
 }

@@ -1,6 +1,7 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,9 +55,39 @@ public class PartidaController {
 	 * @return ResponseEntity con la partida creada en formato DTO.
 	 */
 	@PostMapping("/crear")
-	public ResponseEntity<PartidaDTO> crearPartida(@RequestParam Long anfitrionId, @RequestBody String[] otrosNombres) {
-		return ResponseEntity.ok(partidaService.crearPartidaDTO(anfitrionId, otrosNombres));
+	public ResponseEntity<?> crearPartida(
+	        @RequestParam Long anfitrionId,
+	        @RequestBody String[] otrosNombres) {
+
+	    try {
+	        PartidaDTO partida = partidaService.crearPartidaDTO(anfitrionId, otrosNombres);
+	        return ResponseEntity.ok(partida);
+
+	    } catch (EntityNotFoundException ex) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(crearError(ex.getMessage()));
+
+	    } catch (IllegalStateException ex) {
+	        return ResponseEntity.status(HttpStatus.CONFLICT)
+	                .body(crearError(ex.getMessage()));
+
+	    } catch (IllegalArgumentException ex) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	                .body(crearError(ex.getMessage()));
+
+	    } catch (Exception ex) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(crearError("Ocurrió un error inesperado"));
+	    }
 	}
+
+
+	private Map<String, String> crearError(String mensaje) {
+	    Map<String, String> error = new HashMap<String, String>();
+	    error.put("error", mensaje);
+	    return error;
+	}
+
 
 	/**
 	 * Inicializa el juego para una partida específica.
@@ -348,17 +379,6 @@ public class PartidaController {
 
 		return ResponseEntity.ok(listaNormal);
 	}
-	 @GetMapping("/{partidaId}/territorios/{territorioId}")
-	    public ResponseEntity<TerritorioDTO> obtenerTerritorioPorId(
-	            @PathVariable Long partidaId,
-	            @PathVariable Long territorioId) {
-
-	        try {
-	            TerritorioDTO territorio = partidaService.obtenerTerritorioPorId(partidaId, territorioId);
-	            return ResponseEntity.ok(territorio);
-	        } catch (RuntimeException e) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        }
-	    }
+	
 
 }
