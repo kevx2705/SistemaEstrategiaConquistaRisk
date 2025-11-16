@@ -409,36 +409,81 @@ public class PartidaService {
 	 * @throws RuntimeException Si la cantidad es inválida, el territorio no existe
 	 *                          o no pertenece al jugador.
 	 */
+	@Transactional
 	public void colocarTropa(Partida partida, Long jugadorId, String nombreTerritorio, int cantidad) {
-		if (cantidad <= 0) {
-			throw new RuntimeException("La cantidad de tropas debe ser mayor que 0.");
-		}
-		Type listType = new TypeToken<MyLinkedList<TerritorioDTO>>() {
-		}.getType();
-		if (partida.getTerritoriosJSON() == null || partida.getTerritoriosJSON().isBlank()) {
-			throw new RuntimeException("No existen territorios cargados en la partida.");
-		}
-		MyLinkedList<TerritorioDTO> territorios = gson.fromJson(partida.getTerritoriosJSON(), listType);
-		TerritorioDTO territorioObjetivo = null;
-		for (int i = 0; i < territorios.size(); i++) {
-			TerritorioDTO t = territorios.getPos(i).getInfo();
-			if (t.getNombre().equalsIgnoreCase(nombreTerritorio)) {
-				territorioObjetivo = t;
-				break;
-			}
-		}
-		if (territorioObjetivo == null) {
-			throw new RuntimeException("El territorio '" + nombreTerritorio + "' no existe.");
-		}
-		if (!territorioObjetivo.getIdJugador().equals(jugadorId)) {
-			throw new RuntimeException("No puedes colocar tropas en un territorio que no te pertenece.");
-		}
-		int tropasActuales = territorioObjetivo.getTropas();
-		territorioObjetivo.setTropas(tropasActuales + cantidad);
-		String nuevosTerritoriosJSON = gson.toJson(territorios, listType);
-		partida.setTerritoriosJSON(nuevosTerritoriosJSON);
-		partidaRepository.save(partida);
+	    // Verificar cantidad válida
+	    if (cantidad <= 0) {
+	        throw new RuntimeException("La cantidad de tropas debe ser mayor que 0.");
+	    }
+
+	    // Verificar turno
+	    if (!jugadorId.equals(partida.getJugadorActualId())) {
+	        throw new RuntimeException("No es tu turno para colocar tropas.");
+	    }
+
+	    // Cargar territorios
+	    Type listType = new TypeToken<MyLinkedList<TerritorioDTO>>() {}.getType();
+	    if (partida.getTerritoriosJSON() == null || partida.getTerritoriosJSON().isBlank()) {
+	        throw new RuntimeException("No existen territorios cargados en la partida.");
+	    }
+	    MyLinkedList<TerritorioDTO> territorios = gson.fromJson(partida.getTerritoriosJSON(), listType);
+
+	    // Buscar territorio
+	    TerritorioDTO territorioObjetivo = null;
+	    for (int i = 0; i < territorios.size(); i++) {
+	        TerritorioDTO t = territorios.getPos(i).getInfo();
+	        if (t.getNombre().equalsIgnoreCase(nombreTerritorio)) {
+	            territorioObjetivo = t;
+	            break;
+	        }
+	    }
+
+	    if (territorioObjetivo == null) {
+	        throw new RuntimeException("El territorio '" + nombreTerritorio + "' no existe.");
+	    }
+
+	    if (!territorioObjetivo.getIdJugador().equals(jugadorId)) {
+	        throw new RuntimeException("No puedes colocar tropas en un territorio que no te pertenece.");
+	    }
+
+	    // Obtener jugador
+	    Jugador jugador = jugadorService.obtenerJugadorPorId(jugadorId);
+
+	    // Verificar que tenga suficientes tropas disponibles
+	    if (cantidad > jugador.getTropasDisponibles()) {
+	        throw new RuntimeException("No tienes suficientes tropas disponibles. Tropas disponibles: " + jugador.getTropasDisponibles());
+	    }
+
+	    // Colocar tropas
+	    territorioObjetivo.setTropas(territorioObjetivo.getTropas() + cantidad);
+
+	    // Restar tropas disponibles al jugador
+	    jugadorService.quitarTropas(jugadorId, cantidad);
+
+	    // Guardar cambios en territorios
+	    partida.setTerritoriosJSON(gson.toJson(territorios, listType));
+
+	    // Actualizar jugadores en JSON para reflejar tropas disponibles
+	    MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
+	    MyLinkedList<JugadorDTO> jugadoresDTO = new MyLinkedList<>();
+	    for (int i = 0; i < ordenJugadores.size(); i++) {
+	        Long id = ordenJugadores.getPos(i).getInfo();
+	        Jugador j = jugadorService.obtenerJugadorPorId(id);
+	        JugadorDTO dto = modelMapper.map(j, JugadorDTO.class);
+	        jugadoresDTO.addLast(dto);
+	    }
+	    partida.setJugadoresOrdenTurnoJSON(JsonUtil.toJson(jugadoresDTO));
+
+	    // Opcional: avanzar turno automáticamente si el jugador ya colocó todas sus tropas
+	    if (jugador.getTropasDisponibles() <= 0) {
+	        Long siguiente = obtenerSiguienteJugador(ordenJugadores, jugadorId);
+	        partida.setJugadorActualId(siguiente);
+	    }
+
+	    // Guardar partida
+	    partidaRepository.save(partida);
 	}
+	
 
 	/**
 	 * Realiza un ataque entre territorios.
