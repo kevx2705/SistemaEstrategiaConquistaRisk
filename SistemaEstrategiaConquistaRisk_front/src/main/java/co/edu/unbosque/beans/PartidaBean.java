@@ -415,11 +415,6 @@ public class PartidaBean implements Serializable {
 		
 		try {
 			
-			if (territoriosDisponiblesList == null) {
-				showMessage("SIGUIENTE FASE", "Pasamos a la suguiente fase");
-				return;
-			}
-			
 			if (partidaActual == null) {
 				showMessage("Error", "No hay partida activa");
 				return;
