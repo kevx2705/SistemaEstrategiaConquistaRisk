@@ -40,7 +40,7 @@ public class EmailController {
      *         Si ocurre un error durante el envío, retorna un error 500.
      */
     @PostMapping("/enviar-final/{partidaId}")
-    public ResponseEntity<?> enviarCorreoFinal(@PathVariable int partidaId, @RequestParam String email) {
+    public ResponseEntity<?> enviarCorreoFinal(@PathVariable Long partidaId, @RequestParam String email) {
         try {
             Partida partida = partidaService.obtenerPartidaPorId(partidaId);
             if (partida == null) {

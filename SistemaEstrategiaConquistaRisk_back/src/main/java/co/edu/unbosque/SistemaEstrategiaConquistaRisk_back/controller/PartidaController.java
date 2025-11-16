@@ -163,34 +163,47 @@ public class PartidaController {
 		return ResponseEntity.ok(jugadoresList);
 	}
 
-	/**
-	 * Inicia la fase de refuerzo en una partida.
-	 *
-	 * @param id Identificador de la partida.
-	 * @return ResponseEntity sin contenido si la operación fue exitosa.
-	 */
-	@PostMapping("/{id}/fase/refuerzo")
-	public ResponseEntity<Void> iniciarFaseRefuerzo(@PathVariable Long id) {
-		partidaService.iniciarFaseRefuerzo(id);
-		return ResponseEntity.ok().build();
+	@PostMapping("/{partidaId}/fase-refuerzo/iniciar")
+	public ResponseEntity<?> iniciarFaseRefuerzo(@PathVariable Long partidaId) {
+	    try {
+	        Partida partidaActualizada = partidaService.iniciarFaseRefuerzo(partidaId);
+	        return ResponseEntity.ok(partidaActualizada); // devolvemos la partida actualizada
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.badRequest().body(e.getMessage());
+	    }
 	}
 
-	/**
-	 * Coloca tropas en un territorio específico de una partida.
-	 *
-	 * @param id         Identificador de la partida.
-	 * @param jugadorId  Identificador del jugador que coloca las tropas.
-	 * @param territorio Nombre del territorio donde se colocarán las tropas.
-	 * @param cantidad   Cantidad de tropas a colocar.
-	 * @return ResponseEntity sin contenido si la operación fue exitosa.
-	 */
-	@PostMapping("/{id}/colocar-tropa")
-	public ResponseEntity<Void> colocarTropa(@PathVariable Long id, @RequestParam Long jugadorId,
-			@RequestParam String territorio, @RequestParam int cantidad) {
-		partidaService.colocarTropa(partidaService.retornarPartidaEntidad(id), jugadorId, territorio, cantidad);
-		return ResponseEntity.ok().build();
-	}
 
+	    /**
+	     * Coloca tropas en un territorio específico.
+	     */
+	 @PostMapping("/fase-refuerzo/colocar-tropas")
+	    public ResponseEntity<?> colocarTropas(
+	            @RequestParam Long partidaId,
+	            @RequestParam Long jugadorId,
+	            @RequestParam String nombreTerritorio,
+	            @RequestParam int cantidad) {
+
+	        try {
+	            // Obtener la partida desde el service
+	            Partida partida = partidaService.obtenerPartidaPorId(partidaId);
+	            if (partida == null) {
+	                return ResponseEntity.badRequest().body("No existe la partida");
+	            }
+
+	            // Coloca las tropas
+	            partidaService.colocarTropa(partida, jugadorId, nombreTerritorio, cantidad);
+
+	            // Devuelve la partida actualizada
+	            partida = partidaService.obtenerPartidaPorId(partidaId);
+	            return ResponseEntity.ok(partida);
+
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.badRequest().body(e.getMessage());
+	        }
+	    }
+
+	
 	/**
 	 * Realiza un ataque entre territorios en una partida.
 	 *
@@ -311,7 +324,7 @@ public class PartidaController {
 	 *         ocurre una excepción.
 	 */
 	@GetMapping("/descargar-final/{partidaId}")
-	public ResponseEntity<byte[]> descargarZipFinal(@PathVariable int partidaId) {
+	public ResponseEntity<byte[]> descargarZipFinal(@PathVariable Long partidaId) {
 		try {
 			byte[] zipBytes = partidaService.generarZipFinalPartida(partidaId);
 			if (zipBytes == null) {

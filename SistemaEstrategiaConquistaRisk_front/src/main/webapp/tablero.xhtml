@@ -503,21 +503,21 @@
 								<!-- Spinner para seleccionar cuántas tropas reforzar -->
 								<!-- InputNumber para seleccionar cuántas tropas reforzar -->
 								<div class="field col-12 md:col-4">
-									<p:inputNumber value="3" minValue="1" maxValue="10"
+									<p:inputNumber value="#{partidabean.tropasAColocar}" minValue="1" maxValue="10"
 										decimalPlaces="0" style="width: 100%; " />
 								</div>
 								<!-- 				rendered="#{partidabean.territoriosDisponiblesVacio}" -->
 								<!-- ID único para este selectOneMenu -->
-								<p:selectOneMenu id="territoriosJugadorRefuerzosVacio" value="#{partidabean.territorioSeleccionadoId2}">
+								<p:selectOneMenu id="territoriosJugadorRefuerzosVacio" value="#{partidabean.territorioSeleccionadoNombre}">
 									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
 									<f:selectItems
 										value="#{partidabean.territoriosList}" var="t"
-										itemLabel="#{t.nombre}" itemValue="#{t.id}" />
+										itemLabel="#{t.nombre}" itemValue="#{t.nombre}" />
 								</p:selectOneMenu>
 								<br />
 								<br />
 								<p:commandButton value="Reforzar"
-									action="#{partidabean.reforzarTerritorio(partidabean.territorioSeleccionadoId)}"
+									action="#{partidabean.colocarTropasRefuerzo}"
 									update="gameForm" process="@form" />
 							</p:panel>
 

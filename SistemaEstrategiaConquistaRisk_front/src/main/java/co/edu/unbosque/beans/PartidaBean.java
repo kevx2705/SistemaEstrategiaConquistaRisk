@@ -86,7 +86,7 @@ public class PartidaBean implements Serializable {
 	 * ID del territorio actualmente seleccionado.
 	 */
 	private Long territorioSeleccionadoId;
-	private Long territorioSeleccionadoId2;
+	private String territorioSeleccionadoNombre;
 	/**
 	 * URL base para las solicitudes al backend relacionadas con partidas.
 	 */
@@ -102,7 +102,7 @@ public class PartidaBean implements Serializable {
 	private String nombreJugador;
 	private List<TerritorioDTO> territoriosList; // lista para el select
 	private final String BASE_URLEMAIL = "http://localhost:8081/correo";
-
+	private int tropasAColocar;
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
 	 * JSON.
@@ -266,31 +266,88 @@ public class PartidaBean implements Serializable {
 		}
 	}
 
-	public JugadorDTO cargarDatosAnfitrion() {
+	public void iniciarFaseRefuerzo() {
+		try {
+			if (partidaActual == null) {
+				showMessage("Error", "No hay partida activa");
+				return;
+			}
+
+			String url = BASE_URL + "/" + partidaActual.getId() + "/fase-refuerzo/iniciar";
+			String response = HttpClientUtil.post(url, null);
+
+			// Ahora obtenemos la partida actualizada directamente
+			partidaActual = gson.fromJson(response, Partida.class);
+
+			cargarJugadorActual();
+			cargarTerritoriosJugador();
+
+			showMessage("Éxito", "Fase de refuerzo iniciada. Turno del jugador: " + jugadorActualDTO.getNombre());
+
+		} catch (Exception e) {
+			showMessage("Error", "No se pudo iniciar la fase de refuerzos: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public void colocarTropasRefuerzo() {
 	    try {
-	        if (partidaActual == null || partidaActual.getId() == null) {
-	            showMessage("Error", "No hay partida activa");
-	            return null;
+	        if (territorioSeleccionadoNombre == null || tropasAColocar <= 0) {
+	            showMessage("Error", "Debes seleccionar un territorio y una cantidad válida de tropas");
+	            return;
 	        }
-	        Long partidaId = partidaActual.getId();
-	        String url = BASE_URL + "/" + partidaId + "/anfitrion/datos";
-	        String json = HttpClientUtil.get(url);
-	        if (json == null || json.isEmpty()) {
-	            showMessage("Error", "No se recibieron datos del anfitrión");
-	            return null;
-	        }
-	        // Cambia Jugador por JugadorDTO
-	        JugadorDTO anfitrion = gson.fromJson(json, JugadorDTO.class);
-	        System.out.println("Anfitrión ID: " + anfitrion.getId());
-	        System.out.println("Nombre: " + anfitrion.getNombre());
-	        System.out.println("Correo: " + anfitrion.getCorreo());
-	        System.out.println("Color: " + anfitrion.getColor());
-	        return anfitrion;
+
+	        String url = BASE_URL + "/fase-refuerzo/colocar-tropas"
+	                + "?partidaId=" + partidaActual.getId()
+	                + "&jugadorId=" + jugadorActualDTO.getId()
+	                + "&nombreTerritorio=" + URLEncoder.encode(territorioSeleccionadoNombre, StandardCharsets.UTF_8)
+	                + "&cantidad=" + tropasAColocar;
+
+	        // No enviamos la partida, el backend la obtiene desde BD
+	        String response = HttpClientUtil.post(url, null);
+
+	        // Actualizamos la partida con la respuesta del backend
+	        partidaActual = gson.fromJson(response, Partida.class);
+	        cargarJugadorActual();
+	        cargarTerritoriosJugador();
+
+	        showMessage("Éxito", "Tropas colocadas correctamente en " + territorioSeleccionadoNombre);
+
+	        tropasAColocar = 0;
+	        territorioSeleccionadoNombre = null;
+
 	    } catch (Exception e) {
+	        showMessage("Error", "No se pudieron colocar tropas: " + e.getMessage());
 	        e.printStackTrace();
-	        showMessage("Error", "No se pudieron cargar los datos del anfitrión");
-	        return null;
 	    }
+	}
+
+
+	public JugadorDTO cargarDatosAnfitrion() {
+		try {
+			if (partidaActual == null || partidaActual.getId() == null) {
+				showMessage("Error", "No hay partida activa");
+				return null;
+			}
+			Long partidaId = partidaActual.getId();
+			String url = BASE_URL + "/" + partidaId + "/anfitrion/datos";
+			String json = HttpClientUtil.get(url);
+			if (json == null || json.isEmpty()) {
+				showMessage("Error", "No se recibieron datos del anfitrión");
+				return null;
+			}
+			// Cambia Jugador por JugadorDTO
+			JugadorDTO anfitrion = gson.fromJson(json, JugadorDTO.class);
+			System.out.println("Anfitrión ID: " + anfitrion.getId());
+			System.out.println("Nombre: " + anfitrion.getNombre());
+			System.out.println("Correo: " + anfitrion.getCorreo());
+			System.out.println("Color: " + anfitrion.getColor());
+			return anfitrion;
+		} catch (Exception e) {
+			e.printStackTrace();
+			showMessage("Error", "No se pudieron cargar los datos del anfitrión");
+			return null;
+		}
 	}
 
 	public void reforzarTerritorio(Long territorioId) {
@@ -648,6 +705,14 @@ public class PartidaBean implements Serializable {
 		this.anfitrionId = anfitrionId;
 	}
 
+	public int getTropasAColocar() {
+		return tropasAColocar;
+	}
+
+	public void setTropasAColocar(int tropasAColocar) {
+		this.tropasAColocar = tropasAColocar;
+	}
+
 	/**
 	 * Verifica si la partida ha sido iniciada.
 	 * 
@@ -779,14 +844,13 @@ public class PartidaBean implements Serializable {
 		this.territoriosList = territoriosList;
 	}
 
-	public Long getTerritorioSeleccionadoId2() {
-		return territorioSeleccionadoId2;
+	public String getTerritorioSeleccionadoNombre() {
+		return territorioSeleccionadoNombre;
 	}
 
-	public void setTerritorioSeleccionadoId2(Long territorioSeleccionadoId2) {
-		this.territorioSeleccionadoId2 = territorioSeleccionadoId2;
+	public void setTerritorioSeleccionadoNombre(String territorioSeleccionadoNombre) {
+		this.territorioSeleccionadoNombre = territorioSeleccionadoNombre;
 	}
-
 
 	public void finalizarPartidaForzada() {
 		try {
@@ -830,24 +894,29 @@ public class PartidaBean implements Serializable {
 	}
 
 	public void finalizarYDescargar() {
-		try {
-			finalizarPartidaForzada();
-			descargarZipFinal();
-			JugadorDTO anfitrion = cargarDatosAnfitrion(); // Cambia Jugador por JugadorDTO
-			if (anfitrion == null) {
-				showMessage("Error", "No se pudo obtener los datos del anfitrión.");
-				return;
-			}
-			// Asegúrate de que el correo no sea null
-			if (anfitrion.getCorreo() == null || anfitrion.getCorreo().trim().isEmpty()) {
-				showMessage("Error", "El correo del anfitrión no está disponible.");
-				return;
-			}
-			enviarCorreoFinal(anfitrion.getCorreo());
-		} catch (Exception e) {
-			showMessage("Error", "Ocurrió un error al finalizar la partida: " + e.getMessage());
-			e.printStackTrace();
-		}
+	    try {
+	        // 1. Finaliza la partida forzadamente
+	        finalizarPartidaForzada();
+
+	        // 2. Descarga el ZIP final
+	        descargarZipFinal();
+
+	        // 3. Obtiene el correo del jugador con correo
+	        String urlCorreo = BASE_URL + "/" + partidaActual.getId() + "/jugador-con-correo";
+	        String correo = HttpClientUtil.get(urlCorreo);
+
+	        if (correo == null || correo.trim().isEmpty()) {
+	            showMessage("Error", "No se pudo obtener el correo del jugador con correo.");
+	            return;
+	        }
+
+	        // 4. Enviar correo final
+	        enviarCorreoFinal(correo);
+
+	    } catch (Exception e) {
+	        showMessage("Error", "Ocurrió un error al finalizar la partida: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 
 	public void enviarCorreoFinal(String email) {

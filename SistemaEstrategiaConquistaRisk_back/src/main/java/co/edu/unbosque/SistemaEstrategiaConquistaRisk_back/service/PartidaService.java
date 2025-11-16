@@ -365,12 +365,15 @@ public class PartidaService {
 	 * @param partidaId Identificador de la partida.
 	 */
 	@Transactional
-	public void iniciarFaseRefuerzo(Long partidaId) {
+	public Partida iniciarFaseRefuerzo(Long partidaId) {
+	    // Obtener la partida
 	    Partida partida = partidaRepository.findById(partidaId)
 	            .orElseThrow(() -> new RuntimeException("No existe la partida"));
 
+	    // Cargar orden de jugadores
 	    MyLinkedList<Long> ordenJugadores = cargarOrdenJugadores(partida);
 
+	    // Asignar refuerzos a cada jugador
 	    for (int i = 0; i < ordenJugadores.size(); i++) {
 	        Long idJugador = ordenJugadores.getPos(i).getInfo();
 
@@ -379,24 +382,31 @@ public class PartidaService {
 	        Jugador jugador = jugadorService.obtenerJugadorPorId(idJugador);
 
 	        int refuerzos = jugador.getTerritoriosControlados() / 3;
-	        if (refuerzos < 3)
+	        if (refuerzos < 3) {
 	            refuerzos = 3;
+	        }
 	        refuerzos += calcularBonusContinentes(idJugador);
 
 	        jugadorService.agregarTropas(idJugador, refuerzos);
 	    }
 
+	    // Actualizar JSON de jugadores con las tropas disponibles
 	    MyLinkedList<JugadorDTO> jugadoresDTO = new MyLinkedList<>();
 	    for (int i = 0; i < ordenJugadores.size(); i++) {
 	        Long id = ordenJugadores.getPos(i).getInfo();
-	        Jugador j = jugadorService.getJugadorById(id); // datos actualizados
+	        Jugador j = jugadorService.obtenerJugadorPorId(id); // datos actualizados
 	        JugadorDTO dto = modelMapper.map(j, JugadorDTO.class);
 	        jugadoresDTO.addLast(dto);
 	    }
 	    partida.setJugadoresOrdenTurnoJSON(JsonUtil.toJson(jugadoresDTO));
 
+	    // Guardar cambios
 	    partidaRepository.save(partida);
+
+	    // Devolver partida actualizada
+	    return partida;
 	}
+
 
 
 	/**
@@ -1061,8 +1071,8 @@ public class PartidaService {
 	 * @param id Identificador de la partida.
 	 * @return {@code Partida} La partida encontrada, o null si no existe.
 	 */
-	public Partida obtenerPartidaPorId(int id) {
-		return partidaRepository.findById((long) id).orElse(null);
+	public Partida obtenerPartidaPorId(Long id) {
+		return partidaRepository.findById(id).orElse(null);
 	}
 
 	/**
@@ -1119,7 +1129,7 @@ public class PartidaService {
 	 * @return byte[] Arreglo de bytes del archivo ZIP generado.
 	 * @throws Exception Si ocurre un error al generar el ZIP.
 	 */
-	public byte[] generarZipFinalPartida(int partidaId) throws Exception {
+	public byte[] generarZipFinalPartida(Long partidaId) throws Exception {
 		Partida partida = obtenerPartidaPorId(partidaId);
 		if (partida == null || !Boolean.TRUE.equals(partida.isFinalizada())) {
 			return null;
