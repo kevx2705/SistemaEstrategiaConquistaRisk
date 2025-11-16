@@ -158,6 +158,38 @@ public class PartidaService {
 		PartidaDTO dto = modelMapper.map(partida, PartidaDTO.class);
 		return dto;
 	}
+	
+	/**
+	 * Obtiene la lista de jugadores de una partida específica, en formato DTO.
+	 *
+	 * @param partidaId Identificador de la partida.
+	 * @return MyLinkedList<JugadorDTO> con la información de los jugadores.
+	 * @throws RuntimeException Si la partida no existe o no tiene jugadores.
+	 */
+	public MyLinkedList<JugadorDTO> obtenerJugadoresPorPartida(Long partidaId) {
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("Partida no encontrada"));
+	    if (partida.getJugadoresOrdenTurnoJSON() == null || partida.getJugadoresOrdenTurnoJSON().isEmpty()) {
+	        throw new RuntimeException("La partida no tiene jugadores definidos");
+	    }
+	    Type tipoLista = new TypeToken<MyLinkedList<JugadorDTO>>() {}.getType();
+	    MyLinkedList<JugadorDTO> jugadoresDTO = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
+	    MyLinkedList<JugadorDTO> respuesta = new MyLinkedList<>();
+	    Node<JugadorDTO> current = jugadoresDTO.getFirst();
+	    while (current != null) {
+	        JugadorDTO jDto = current.getInfo();
+	        JugadorDTO jRespuesta = new JugadorDTO();
+	        jRespuesta.setId(jDto.getId());
+	        jRespuesta.setNombre(jDto.getNombre());
+	        jRespuesta.setColor(jDto.getColor());
+	        jRespuesta.setTropasDisponibles(jDto.getTropasDisponibles());
+	        jRespuesta.setTerritoriosControlados(jDto.getTerritoriosControlados());
+	        respuesta.addLast(jRespuesta);
+	        current = current.getNext();
+	    }
+	    return respuesta;
+	}
+
 
 	/**
 	 * Inicializa el juego con tropas iniciales y prepara los territorios.
