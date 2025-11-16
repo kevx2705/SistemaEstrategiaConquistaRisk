@@ -3,11 +3,14 @@ package co.edu.unbosque.estructures;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Implementación de una lista enlazada genérica usando solo métodos recursivos.
  *
  * @param <E> Tipo de los elementos almacenados en la lista.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MyLinkedList<E> implements Serializable, Iterable<E> {
 
     /**

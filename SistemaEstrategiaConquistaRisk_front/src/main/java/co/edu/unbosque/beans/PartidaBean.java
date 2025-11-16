@@ -87,6 +87,7 @@ public class PartidaBean implements Serializable {
 	private Long jugadorActualId;
 	private JugadorDTO jugadorActualDTO;
 	private Gson gson =  new Gson();
+	private List<JugadorDTO> jugadores;
 
 
 	/**
@@ -199,39 +200,56 @@ public class PartidaBean implements Serializable {
 			irAlTablero();
 			cargarTerritoriosDisponibles();
 			cargarJugadorActual();
-			obtenerJugadoresDePartida(partidaActual.getId());
 			System.out.println(territoriosDisponiblesList);
-
+			cargarJugadoresDePartida();
 		} catch (Exception e) {
 			showMessage("Error", "No se pudo crear la partida: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	public void obtenerJugadoresDePartida(Long partidaId) {
-		try {
-			if (partidaId == null) {
-				showMessage("Error", "ID de partida no válido.");
-				return;
-			}
-			
-			String url = BASE_URL + "/" + partidaId + "/jugadores";
-			
-			String response = HttpClientUtil.get(url);
-			
-			if (response.contains("Partida no encontrada")) {
-				showMessage("Error", "La partida no existe.");
-			} else if (response.contains("Error al obtener jugadores")) {
-				showMessage("Error", "No se pudieron obtener los jugadores.");
-			} else {
-				MyLinkedList<JugadorDTO> jugadores = parsearJugadoresDesdeJson(response);
-				mostrarJugadoresEnUI(jugadores);
-			}
-		} catch (Exception e) {
-			showMessage("Error", "No se pudieron obtener los jugadores: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+	
+	public void cargarJugadoresDePartida() {
+	    try {
+	        if (partidaActual == null) {
+	            showMessage("Error", "No hay partida activa.");
+	            return;
+	        }
 
+	        Long partidaId = partidaActual.getId();
+
+	        System.out.println("➡ Cargando jugadores de la partida: " + partidaId);
+
+	        String url = BASE_URL + "/" + partidaId + "/jugadores";
+	        String response = HttpClientUtil.get(url);
+
+	        if (response == null || response.trim().isEmpty()) {
+	            showMessage("Error", "Respuesta vacía del servidor.");
+	            return;
+	        }
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        List<JugadorDTO> lista = mapper.readValue(response,
+	                new TypeReference<List<JugadorDTO>>() {});
+
+	        jugadores = lista;
+
+	        System.out.println("Jugadores recibidos:");
+	        for (JugadorDTO j : jugadores) {
+	            System.out.println(" - ID: " + j.getId() +
+	                               " | Usuario: " + j.getNombre() +
+	                               " | Tropas Disponibles: " + j.getTropasDisponibles() +
+	                               " | Territorios Controlados: " + j.getTerritoriosControlados() +
+	                               " | Color: " + j.getColor());
+	        }
+
+	        showMessage("Éxito", "Jugadores cargados correctamente.");
+
+	    } catch (Exception e) {
+	        showMessage("Error", "No se pudo cargar jugadores: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+	
 	public List<Jugador> getJugadoresParaFront() {
 		List<Jugador> lista = new ArrayList<>();
 		for (int i = 0; i < jugadoresEnPartida.size(); i++) {
