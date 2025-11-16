@@ -258,26 +258,27 @@ public class PartidaBean implements Serializable {
 		return lista;
 	}
 
-	public Jugador getJugador1() {
-		return jugadoresEnPartida.size() > 0 ? jugadoresEnPartida.get(0) : null;
+	public JugadorDTO getJugador1() {
+	    return jugadores != null && jugadores.size() > 0 ? jugadores.get(0) : null;
 	}
 
-	public Jugador getJugador2() {
-		return jugadoresEnPartida.size() > 1 ? jugadoresEnPartida.get(1) : null;
+	public JugadorDTO getJugador2() {
+	    return jugadores != null && jugadores.size() > 1 ? jugadores.get(1) : null;
 	}
 
-	public Jugador getJugador3() {
-		return jugadoresEnPartida.size() > 2 ? jugadoresEnPartida.get(2) : null;
+	public JugadorDTO getJugador3() {
+	    return jugadores != null && jugadores.size() > 2 ? jugadores.get(2) : null;
 	}
 
-	public Jugador getJugador4() {
-		return jugadoresEnPartida.size() > 3 ? jugadoresEnPartida.get(3) : null;
+	public JugadorDTO getJugador4() {
+	    return jugadores != null && jugadores.size() > 3 ? jugadores.get(3) : null;
 	}
-
-	public Jugador getJugador5() {
-		return jugadoresEnPartida.size() > 4 ? jugadoresEnPartida.get(4) : null;
+	public JugadorDTO getJugador5() {
+		return jugadores != null && jugadores.size() > 4 ? jugadores.get(4) : null;
 	}
-	
+	public JugadorDTO getJugador6() {
+		return jugadores != null && jugadores.size() > 5 ? jugadores.get(5) : null;
+	}
 
 	private MyLinkedList<JugadorDTO> parsearJugadoresDesdeJson(String jsonResponse) {
 	    return new MyLinkedList<>();
@@ -543,6 +544,7 @@ public class PartidaBean implements Serializable {
 	public boolean isPartidaIniciada() {
 		return partidaIniciada;
 	}
+	
 
 	/**
 	 * Establece si la partida ha sido iniciada.
