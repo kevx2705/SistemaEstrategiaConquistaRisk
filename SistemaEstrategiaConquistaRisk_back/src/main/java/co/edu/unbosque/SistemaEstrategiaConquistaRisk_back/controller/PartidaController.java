@@ -348,6 +348,17 @@ public class PartidaController {
 
 		return ResponseEntity.ok(listaNormal);
 	}
-	
+	 @GetMapping("/{partidaId}/territorios/{territorioId}")
+	    public ResponseEntity<TerritorioDTO> obtenerTerritorioPorId(
+	            @PathVariable Long partidaId,
+	            @PathVariable Long territorioId) {
+
+	        try {
+	            TerritorioDTO territorio = partidaService.obtenerTerritorioPorId(partidaId, territorioId);
+	            return ResponseEntity.ok(territorio);
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        }
+	    }
 
 }

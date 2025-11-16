@@ -587,26 +587,32 @@
 
 		<script>
 		function showTerritory(idTerritorio) {
-		    fetch(`http://localhost:8081/api/territorios/${id}/obtenerterritorioporid`)
-	            .then(response => {
-	                if (!response.ok) {
-	                    throw new Error('Error al obtener el territorio');
-	                }
-	                return response.json();
-	            })
-	            .then(data => {
-	                // Actualiza el diálogo con los datos del backend
-	                document.getElementById('territoryName').textContent = data.nombre;
-	                document.getElementById('territoryOwner').textContent = data.propietario;
-	                document.getElementById('territoryTroops').textContent = data.tropas;
+		    // Construye la URL correctamente
+		    const url = `http://localhost:8081/api/territorios/${idTerritorio}/obtenerterritorioporid`;
+		    
+		    fetch(url)
+		        .then(response => {
+		            if (!response.ok) {
+		                throw new Error('Error al obtener el territorio, status: ' + response.status);
+		            }
+		            return response.json();
+		        })
+		        .then(data => {
+		            // Actualiza los campos del diálogo con los datos del backend
+		            document.getElementById('territoryName').textContent = data.nombre;
+		            document.getElementById('territoryOwner').textContent = "Jugador " + data.idJugador;
+		            document.getElementById('territoryTroops').textContent = data.tropas;
 
-	                // Muestra el diálogo
-	                PF('territoryDialog').show();
-	            })
-	            .catch(error => {
-	                console.error('Error:', error);
-	                alert('No se pudo cargar la información del territorio');
-	            });
+		            // Muestra el diálogo usando PrimeFaces (PF)
+		            PF('territoryDialog').show();
+		        })
+		        .catch(error => {
+		            console.error('Error:', error);
+		            alert('No se pudo cargar la información del territorio: ' + error.message);
+		        });
+		}
+
+
 			function cambiarFase(fase) {
 				document.getElementById('gameForm:faseTerritoriosPanel').style.display = 'none';
 				document.getElementById('gameForm:faseAtaquePanel').style.display = 'none';

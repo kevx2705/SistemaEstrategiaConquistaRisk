@@ -1153,6 +1153,33 @@ public class PartidaService {
 
 		return disponibles;
 	}
+	@Transactional(readOnly = true)
+	public TerritorioDTO obtenerTerritorioPorId(Long partidaId, Long territorioId) {
+	    // Buscar la partida
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
+
+	    // Leer el JSON de territorios
+	    String territoriosJSON = partida.getTerritoriosJSON();
+	    if (territoriosJSON == null || territoriosJSON.isEmpty()) {
+	        throw new RuntimeException("❌ La partida no tiene territorios cargados.");
+	    }
+
+	    // Convertir JSON a MyLinkedList<TerritorioDTO>
+	    Type tipoLista = new TypeToken<MyLinkedList<TerritorioDTO>>() {}.getType();
+	    MyLinkedList<TerritorioDTO> territorios = gson.fromJson(territoriosJSON, tipoLista);
+
+	    // Buscar el territorio por ID
+	    for (int i = 0; i < territorios.size(); i++) {
+	        TerritorioDTO t = territorios.getPos(i).getInfo();
+	        if (t.getId().equals(territorioId)) {
+	            return t;
+	        }
+	    }
+
+	    throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado en la partida.");
+	}
+
 	
 
 }

@@ -437,6 +437,29 @@ public class PartidaBean implements Serializable {
 			e.printStackTrace();
 		}
 	}
+	public void cargarTerritorioPorId(Long territorioId) {
+	    try {
+	        if (partidaActual == null) {
+	            showMessage("Error", "No hay partida activa");
+	            return;
+	        }
+
+	        Long partidaId = partidaActual.getId();
+	        String url = "http://localhost:8081/api/partidas/" + partidaId + "/territorios/" + territorioId;
+	        String json = HttpClientUtil.get(url);
+
+	        territorioSeleccionado = gson.fromJson(json, TerritorioDTO.class);
+	        System.out.println("Territorio cargado: " + territorioSeleccionado.getNombre());
+
+	        // Mostrar diálogo si usas PrimeFaces
+	        PrimeFaces.current().executeScript("PF('territoryDialog').show();");
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        showMessage("Error", "No se pudo cargar el territorio");
+	    }
+	}
+
 
 	/**
 	 * Redirige al tablero de juego.
