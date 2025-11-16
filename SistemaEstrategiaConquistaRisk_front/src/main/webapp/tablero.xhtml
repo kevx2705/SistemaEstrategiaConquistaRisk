@@ -5,8 +5,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
-<ui:composition template="template/template.xhtml">
+	xmlns:p="http://primefaces.org/ui"> <ui:composition
+	template="template/template.xhtml">
 
 	<ui:define name="content">
 		<style>
@@ -24,682 +24,483 @@
 	border-radius: 50%;
 }
 </style>
-		<div class="risk-background">
-			<div class="game-wrapper">
-				<div class="game-columns">
-					<div class="left-column">
-
-						<div class="game-board">
-							<h:form id="mapForm">
-								<img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
-								<!-- América del Sur -->
-								<p:commandButton styleClass="territory-point"
-									style="top: 275px; left: 150px;"
-									action="#{partidabean.cargarTerritorioPorId(1)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-
-								<p:commandButton styleClass="territory-point"
-									style="top: 340px; left: 175px;"
-									action="#{partidabean.cargarTerritorioPorId(2)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 400px; left: 185px;"
-									action="#{partidabean.cargarTerritorioPorId(3)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 300px; left: 188px;"
-									action="#{partidabean.cargarTerritorioPorId(4)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-
-								<!-- América del Norte -->
-								<p:commandButton styleClass="territory-point"
-									style="top: 60px; left: 40px;"
-									action="#{partidabean.cargarTerritorioPorId(5)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 70px; left: 110px;"
-									action="#{partidabean.cargarTerritorioPorId(6)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 100px; left: 140px;"
-									action="#{partidabean.cargarTerritorioPorId(7)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 100px; left: 188px;"
-									action="#{partidabean.cargarTerritorioPorId(8)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 70px; left: 110px;"
-									action="#{partidabean.cargarTerritorioPorId(9)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 60px; left: 235px;"
-									action="#{partidabean.cargarTerritorioPorId(10)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 150px; left: 100px;"
-									action="#{partidabean.cargarTerritorioPorId(11)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 170px; left: 160px;"
-									action="#{partidabean.cargarTerritorioPorId(12)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 220px; left: 100px;"
-									action="#{partidabean.cargarTerritorioPorId(13)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-
-								<!-- Europa -->
-								<p:commandButton styleClass="territory-point"
-									style="top: 85px; left: 292px;"
-									action="#{partidabean.cargarTerritorioPorId(14)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 80px; left: 380px;"
-									action="#{partidabean.cargarTerritorioPorId(15)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 150px; left: 292px;"
-									action="#{partidabean.cargarTerritorioPorId(16)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 160px; left: 350px;"
-									action="#{partidabean.cargarTerritorioPorId(17)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 200px; left: 350px;"
-									action="#{partidabean.cargarTerritorioPorId(18)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 200px; left: 310px;"
-									action="#{partidabean.cargarTerritorioPorId(19)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 120px; left: 420px;"
-									action="#{partidabean.cargarTerritorioPorId(20)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-
-								<!-- África -->
-								<p:commandButton styleClass="territory-point"
-									style="top: 280px; left: 400px;"
-									action="#{partidabean.cargarTerritorioPorId(21)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 340px; left: 410px;"
-									action="#{partidabean.cargarTerritorioPorId(22)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 370px; left: 370px;"
-									action="#{partidabean.cargarTerritorioPorId(23)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 300px; left: 350px;"
-									action="#{partidabean.cargarTerritorioPorId(24)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 410px; left: 380px;"
-									action="#{partidabean.cargarTerritorioPorId(25)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 420px; left: 465px;"
-									action="#{partidabean.cargarTerritorioPorId(26)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-
-								<!-- Asia -->
-								<p:commandButton styleClass="territory-point"
-									style="top: 185px; left: 485px;"
-									action="#{partidabean.cargarTerritorioPorId(36)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 255px; left: 440px;"
-									action="#{partidabean.cargarTerritorioPorId(27)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 260px; left: 530px;"
-									action="#{partidabean.cargarTerritorioPorId(28)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 259px; left: 585px;"
-									action="#{partidabean.cargarTerritorioPorId(29)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 200px; left: 550px;"
-									action="#{partidabean.cargarTerritorioPorId(30)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 150px; left: 590px;"
-									action="#{partidabean.cargarTerritorioPorId(31)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 120px; left: 575px;"
-									action="#{partidabean.cargarTerritorioPorId(32)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 60px; left: 590px;"
-									action="#{partidabean.cargarTerritorioPorId(33)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 60px; left: 650px;"
-									action="#{partidabean.cargarTerritorioPorId(34)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 155px; left: 670px;"
-									action="#{partidabean.cargarTerritorioPorId(35)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 130px; left: 500px;"
-									action="#{partidabean.cargarTerritorioPorId(38)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-
-								<!-- Oceanía -->
-								<p:commandButton styleClass="territory-point"
-									style="top: 350px; left: 600px;"
-									action="#{partidabean.cargarTerritorioPorId(39)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 330px; left: 650px;"
-									action="#{partidabean.cargarTerritorioPorId(40)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 410px; left: 630px;"
-									action="#{partidabean.cargarTerritorioPorId(41)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-								<p:commandButton styleClass="territory-point"
-									style="top: 430px; left: 690px;"
-									action="#{partidabean.cargarTerritorioPorId(42)}"
-									update=":territoryDialog"
-									oncomplete="PF('territoryDialog').show()" />
-							</h:form>
-						</div>
-
-
-
-
-
-						<p:dialog id="territoryDialog" widgetVar="territoryDialog"
-							modal="true" header="Acciones en territorio"
-							styleClass="dialog-risk" responsive="true" closable="true"
-							width="400">
-
-							<div class="territory-info">
-								<p>
-									<strong>Territorio:</strong>
-									<h:outputText
-										value="#{partidabean.territorioSeleccionado.nombre}" />
-								</p>
-								<p>
-									<strong>Dueño:</strong>
-									<h:outputText value="#{partidabean.nombreJugador}" />
-								</p>
-								<p>
-									<strong>Tropas:</strong>
-									<h:outputText
-										value="#{partidabean.territorioSeleccionado.tropas}" />
-								</p>
-							</div>
-
-							<p:separator />
-
-
-						</p:dialog>
-
-
-						<p:dialog widgetVar="attackDialog" header="Atacar territorio"
-							modal="true" closable="true" draggable="true" resizable="false"
-							width="450" styleClass="dialog-risk">
-							<h:form>
-								<p class="modal-title">Selecciona los territorios y tropas
-									para atacar</p>
-
-								<div class="modal-content">
-									<h:outputLabel value="Desde (tu territorio):"
-										for="fromTerritory" />
-									<h:selectOneMenu id="fromTerritory"
-										value="#{gameBean.fromTerritory}">
-										<f:selectItem itemLabel="Selecciona" itemValue="" />
-										<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-											itemLabel="#{t}" itemValue="#{t}" />
-									</h:selectOneMenu>
-
-									<h:outputLabel value="Hacia (territorio enemigo):"
-										for="toTerritory" />
-									<h:selectOneMenu id="toTerritory"
-										value="#{gameBean.toTerritory}">
-										<f:selectItem itemLabel="Selecciona" itemValue="" />
-										<f:selectItems value="#{gameBean.territoriosEnemigos}" var="t"
-											itemLabel="#{t}" itemValue="#{t}" />
-									</h:selectOneMenu>
-
-									<h:outputLabel value="Tropas a usar:" for="troopsToUse" />
-									<p:inputText id="troopsToUse"
-										value="#{gameBean.tropasParaAtacar}" type="number" min="1"
-										max="3" />
-
-									<p class="modal-note">Regla: Máximo 3 dados para atacar.
-										Debes dejar al menos 1 tropa en el territorio origen.</p>
-
-									<div class="modal-buttons">
-										<p:commandButton value="Confirmar ataque"
-											action="#{gameBean.confirmarAtaque}"
-											update="gameForm:dicePanel gameForm:turnInfo"
-											styleClass="btn-action"
-											oncomplete="PF('attackDialog').hide()" />
-
-
-
-										<p:commandButton value="Cancelar"
-											onclick="PF('attackDialog').hide()" styleClass="btn-cancel" />
-									</div>
-								</div>
-							</h:form>
-						</p:dialog>
-
-						<p:dialog widgetVar="moveDialog" header="Mover tropas"
-							modal="true" closable="true" draggable="true" resizable="false"
-							width="450" styleClass="dialog-risk">
-							<h:form>
-								<p class="modal-title">Selecciona los territorios para mover
-									tropas</p>
-
-								<div class="modal-content">
-									<h:outputLabel value="Desde (tu territorio):"
-										for="fromMoveTerritory" />
-									<h:selectOneMenu id="fromMoveTerritory"
-										value="#{gameBean.fromMoveTerritory}">
-										<f:selectItem itemLabel="Selecciona" itemValue="" />
-										<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-											itemLabel="#{t}" itemValue="#{t}" />
-									</h:selectOneMenu>
-
-									<h:outputLabel value="Hacia (territorio aliado):"
-										for="toMoveTerritory" />
-									<h:selectOneMenu id="toMoveTerritory"
-										value="#{gameBean.toMoveTerritory}">
-										<f:selectItem itemLabel="Selecciona" itemValue="" />
-										<f:selectItems value="#{gameBean.territoriosConectados}"
-											var="t" itemLabel="#{t}" itemValue="#{t}" />
-									</h:selectOneMenu>
-
-									<h:outputLabel value="Tropas a mover:" for="troopsToMove" />
-									<p:inputText id="troopsToMove" value="#{gameBean.tropasAMover}"
-										type="number" min="1" max="10" />
-
-									<p class="modal-note">Regla: Solo entre territorios
-										conectados y debes dejar al menos 1 tropa en el origen.</p>
-
-									<div class="modal-buttons">
-										<p:commandButton value="Confirmar movimiento"
-											action="#{gameBean.confirmarMovimiento}" update="@form"
-											styleClass="btn-action" oncomplete="PF('moveDialog').hide()" />
-
-										<p:commandButton value="Cancelar"
-											onclick="PF('moveDialog').hide()" styleClass="btn-cancel" />
-									</div>
-								</div>
-							</h:form>
-						</p:dialog>
-
-						<p:dialog widgetVar="reinforceDialog" header="Reforzar territorio"
-							modal="true" closable="true" draggable="true" resizable="false"
-							width="450" styleClass="dialog-risk">
-							<h:form>
-								<p class="modal-title">Agrega tropas a uno de tus
-									territorios</p>
-
-								<div class="modal-content">
-									<h:outputLabel value="Territorio a reforzar:"
-										for="reinforceTerritory" />
-									<h:selectOneMenu id="reinforceTerritory"
-										value="#{gameBean.territorioAReforzar}">
-										<f:selectItem itemLabel="Selecciona" itemValue="" />
-										<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
-											itemLabel="#{t}" itemValue="#{t}" />
-									</h:selectOneMenu>
-
-									<h:outputLabel value="Tropas a agregar:" for="troopsToAdd" />
-									<p:inputText id="troopsToAdd"
-										value="#{gameBean.tropasAReforzar}" type="number" min="1"
-										max="5" />
-
-									<p class="modal-note">Regla: Reforzar solo al inicio del
-										turno con tropas disponibles.</p>
-
-									<div class="modal-buttons">
-										<p:commandButton value="Confirmar refuerzo"
-											action="#{gameBean.confirmarRefuerzo}" update="@form"
-											styleClass="btn-action"
-											oncomplete="PF('reinforceDialog').hide()" />
-
-										<p:commandButton value="Cancelar"
-											onclick="PF('reinforceDialog').hide()"
-											styleClass="btn-cancel" />
-									</div>
-								</div>
-							</h:form>
-						</p:dialog>
-
-						<div>
-
-							<h1></h1>
-							<button class="btn-show-players"
-								onclick="PF('playersDialog').show()">Ver jugadores en
-								partida</button>
-
-							<h:form id="formFinalizar">
-								<h:commandButton value="Finalizar Partida"
-									action="#{partidabean.finalizarYDescargar}"
-									styleClass="btn-show-players">
-									<f:ajax execute="@form" render="@form" />
-								</h:commandButton>
-							</h:form>
-
-
-						</div>
-					</div>
-
-					<div class="right-column">
-						<h:form id="gameForm">
-							<p:growl id="messages" showDetail="true" />
-
-							<p:panel id="turnInfo" header="Turno actual"
-								styleClass="panel-risk">
-								<p style="margin-bottom: 10px;">
-									<strong>Jugador:</strong> <span>#{partidabean.jugadorActualDTO.nombre}
-									</span>
-								</p>
-								<p style="margin-bottom: 15px;">
-									<strong>Territorios:</strong> <span>#{partidabean.jugadorActualDTO.territoriosControlados}</span>
-									| <strong>Tropas disponibles:</strong> <span>#{partidabean.jugadorActualDTO.tropasDisponibles}</span>
-								</p>
-
-								<hr style="border: 1px solid #ccc; margin: 10px 0;" />
-
-								<p style="margin-bottom: 10px;">
-									<strong>Cartas</strong>
-								</p>
-
-								<div class="ui-g" style="text-align: center;">
-									<div class="ui-g-4">
-										<p>
-											<span>Infantería</span>
-										</p>
-										<p>
-											<i style="font-size: 2em; color: #4CAF50;"></i>
-										</p>
-										<p>
-											<span style="font-size: 1.3em;">3</span>
-										</p>
-									</div>
-
-									<div class="ui-g-4">
-										<p>
-											<span>Caballería</span>
-										</p>
-										<p>
-											<i style="font-size: 2em; color: #2196F3;"></i>
-										</p>
-										<p>
-											<span style="font-size: 1.3em;">2</span>
-										</p>
-									</div>
-
-									<div class="ui-g-4">
-										<p>
-											<span>Artillería</span>
-										</p>
-										<p>
-											<i style="font-size: 2em; color: #F44336;"></i>
-										</p>
-										<p>
-											<span style="font-size: 1.3em;">1</span>
-										</p>
-									</div>
-								</div>
-
-
-								<div style="text-align: center; margin-top: 15px;">
-									<p:commandButton value="Canjear cartas"
-										styleClass="ui-button-success" action="#{bean.canjearCartas}"
-										update="@form" />
-								</div>
-
-							</p:panel>
-
-							<h1></h1>
-
-							<p:panel id="faseTerritoriosPanel" header="Refuerzos"
-								widgetVar="faseTerritorios" style="display: block;"
-								styleClass="panel-risk">
-
-								<!-- Spinner para seleccionar cuántas tropas reforzar -->
-								<p:spinner id="spinnerTropas" value="3" min="1" max="10"
-									style="margin: 10px 0;" />
-
-								<p:messages id="mensajes" autoUpdate="true" />
-
-								<p:selectOneMenu id="territoriosJugadorRefuerzos"
-									value="#{partidabean.territorioSeleccionadoId}">
-									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
-									<f:selectItems
-										value="#{partidabean.territoriosDisponiblesList}" var="t"
-										itemLabel="#{t.nombre}" itemValue="#{t.id}" />
-								</p:selectOneMenu>
-
-								<br />
-								<br />
-
-								<p:commandButton value="Reclamar"
-									action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
-									update="gameForm" process="@form" />
-
-
-							</p:panel>
-
-
-
-							<p:panel id="faseAtaquePanel" header="Ataque"
-								widgetVar="faseAtaque" style="display: none;"
-								styleClass="panel-risk">
-								<p>Desde:</p>
-								<p:selectOneMenu id="territorioOrigenAtaque"
-									onchange="updateTerritoriosVecinos()">
-									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
-									<f:selectItem itemLabel="Perú" itemValue="Perú" />
-								</p:selectOneMenu>
-								<p>Hasta:</p>
-								<p:selectOneMenu id="territorioDestinoAtaque">
-									<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
-									<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
-								</p:selectOneMenu>
-
-
-								<p:commandButton value="Atacar"
-									onclick="PF('diceDialog').show();" style="margin-top: 10px;" />
-								<br></br>
-								<br></br>
-								<p:commandButton value="Continuar a fase 2 >"
-									onclick="cambiarFase('movimiento'); return false;" />
-							</p:panel>
-
-							<p:panel id="faseMovimientoPanel" header="Movimiento"
-								widgetVar="faseMovimiento" style="display: none;"
-								styleClass="panel-risk">
-								<p:selectOneMenu id="territorioOrigenMovimiento"
-									onchange="updateTerritoriosVecinos()">
-									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
-									<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
-									<f:selectItem itemLabel="Perú" itemValue="Perú" />
-								</p:selectOneMenu>
-								<p:selectOneMenu id="territorioDestinoMovimiento">
-									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
-									<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
-									<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
-								</p:selectOneMenu>
-								<p:spinner id="tropasMovimiento" value="1" min="1" max="10"
-									style="margin: 10px 0;" />
-								<p:commandButton value="Mover tropas" style="margin-top: 10px;" />
-								<br></br>
-								<br></br>
-								<p:commandButton value="Terminar turno"
-									onclick="cambiarFase('territorios'); return false;" />
-							</p:panel>
-
-							<p:dialog id="dicePanel" header="Dados de ataque y defensa"
-								widgetVar="diceDialog" modal="true" closable="true"
-								style="display: none;" styleClass="dialog-risk">
-								<div class="dice-container">
-									<div class="dice-group">
-										<p>Atacante (máx 3)</p>
-										<div class="dice attacker-dice">
-											<span class="die">1</span> <span class="die">2</span> <span
-												class="die">3</span>
-										</div>
-									</div>
-									<div class="dice-group">
-										<p>Defensor (máx 2)</p>
-										<div class="dice defender-dice">
-											<span class="die">1</span> <span class="die">2</span>
-										</div>
-									</div>
-								</div>
-								<p:commandButton value="Lanzar Dados" styleClass="btn-roll" />
-							</p:dialog>
-
-
-
-							<p:dialog widgetVar="playersDialog" modal="true"
-								header="Jugadores en partida" responsive="true" closable="true"
-								width="500" styleClass="dialog-risk">
-								<div class="player-cards-row">
-									<!-- JUGADOR 1 -->
-									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">#{partidabean.jugador1.nombre}</p>
-											<p class="player-territories">Color:
-												#{partidabean.jugador1.color}</p>
-											<p class="player-troops">Tropas:
-												#{partidabean.jugador1.tropasDisponibles}</p>
-											<p class="player-territories">Territorios:
-												#{partidabean.jugador1.territoriosControlados}</p>
-										</div>
-									</div>
-
-									<!-- JUGADOR 2 -->
-									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">#{partidabean.jugador2.nombre}</p>
-											<p class="player-territories">Color:
-												#{partidabean.jugador2.color}</p>
-											<p class="player-troops">Tropas:
-												#{partidabean.jugador2.tropasDisponibles}</p>
-											<p class="player-territories">Territorios:
-												#{partidabean.jugador2.territoriosControlados}</p>
-										</div>
-									</div>
-
-									<!-- JUGADOR 3 -->
-									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">#{partidabean.jugador3.nombre}</p>
-											<p class="player-territories">Color:
-												#{partidabean.jugador3.color}</p>
-											<p class="player-troops">Tropas:
-												#{partidabean.jugador3.tropasDisponibles}</p>
-											<p class="player-territories">Territorios:
-												#{partidabean.jugador3.territoriosControlados}</p>
-										</div>
-									</div>
-
-									<!-- JUGADOR 4 -->
-									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">#{partidabean.jugador4.nombre}</p>
-											<p class="player-territories">Color:
-												#{partidabean.jugador4.color}</p>
-											<p class="player-troops">Tropas:
-												#{partidabean.jugador4.tropasDisponibles}</p>
-											<p class="player-territories">Territorios:
-												#{partidabean.jugador4.territoriosControlados}</p>
-										</div>
-									</div>
-
-									<!-- JUGADOR 5 -->
-									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">#{partidabean.jugador5.nombre}</p>
-											<p class="player-territories">Color:
-												#{partidabean.jugador5.color}</p>
-											<p class="player-troops">Tropas:
-												#{partidabean.jugador5.tropasDisponibles}</p>
-											<p class="player-territories">Territorios:
-												#{partidabean.jugador5.territoriosControlados}</p>
-										</div>
-									</div>
-
-									<!-- JUGADOR 6 -->
-									<div class="player-card">
-										<div class="player-info">
-											<p class="player-name">#{partidabean.jugador6.nombre}</p>
-											<p class="player-territories">Color:
-												#{partidabean.jugador6.color}</p>
-											<p class="player-troops">Tropas:
-												#{partidabean.jugador6.tropasDisponibles}</p>
-											<p class="player-territories">Territorios:
-												#{partidabean.jugador6.territoriosControlados}</p>
-										</div>
-									</div>
-
-
-								</div>
-							</p:dialog>
-
-
-
-						</h:form>
-					</div>
-				</div>
-			</div>
-		</div>
+		<div class="risk-background"> <div class="game-wrapper"> <div
+			class="game-columns"> <div class="left-column"> <div
+			class="game-board"> <h:form id="mapForm">
+			<img src="assets/mapRisk.jpg" alt="Mapa Risk" class="risk-map" />
+			<!-- América del Sur -->
+			<p:commandButton styleClass="territory-point"
+				style="top: 275px; left: 150px;"
+				action="#{partidabean.cargarTerritorioPorId(1)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+
+			<p:commandButton styleClass="territory-point"
+				style="top: 340px; left: 175px;"
+				action="#{partidabean.cargarTerritorioPorId(2)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 400px; left: 185px;"
+				action="#{partidabean.cargarTerritorioPorId(3)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 300px; left: 188px;"
+				action="#{partidabean.cargarTerritorioPorId(4)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+
+			<!-- América del Norte -->
+			<p:commandButton styleClass="territory-point"
+				style="top: 60px; left: 40px;"
+				action="#{partidabean.cargarTerritorioPorId(5)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 70px; left: 110px;"
+				action="#{partidabean.cargarTerritorioPorId(6)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 100px; left: 140px;"
+				action="#{partidabean.cargarTerritorioPorId(7)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 100px; left: 188px;"
+				action="#{partidabean.cargarTerritorioPorId(8)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 70px; left: 110px;"
+				action="#{partidabean.cargarTerritorioPorId(9)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 60px; left: 235px;"
+				action="#{partidabean.cargarTerritorioPorId(10)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 150px; left: 100px;"
+				action="#{partidabean.cargarTerritorioPorId(11)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 170px; left: 160px;"
+				action="#{partidabean.cargarTerritorioPorId(12)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 220px; left: 100px;"
+				action="#{partidabean.cargarTerritorioPorId(13)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+
+			<!-- Europa -->
+			<p:commandButton styleClass="territory-point"
+				style="top: 85px; left: 292px;"
+				action="#{partidabean.cargarTerritorioPorId(14)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 80px; left: 380px;"
+				action="#{partidabean.cargarTerritorioPorId(15)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 150px; left: 292px;"
+				action="#{partidabean.cargarTerritorioPorId(16)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 160px; left: 350px;"
+				action="#{partidabean.cargarTerritorioPorId(17)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 200px; left: 350px;"
+				action="#{partidabean.cargarTerritorioPorId(18)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 200px; left: 310px;"
+				action="#{partidabean.cargarTerritorioPorId(19)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 120px; left: 420px;"
+				action="#{partidabean.cargarTerritorioPorId(20)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+
+			<!-- África -->
+			<p:commandButton styleClass="territory-point"
+				style="top: 280px; left: 400px;"
+				action="#{partidabean.cargarTerritorioPorId(21)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 340px; left: 410px;"
+				action="#{partidabean.cargarTerritorioPorId(22)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 370px; left: 370px;"
+				action="#{partidabean.cargarTerritorioPorId(23)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 300px; left: 350px;"
+				action="#{partidabean.cargarTerritorioPorId(24)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 410px; left: 380px;"
+				action="#{partidabean.cargarTerritorioPorId(25)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 420px; left: 465px;"
+				action="#{partidabean.cargarTerritorioPorId(26)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+
+			<!-- Asia -->
+			<p:commandButton styleClass="territory-point"
+				style="top: 185px; left: 485px;"
+				action="#{partidabean.cargarTerritorioPorId(36)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 255px; left: 440px;"
+				action="#{partidabean.cargarTerritorioPorId(27)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 260px; left: 530px;"
+				action="#{partidabean.cargarTerritorioPorId(28)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 259px; left: 585px;"
+				action="#{partidabean.cargarTerritorioPorId(29)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 200px; left: 550px;"
+				action="#{partidabean.cargarTerritorioPorId(30)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 150px; left: 590px;"
+				action="#{partidabean.cargarTerritorioPorId(31)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 120px; left: 575px;"
+				action="#{partidabean.cargarTerritorioPorId(32)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 60px; left: 590px;"
+				action="#{partidabean.cargarTerritorioPorId(33)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 60px; left: 650px;"
+				action="#{partidabean.cargarTerritorioPorId(34)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 155px; left: 670px;"
+				action="#{partidabean.cargarTerritorioPorId(35)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 130px; left: 500px;"
+				action="#{partidabean.cargarTerritorioPorId(38)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+
+			<!-- Oceanía -->
+			<p:commandButton styleClass="territory-point"
+				style="top: 350px; left: 600px;"
+				action="#{partidabean.cargarTerritorioPorId(39)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 330px; left: 650px;"
+				action="#{partidabean.cargarTerritorioPorId(40)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 410px; left: 630px;"
+				action="#{partidabean.cargarTerritorioPorId(41)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+			<p:commandButton styleClass="territory-point"
+				style="top: 430px; left: 690px;"
+				action="#{partidabean.cargarTerritorioPorId(42)}"
+				update=":territoryDialog" oncomplete="PF('territoryDialog').show()" />
+		</h:form> </div> <p:dialog id="territoryDialog" widgetVar="territoryDialog"
+			modal="true" header="Acciones en territorio" styleClass="dialog-risk"
+			responsive="true" closable="true" width="400">
+
+			<div class="territory-info"> <p> <strong>Territorio:</strong>
+			<h:outputText value="#{partidabean.territorioSeleccionado.nombre}" />
+			</p> <p> <strong>Dueño:</strong> <h:outputText
+				value="#{partidabean.nombreJugador}" /> </p> <p> <strong>Tropas:</strong>
+			<h:outputText value="#{partidabean.territorioSeleccionado.tropas}" />
+			</p> </div>
+
+			<p:separator />
+
+
+		</p:dialog> <p:dialog widgetVar="attackDialog" header="Atacar territorio"
+			modal="true" closable="true" draggable="true" resizable="false"
+			width="450" styleClass="dialog-risk">
+			<h:form>
+				<p class="modal-title">Selecciona los territorios y tropas para
+				atacar</p>
+
+				<div class="modal-content"> <h:outputLabel
+					value="Desde (tu territorio):" for="fromTerritory" /> <h:selectOneMenu
+					id="fromTerritory" value="#{gameBean.fromTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Hacia (territorio enemigo):"
+					for="toTerritory" /> <h:selectOneMenu id="toTerritory"
+					value="#{gameBean.toTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosEnemigos}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Tropas a usar:" for="troopsToUse" /> <p:inputText
+					id="troopsToUse" value="#{gameBean.tropasParaAtacar}" type="number"
+					min="1" max="3" /> <p class="modal-note">Regla: Máximo 3 dados
+				para atacar. Debes dejar al menos 1 tropa en el territorio origen.</p> <div
+					class="modal-buttons"> <p:commandButton
+					value="Confirmar ataque" action="#{gameBean.confirmarAtaque}"
+					update="gameForm:dicePanel gameForm:turnInfo"
+					styleClass="btn-action" oncomplete="PF('attackDialog').hide()" />
+
+
+
+				<p:commandButton value="Cancelar"
+					onclick="PF('attackDialog').hide()" styleClass="btn-cancel" /> </div> </div>
+			</h:form>
+		</p:dialog> <p:dialog widgetVar="moveDialog" header="Mover tropas" modal="true"
+			closable="true" draggable="true" resizable="false" width="450"
+			styleClass="dialog-risk">
+			<h:form>
+				<p class="modal-title">Selecciona los territorios para mover
+				tropas</p>
+
+				<div class="modal-content"> <h:outputLabel
+					value="Desde (tu territorio):" for="fromMoveTerritory" /> <h:selectOneMenu
+					id="fromMoveTerritory" value="#{gameBean.fromMoveTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Hacia (territorio aliado):"
+					for="toMoveTerritory" /> <h:selectOneMenu id="toMoveTerritory"
+					value="#{gameBean.toMoveTerritory}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosConectados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Tropas a mover:" for="troopsToMove" /> <p:inputText
+					id="troopsToMove" value="#{gameBean.tropasAMover}" type="number"
+					min="1" max="10" /> <p class="modal-note">Regla: Solo entre
+				territorios conectados y debes dejar al menos 1 tropa en el origen.</p>
+
+				<div class="modal-buttons"> <p:commandButton
+					value="Confirmar movimiento"
+					action="#{gameBean.confirmarMovimiento}" update="@form"
+					styleClass="btn-action" oncomplete="PF('moveDialog').hide()" /> <p:commandButton
+					value="Cancelar" onclick="PF('moveDialog').hide()"
+					styleClass="btn-cancel" /> </div> </div>
+			</h:form>
+		</p:dialog> <p:dialog widgetVar="reinforceDialog" header="Reforzar territorio"
+			modal="true" closable="true" draggable="true" resizable="false"
+			width="450" styleClass="dialog-risk">
+			<h:form>
+				<p class="modal-title">Agrega tropas a uno de tus territorios</p>
+
+				<div class="modal-content"> <h:outputLabel
+					value="Territorio a reforzar:" for="reinforceTerritory" /> <h:selectOneMenu
+					id="reinforceTerritory" value="#{gameBean.territorioAReforzar}">
+					<f:selectItem itemLabel="Selecciona" itemValue="" />
+					<f:selectItems value="#{gameBean.territoriosAliados}" var="t"
+						itemLabel="#{t}" itemValue="#{t}" />
+				</h:selectOneMenu> <h:outputLabel value="Tropas a agregar:" for="troopsToAdd" /> <p:inputText
+					id="troopsToAdd" value="#{gameBean.tropasAReforzar}" type="number"
+					min="1" max="5" /> <p class="modal-note">Regla: Reforzar solo
+				al inicio del turno con tropas disponibles.</p> <div
+					class="modal-buttons"> <p:commandButton
+					value="Confirmar refuerzo" action="#{gameBean.confirmarRefuerzo}"
+					update="@form" styleClass="btn-action"
+					oncomplete="PF('reinforceDialog').hide()" /> <p:commandButton
+					value="Cancelar" onclick="PF('reinforceDialog').hide()"
+					styleClass="btn-cancel" /> </div> </div>
+			</h:form>
+		</p:dialog> <div> <h1></h1> <button class="btn-show-players"
+			onclick="PF('playersDialog').show()">Ver jugadores en
+		partida</button> <h:form id="formFinalizar">
+			<h:commandButton value="Finalizar Partida"
+				action="#{partidabean.finalizarYDescargar}"
+				styleClass="btn-show-players">
+				<f:ajax execute="@form" render="@form" />
+			</h:commandButton>
+		</h:form> </div> </div> <div class="right-column"> <h:form id="gameForm">
+			<p:growl id="messages" showDetail="true" />
+
+			<p:panel id="turnInfo" header="Turno actual" styleClass="panel-risk">
+				<p style="margin-bottom: 10px;"> <strong>Jugador:</strong> <span>#{partidabean.jugadorActualDTO.nombre}
+				</span> </p>
+				<p style="margin-bottom: 15px;"> <strong>Territorios:</strong> <span>#{partidabean.jugadorActualDTO.territoriosControlados}</span>
+				| <strong>Tropas disponibles:</strong> <span>#{partidabean.jugadorActualDTO.tropasDisponibles}</span>
+				</p>
+
+				<hr style="border: 1px solid #ccc; margin: 10px 0;" />
+
+				<p style="margin-bottom: 10px;"> <strong>Cartas</strong> </p>
+
+				<div class="ui-g" style="text-align: center;"> <div
+					class="ui-g-4"> <p> <span>Infantería</span> </p> <p> <i
+					style="font-size: 2em; color: #4CAF50;"></i> </p> <p> <span
+					style="font-size: 1.3em;">3</span> </p> </div> <div class="ui-g-4"> <p>
+				<span>Caballería</span> </p> <p> <i
+					style="font-size: 2em; color: #2196F3;"></i> </p> <p> <span
+					style="font-size: 1.3em;">2</span> </p> </div> <div class="ui-g-4"> <p>
+				<span>Artillería</span> </p> <p> <i
+					style="font-size: 2em; color: #F44336;"></i> </p> <p> <span
+					style="font-size: 1.3em;">1</span> </p> </div> </div>
+
+
+				<div style="text-align: center; margin-top: 15px;"> <p:commandButton
+					value="Canjear cartas" styleClass="ui-button-success"
+					action="#{bean.canjearCartas}" update="@form" /> </div>
+
+			</p:panel>
+
+			<h1></h1>
+
+			<p:panel id="faseTerritoriosPanel" header="Refuerzos"
+				widgetVar="faseTerritorios" style="display: block;"
+				styleClass="panel-risk"
+				rendered="#{not partidabean.territoriosDisponiblesVacio}">
+				<!-- Spinner para seleccionar cuántas tropas reforzar -->
+				<p:spinner id="spinnerTropas" value="3" min="1" max="10"
+					style="margin: 10px 0;" />
+				<p:messages id="mensajes" autoUpdate="true" />
+				<p:selectOneMenu id="territoriosJugadorRefuerzos"
+					value="#{partidabean.territorioSeleccionadoId}">
+					<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+					<f:selectItems value="#{partidabean.territoriosDisponiblesList}"
+						var="t" itemLabel="#{t.nombre}" itemValue="#{t.id}" />
+				</p:selectOneMenu>
+				<br />
+				<br />
+				<p:commandButton value="Reclamar"
+					action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
+					update="gameForm" process="@form" />
+			</p:panel>
+
+			<!-- Panel que se muestra cuando la lista está vacía -->
+			<p:panel id="refuerzosPanel" header="Refuerzos"
+				widgetVar="refuerzosPanel" style="display: block;"
+				styleClass="panel-risk"
+				>
+				<p:messages id="mensajesRefuerzos" autoUpdate="true" />
+				<p:outputLabel value="No hay territorios disponibles para reclamar." />
+				<!-- ID único para este selectOneMenu -->
+				<p:selectOneMenu id="territoriosJugadorRefuerzosVacio"
+					value="#{partidabean.territorioSeleccionadoId}">
+					<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+					<f:selectItems value="#{partidabean.territoriosDisponiblesList}"
+						var="t" itemLabel="#{t.nombre}" itemValue="#{t.id}" />
+				</p:selectOneMenu>
+				<br />
+				<br />
+				<p:commandButton value="Reforzar"
+					action="#{partidabean.reforzarTerritorio(partidabean.territorioSeleccionadoId)}"
+					update="gameForm" process="@form" />
+			</p:panel>
+
+
+			<p:panel id="faseAtaquePanel" header="Ataque" widgetVar="faseAtaque"
+				style="display: none;" styleClass="panel-risk">
+				<p>Desde:</p>
+				<p:selectOneMenu id="territorioOrigenAtaque"
+					onchange="updateTerritoriosVecinos()">
+					<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+					<f:selectItem itemLabel="Perú" itemValue="Perú" />
+				</p:selectOneMenu>
+				<p>Hasta:</p>
+				<p:selectOneMenu id="territorioDestinoAtaque">
+					<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
+					<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
+				</p:selectOneMenu>
+
+
+				<p:commandButton value="Atacar" onclick="PF('diceDialog').show();"
+					style="margin-top: 10px;" />
+				<br></br>
+				<br></br>
+				<p:commandButton value="Continuar a fase 2 >"
+					onclick="cambiarFase('movimiento'); return false;" />
+			</p:panel>
+
+			<p:panel id="faseMovimientoPanel" header="Movimiento"
+				widgetVar="faseMovimiento" style="display: none;"
+				styleClass="panel-risk">
+				<p:selectOneMenu id="territorioOrigenMovimiento"
+					onchange="updateTerritoriosVecinos()">
+					<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+					<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+					<f:selectItem itemLabel="Perú" itemValue="Perú" />
+				</p:selectOneMenu>
+				<p:selectOneMenu id="territorioDestinoMovimiento">
+					<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+					<f:selectItem itemLabel="Argentina" itemValue="Argentina" />
+					<f:selectItem itemLabel="Brasil" itemValue="Brasil" />
+				</p:selectOneMenu>
+				<p:spinner id="tropasMovimiento" value="1" min="1" max="10"
+					style="margin: 10px 0;" />
+				<p:commandButton value="Mover tropas" style="margin-top: 10px;" />
+				<br></br>
+				<br></br>
+				<p:commandButton value="Terminar turno"
+					onclick="cambiarFase('territorios'); return false;" />
+			</p:panel>
+
+			<p:dialog id="dicePanel" header="Dados de ataque y defensa"
+				widgetVar="diceDialog" modal="true" closable="true"
+				style="display: none;" styleClass="dialog-risk">
+				<div class="dice-container"> <div class="dice-group"> <p>Atacante
+				(máx 3)</p> <div class="dice attacker-dice"> <span class="die">1</span>
+				<span class="die">2</span> <span class="die">3</span> </div> </div> <div
+					class="dice-group"> <p>Defensor (máx 2)</p> <div
+					class="dice defender-dice"> <span class="die">1</span> <span
+					class="die">2</span> </div> </div> </div>
+				<p:commandButton value="Lanzar Dados" styleClass="btn-roll" />
+			</p:dialog>
+
+
+
+			<p:dialog widgetVar="playersDialog" modal="true"
+				header="Jugadores en partida" responsive="true" closable="true"
+				width="500" styleClass="dialog-risk">
+				<div class="player-cards-row"> <!-- JUGADOR 1 --> <div
+					class="player-card"> <div class="player-info"> <p
+					class="player-name">#{partidabean.jugador1.nombre}</p> <p
+					class="player-territories">Color: #{partidabean.jugador1.color}</p>
+				<p class="player-troops">Tropas:
+				#{partidabean.jugador1.tropasDisponibles}</p> <p
+					class="player-territories">Territorios:
+				#{partidabean.jugador1.territoriosControlados}</p> </div> </div> <!-- JUGADOR 2 -->
+				<div class="player-card"> <div class="player-info"> <p
+					class="player-name">#{partidabean.jugador2.nombre}</p> <p
+					class="player-territories">Color: #{partidabean.jugador2.color}</p>
+				<p class="player-troops">Tropas:
+				#{partidabean.jugador2.tropasDisponibles}</p> <p
+					class="player-territories">Territorios:
+				#{partidabean.jugador2.territoriosControlados}</p> </div> </div> <!-- JUGADOR 3 -->
+				<div class="player-card"> <div class="player-info"> <p
+					class="player-name">#{partidabean.jugador3.nombre}</p> <p
+					class="player-territories">Color: #{partidabean.jugador3.color}</p>
+				<p class="player-troops">Tropas:
+				#{partidabean.jugador3.tropasDisponibles}</p> <p
+					class="player-territories">Territorios:
+				#{partidabean.jugador3.territoriosControlados}</p> </div> </div> <!-- JUGADOR 4 -->
+				<div class="player-card"> <div class="player-info"> <p
+					class="player-name">#{partidabean.jugador4.nombre}</p> <p
+					class="player-territories">Color: #{partidabean.jugador4.color}</p>
+				<p class="player-troops">Tropas:
+				#{partidabean.jugador4.tropasDisponibles}</p> <p
+					class="player-territories">Territorios:
+				#{partidabean.jugador4.territoriosControlados}</p> </div> </div> <!-- JUGADOR 5 -->
+				<div class="player-card"> <div class="player-info"> <p
+					class="player-name">#{partidabean.jugador5.nombre}</p> <p
+					class="player-territories">Color: #{partidabean.jugador5.color}</p>
+				<p class="player-troops">Tropas:
+				#{partidabean.jugador5.tropasDisponibles}</p> <p
+					class="player-territories">Territorios:
+				#{partidabean.jugador5.territoriosControlados}</p> </div> </div> <!-- JUGADOR 6 -->
+				<div class="player-card"> <div class="player-info"> <p
+					class="player-name">#{partidabean.jugador6.nombre}</p> <p
+					class="player-territories">Color: #{partidabean.jugador6.color}</p>
+				<p class="player-troops">Tropas:
+				#{partidabean.jugador6.tropasDisponibles}</p> <p
+					class="player-territories">Territorios:
+				#{partidabean.jugador6.territoriosControlados}</p> </div> </div> </div>
+			</p:dialog>
+
+
+
+		</h:form> </div> </div> </div> </div>
 
 		<script>
 		function showTerritory(idTerritorio) {
@@ -744,5 +545,4 @@
 			}
 		</script>
 	</ui:define>
-</ui:composition>
-</html>
+</ui:composition> </html>

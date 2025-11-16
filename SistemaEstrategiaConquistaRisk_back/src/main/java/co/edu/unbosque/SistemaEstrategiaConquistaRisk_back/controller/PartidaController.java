@@ -402,5 +402,24 @@ public class PartidaController {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	        }
 	    }
+	  
+	  @GetMapping("/{partidaId}/anfitrion/datos")
+	  public ResponseEntity<JugadorDTO> obtenerDatosAnfitrion(@PathVariable Long partidaId) {
+	      try {
+	          Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
+	          if (anfitrionId == null) {
+	              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	          }
+
+	          JugadorDTO anfitrion = partidaService.obtenerJugadorDePartida(partidaId, anfitrionId);
+	          return ResponseEntity.ok(anfitrion);
+
+	      } catch (RuntimeException e) {
+	          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	      } catch (Exception e) {
+	          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	      }
+	  }
+
 
 }
