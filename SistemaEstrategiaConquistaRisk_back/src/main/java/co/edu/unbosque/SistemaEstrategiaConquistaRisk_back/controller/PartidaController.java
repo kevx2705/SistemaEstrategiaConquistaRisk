@@ -348,5 +348,6 @@ public class PartidaController {
 
 		return ResponseEntity.ok(listaNormal);
 	}
+	
 
 }

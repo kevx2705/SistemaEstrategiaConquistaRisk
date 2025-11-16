@@ -85,6 +85,9 @@ public class PartidaBean implements Serializable {
 	private TerritorioDTO territorioSeleccionado; // objeto seleccionado
 	private List<TerritorioDTO> territoriosDisponiblesList;
 	private Long jugadorActualId;
+	private JugadorDTO jugadorActualDTO;
+	private Gson gson =  new Gson();
+
 
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
@@ -195,6 +198,7 @@ public class PartidaBean implements Serializable {
 			inicializarJuego();
 			irAlTablero();
 			cargarTerritoriosDisponibles();
+			cargarJugadorActual();
 			obtenerJugadoresDePartida(partidaActual.getId());
 			System.out.println(territoriosDisponiblesList);
 
@@ -306,12 +310,28 @@ public class PartidaBean implements Serializable {
 			} else {
 				showMessage("Éxito", "Territorio reclamado.");
 				cargarTerritoriosDisponibles();
+				cargarJugadorActual();
 			}
 
 		} catch (Exception e) {
 			showMessage("Error", "No se pudo reclamar: " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+	public void cargarJugadorActual() {
+	    try {
+	        Long jugadorId = obtenerJugadorActual(partidaActual.getId());
+
+	        String url = "http://localhost:8081/jugadores/"+jugadorId+"/obtenerjugadorporid";
+	        String json = HttpClientUtil.get(url);
+
+	        jugadorActualDTO = gson.fromJson(json, JugadorDTO.class);
+	        System.out.println("id jugador actualdto"+jugadorActualDTO.getId());
+	        System.out.println("nombre jugador actual dto"+jugadorActualDTO.getNombre());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        showMessage("Error", "No se pudo obtener el jugador actual");
+	    }
 	}
 
 	/**
@@ -602,6 +622,14 @@ public class PartidaBean implements Serializable {
 
 	public void setJugadorActualId(Long jugadorActualId) {
 		this.jugadorActualId = jugadorActualId;
+	}
+
+	public JugadorDTO getJugadorActualDTO() {
+		return jugadorActualDTO;
+	}
+
+	public void setJugadorActualDTO(JugadorDTO jugadorActualDTO) {
+		this.jugadorActualDTO = jugadorActualDTO;
 	}
 
 }

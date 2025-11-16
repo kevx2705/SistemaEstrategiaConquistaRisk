@@ -58,6 +58,14 @@ public class JugadorService {
         return jugadorRepo.findById(idJugador).orElse(null);
     }
 
+    public JugadorDTO obtenerJugadorPorIdDTO(Long idJugador) {
+        Jugador jugador = jugadorRepo.findById(idJugador).orElse(null);
+        if (jugador == null) return null;
+
+        return modelMapper.map(jugador, JugadorDTO.class);
+    }
+
+
     /**
      * Obtiene todos los jugadores registrados.
      *

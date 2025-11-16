@@ -108,7 +108,18 @@ public class JugadorController {
         MyLinkedList<JugadorDTO> jugadores = jugadorService.getAll();
         return ResponseEntity.ok(jugadores);
     }
+    @GetMapping("/{id}/obtenerjugadorporid")
+    public ResponseEntity<?> obtenerJugadorPorId(@PathVariable Long id) {
 
+        JugadorDTO dto = jugadorService.obtenerJugadorPorIdDTO(id);
+
+        if (dto == null) {
+            return ResponseEntity.status(404)
+                    .body("No existe el jugador con id " + id);
+        }
+
+        return ResponseEntity.ok(dto);
+    }
     /**
      * Elimina un jugador por su identificador.
      *
