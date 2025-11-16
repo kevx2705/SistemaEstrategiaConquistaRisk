@@ -393,27 +393,30 @@
 								<p:spinner id="spinnerTropas" value="3" min="1" max="10"
 									style="margin: 10px 0;" />
 
-									<p:messages id="mensajes" autoUpdate="true" />
+								<p:messages id="mensajes" autoUpdate="true" />
 
-									<p:selectOneMenu id="territoriosJugadorRefuerzos"
-										value="#{partidabean.territorioSeleccionadoId}">
-										<f:selectItem itemLabel="Selecciona un territorio"
-											itemValue="" />
-										<f:selectItems
-											value="#{partidabean.territoriosDisponiblesList}" var="t"
-											itemLabel="#{t.nombre}" itemValue="#{t.id}" />
-										<p:ajax
-											listener="#{partidabean.reclamarTerritorioSeleccionado}"
-											update="mensajes" />
-									</p:selectOneMenu>
-
-
+								<p:selectOneMenu id="territoriosJugadorRefuerzos"
+									value="#{partidabean.territorioSeleccionadoId}">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItems
+										value="#{partidabean.territoriosDisponiblesList}" var="t"
+										itemLabel="#{t.nombre}" itemValue="#{t.id}" />
+									<p:ajax
+										listener="#{partidabean.reclamarTerritorioSeleccionado}"
+										update="mensajes" />
+								</p:selectOneMenu>
 
 								<br />
 								<br />
 
-								<p:commandButton value="Continuar a fase 1 >"
-									onclick="cambiarFase('ataque'); return false;" />
+								<p:commandButton value="Reclamar"
+									actionListener="#{partidabean.reclamarTerritorio(
+                     partidabean.partidaActual.id,
+                     partidabean.jugadorActualId,
+                     partidabean.territorioSeleccionadoId
+                 )}"
+									update="gameForm" process="@form" />
+
 							</p:panel>
 
 

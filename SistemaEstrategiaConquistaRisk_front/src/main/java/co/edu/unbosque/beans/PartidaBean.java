@@ -14,14 +14,20 @@ import org.primefaces.PrimeFaces;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+
 import co.edu.unbosque.estructures.MyLinkedList;
 import co.edu.unbosque.estructures.Node;
 import co.edu.unbosque.model.Carta;
 import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.model.Partida;
 import co.edu.unbosque.model.UsuarioActual;
+import co.edu.unbosque.model.persistence.JugadorDTO;
 import co.edu.unbosque.model.persistence.TerritorioDTO;
 import co.edu.unbosque.util.HttpClientUtil;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+
 
 /**
  * Bean de sesión que gestiona la creación, inicialización y acciones de una
@@ -79,6 +85,8 @@ public class PartidaBean implements Serializable {
 	private TerritorioDTO[] territoriosDisponiblesArray; // array para el selectOneMenu
 	private TerritorioDTO territorioSeleccionado; // objeto seleccionado
 	private List<TerritorioDTO> territoriosDisponiblesList;
+	private Long jugadorActualId;
+
 
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
@@ -178,6 +186,8 @@ public class PartidaBean implements Serializable {
 							j.setCartas(cartas);
 
 							jugadoresEnPartida.addLast(j);
+							jugadorActualId = partidaActual.getJugadorActualId();
+							System.out.println("Jugador actual id" + partidaActual);
 							System.out.println(jugadoresEnPartida.toString());
 						}
 					}
@@ -202,6 +212,8 @@ public class PartidaBean implements Serializable {
 		}
 		return lista;
 	}
+	
+
 
 	public Jugador getJugador1() {
 		return jugadoresEnPartida.size() > 0 ? jugadoresEnPartida.get(0) : null;
@@ -232,12 +244,14 @@ public class PartidaBean implements Serializable {
 	 */
 	public void reclamarTerritorio(Long partidaId, Long jugadorId, Long territorioId) {
 		try {
+			
 			if (partidaId == null || jugadorId == null || territorioId == null) {
 				showMessage("Error", "Datos incompletos para reclamar el territorio.");
 				return;
 			}
 			Long anfitrionId = obtenerAnfitrion(partidaId);
 			Long jugadorActualId = obtenerJugadorActual(partidaId);
+			this.jugadorActualId = jugadorActualId = obtenerJugadorActual(partidaId);
 			if (jugadorActualId == null) {
 				showMessage("Error", "No se pudo obtener el jugador actual de la partida.");
 				return;
@@ -246,8 +260,10 @@ public class PartidaBean implements Serializable {
 				showMessage("Error", "Solo el anfitrión o el jugador actual pueden reclamar territorios.");
 				return;
 			}
-			String url = BASE_URL + "/reclamar?partidaId=" + partidaId + "&jugadorId=" + jugadorId + "&territorioId="
-					+ territorioId;
+			String url = BASE_URL + "/" + partidaId + "/reclamar"
+			           + "?jugadorId=" + jugadorId
+			           + "&territorioId=" + territorioId;
+
 			String response = HttpClientUtil.post(url, null);
 			if (response.contains("\"status\":200")) {
 				showMessage("Éxito", "Territorio reclamado con éxito.");
@@ -299,15 +315,18 @@ public class PartidaBean implements Serializable {
 	 * @param partidaId ID de la partida.
 	 * @return ID del jugador actual, o null si ocurre un error.
 	 */
-	private Long obtenerJugadorActual(Long partidaId) {
-		try {
-			String response = HttpClientUtil.get(BASE_URL + "/" + partidaId + "/jugador-actual");
-			return mapper.readValue(response, Long.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	public Long obtenerJugadorActual(Long partidaId) {
+	    try {
+	        String url = BASE_URL + "/" + partidaId + "/jugador-actual";
+	        String response = HttpClientUtil.get(url);
+
+	        return Long.parseLong(response.trim());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
+
 
 	/**
 	 * Inicializa el juego para la partida actual.
@@ -326,30 +345,29 @@ public class PartidaBean implements Serializable {
 	}
 
 	public void cargarTerritoriosDisponibles() {
-	    try {
-	        if (partidaActual == null) {
-	            showMessage("Error", "No hay partida activa");
-	            return;
-	        }
+		try {
+			if (partidaActual == null) {
+				showMessage("Error", "No hay partida activa");
+				return;
+			}
 
-	        String url = BASE_URL + "/" + partidaActual.getId() + "/territorios/disponibles";
-	        String response = HttpClientUtil.get(url);
+			String url = BASE_URL + "/" + partidaActual.getId() + "/territorios/disponibles";
+			String response = HttpClientUtil.get(url);
 
-	        TerritorioDTO[] array = mapper.readValue(response, TerritorioDTO[].class);
+			TerritorioDTO[] array = mapper.readValue(response, TerritorioDTO[].class);
 
-	        this.territoriosDisponiblesList = Arrays.asList(array);
+			this.territoriosDisponiblesList = Arrays.asList(array);
 
-	        System.out.println("Territorios cargados: " + territoriosDisponiblesList.size());
+			System.out.println("Territorios cargados: " + territoriosDisponiblesList.size());
 
-	        // Actualizar componente
-	        PrimeFaces.current().ajax().update("gameform:territoriosJugadorRefuerzos");
+			// Actualizar componente
+			PrimeFaces.current().ajax().update("gameform:territoriosJugadorRefuerzos");
 
-	    } catch (Exception e) {
-	        showMessage("Error", "No se pudieron cargar los territorios: " + e.getMessage());
-	        e.printStackTrace();
-	    }
+		} catch (Exception e) {
+			showMessage("Error", "No se pudieron cargar los territorios: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
-
 
 	/**
 	 * Redirige al tablero de juego.
@@ -551,6 +569,14 @@ public class PartidaBean implements Serializable {
 
 	public void setTerritoriosDisponiblesList(List<TerritorioDTO> territoriosDisponiblesList) {
 		this.territoriosDisponiblesList = territoriosDisponiblesList;
+	}
+
+	public Long getJugadorActualId() {
+		return jugadorActualId;
+	}
+
+	public void setJugadorActualId(Long jugadorActualId) {
+		this.jugadorActualId = jugadorActualId;
 	}
 
 }
