@@ -96,7 +96,7 @@ public class PartidaController {
 
 			String mensaje = e.getMessage();
 
-			System.out.println("❌ Error en reclamarTerritorio: " + mensaje);
+			System.out.println("Error en reclamarTerritorio: " + mensaje);
 
 			if (mensaje.contains("No existe la partida")) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", mensaje));
