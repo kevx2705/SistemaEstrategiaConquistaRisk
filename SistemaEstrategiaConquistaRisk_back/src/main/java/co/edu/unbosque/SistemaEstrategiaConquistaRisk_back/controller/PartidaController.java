@@ -55,39 +55,32 @@ public class PartidaController {
 	 * @return ResponseEntity con la partida creada en formato DTO.
 	 */
 	@PostMapping("/crear")
-	public ResponseEntity<?> crearPartida(
-	        @RequestParam Long anfitrionId,
-	        @RequestBody String[] otrosNombres) {
+	public ResponseEntity<?> crearPartida(@RequestParam Long anfitrionId, @RequestBody String[] otrosNombres) {
 
-	    try {
-	        PartidaDTO partida = partidaService.crearPartidaDTO(anfitrionId, otrosNombres);
-	        return ResponseEntity.ok(partida);
+		try {
+			PartidaDTO partida = partidaService.crearPartidaDTO(anfitrionId, otrosNombres);
+			return ResponseEntity.ok(partida);
 
-	    } catch (EntityNotFoundException ex) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                .body(crearError(ex.getMessage()));
+		} catch (EntityNotFoundException ex) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(crearError(ex.getMessage()));
 
-	    } catch (IllegalStateException ex) {
-	        return ResponseEntity.status(HttpStatus.CONFLICT)
-	                .body(crearError(ex.getMessage()));
+		} catch (IllegalStateException ex) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(crearError(ex.getMessage()));
 
-	    } catch (IllegalArgumentException ex) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body(crearError(ex.getMessage()));
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(crearError(ex.getMessage()));
 
-	    } catch (Exception ex) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body(crearError("Ocurrió un error inesperado"));
-	    }
+		} catch (Exception ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(crearError("Ocurrió un error inesperado"));
+		}
 	}
-
 
 	private Map<String, String> crearError(String mensaje) {
-	    Map<String, String> error = new HashMap<String, String>();
-	    error.put("error", mensaje);
-	    return error;
+		Map<String, String> error = new HashMap<String, String>();
+		error.put("error", mensaje);
+		return error;
 	}
-
 
 	/**
 	 * Inicializa el juego para una partida específica.
@@ -158,16 +151,16 @@ public class PartidaController {
 	 */
 	@GetMapping("/{partidaId}/jugadores")
 	public ResponseEntity<List<JugadorDTO>> obtenerJugadoresPartida(@PathVariable Long partidaId) {
-	    MyLinkedList<JugadorDTO> jugadoresLinkedList = partidaService.obtenerJugadoresPorPartida(partidaId);
+		MyLinkedList<JugadorDTO> jugadoresLinkedList = partidaService.obtenerJugadoresPorPartida(partidaId);
 
-	    List<JugadorDTO> jugadoresList = new ArrayList<>();
-	    Node<JugadorDTO> current = jugadoresLinkedList.getFirst();
-	    while (current != null) {
-	        jugadoresList.add(current.getInfo());
-	        current = current.getNext();
-	    }
+		List<JugadorDTO> jugadoresList = new ArrayList<>();
+		Node<JugadorDTO> current = jugadoresLinkedList.getFirst();
+		while (current != null) {
+			jugadoresList.add(current.getInfo());
+			current = current.getNext();
+		}
 
-	    return ResponseEntity.ok(jugadoresList);
+		return ResponseEntity.ok(jugadoresList);
 	}
 
 	/**
@@ -379,47 +372,60 @@ public class PartidaController {
 
 		return ResponseEntity.ok(listaNormal);
 	}
-	  @GetMapping("/{partidaId}/territorios/{territorioId}")
-	    public ResponseEntity<TerritorioDTO> obtenerTerritorioPorId(
-	            @PathVariable Long partidaId,
-	            @PathVariable Long territorioId) {
 
-	        try {
-	            TerritorioDTO territorio = partidaService.obtenerTerritorioPorId(partidaId, territorioId);
-	            return ResponseEntity.ok(territorio);
-	        } catch (RuntimeException e) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        }
-	    }
-	  @GetMapping("/{partidaId}/jugadores/{jugadorId}")
-	    public ResponseEntity<JugadorDTO> getJugadorDePartida(
-	            @PathVariable Long partidaId,
-	            @PathVariable Long jugadorId) {
-	        try {
-	            JugadorDTO jugador = partidaService.obtenerJugadorDePartida(partidaId, jugadorId);
-	            return ResponseEntity.ok(jugador);
-	        } catch (RuntimeException e) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        }
-	    }
-	  
-	  @GetMapping("/{partidaId}/anfitrion/datos")
-	  public ResponseEntity<JugadorDTO> obtenerDatosAnfitrion(@PathVariable Long partidaId) {
-	      try {
-	          Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
-	          if (anfitrionId == null) {
-	              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	          }
+	@GetMapping("/{partidaId}/territorios/{territorioId}")
+	public ResponseEntity<TerritorioDTO> obtenerTerritorioPorId(@PathVariable Long partidaId,
+			@PathVariable Long territorioId) {
 
-	          JugadorDTO anfitrion = partidaService.obtenerJugadorDePartida(partidaId, anfitrionId);
-	          return ResponseEntity.ok(anfitrion);
+		try {
+			TerritorioDTO territorio = partidaService.obtenerTerritorioPorId(partidaId, territorioId);
+			return ResponseEntity.ok(territorio);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
 
-	      } catch (RuntimeException e) {
-	          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	      } catch (Exception e) {
-	          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	      }
-	  }
+	@GetMapping("/{partidaId}/jugadores/{jugadorId}")
+	public ResponseEntity<JugadorDTO> getJugadorDePartida(@PathVariable Long partidaId, @PathVariable Long jugadorId) {
+		try {
+			JugadorDTO jugador = partidaService.obtenerJugadorDePartida(partidaId, jugadorId);
+			return ResponseEntity.ok(jugador);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
 
+	@GetMapping("/{partidaId}/anfitrion/datos")
+	public ResponseEntity<JugadorDTO> obtenerDatosAnfitrion(@PathVariable Long partidaId) {
+		try {
+			Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
+			if (anfitrionId == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+
+			JugadorDTO anfitrion = partidaService.obtenerJugadorDePartida(partidaId, anfitrionId);
+			return ResponseEntity.ok(anfitrion);
+
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@GetMapping("/{partidaId}/jugadores/{jugadorId}/territorios")
+	public ResponseEntity<List<TerritorioDTO>> getTerritoriosDeJugador(@PathVariable Long partidaId,
+			@PathVariable Long jugadorId) {
+
+		MyLinkedList<TerritorioDTO> territoriosLinked = partidaService.obtenerTerritoriosDeJugador(partidaId,
+				jugadorId);
+		List<TerritorioDTO> territoriosList = new ArrayList<>();
+
+		for (int i = 0; i < territoriosLinked.size(); i++) {
+			territoriosList.add(territoriosLinked.getPos(i).getInfo());
+		}
+
+		return ResponseEntity.ok(territoriosList);
+	}
 
 }

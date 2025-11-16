@@ -86,6 +86,7 @@ public class PartidaBean implements Serializable {
 	 * ID del territorio actualmente seleccionado.
 	 */
 	private Long territorioSeleccionadoId;
+	private Long territorioSeleccionadoId2;
 	/**
 	 * URL base para las solicitudes al backend relacionadas con partidas.
 	 */
@@ -99,6 +100,8 @@ public class PartidaBean implements Serializable {
 	private Gson gson = new Gson();
 	private List<JugadorDTO> jugadores;
 	private String nombreJugador;
+	private List<TerritorioDTO> territoriosList; // lista para el select
+	private final String BASE_URLEMAIL = "http://localhost:8081/correo";
 
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
@@ -220,9 +223,8 @@ public class PartidaBean implements Serializable {
 	}
 
 	public boolean isTerritoriosDisponiblesVacio() {
-	    return territoriosDisponiblesList == null || territoriosDisponiblesList.isEmpty();
+		return territoriosDisponiblesList == null || territoriosDisponiblesList.isEmpty();
 	}
-
 
 	public void cargarJugadoresDePartida() {
 		try {
@@ -295,7 +297,7 @@ public class PartidaBean implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public void reforzarTerritorio(Long territorioId) {
 //	    if (territorioId != null) {
 //	        // Lógica para reforzar el territorio seleccionado
@@ -319,7 +321,6 @@ public class PartidaBean implements Serializable {
 //	        );
 //	    }
 	}
-
 
 	public JugadorDTO getJugador1() {
 		return jugadores != null && jugadores.size() > 0 ? jugadores.get(0) : null;
@@ -395,6 +396,7 @@ public class PartidaBean implements Serializable {
 				showMessage("Éxito", "Territorio reclamado.");
 				cargarTerritoriosDisponibles();
 				cargarJugadorActual();
+				cargarTerritoriosJugador();
 			}
 
 		} catch (Exception e) {
@@ -504,120 +506,16 @@ public class PartidaBean implements Serializable {
 		}
 	}
 
-	public void finalizarPartidaForzada() {
+	public void cargarTerritoriosJugador() {
 		try {
-			if (partidaActual == null) {
-				showMessage("Error", "No hay partida activa.");
-				return;
-			}
+			String url = BASE_URL + "/" + partidaActual.getId() + "/jugadores/"
+					+ obtenerJugadorActual(partidaActual.getId()) + "/territorios";
+			String json = HttpClientUtil.get(url);
 
-			Long partidaId = partidaActual.getId();
-			System.out.println("➡ Finalizando forzadamente la partida: " + partidaId);
-
-			String url = BASE_URL + "/partida/" + partidaId + "/finalizar-forzada";
-			String response = HttpClientUtil.put(url, null);
-
-			if (response == null || response.trim().isEmpty()) {
-				showMessage("Error", "Respuesta vacía del servidor.");
-				return;
-			}
-
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.registerModule(new JavaTimeModule());
-			mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-			Partida partida = mapper.readValue(response, Partida.class);
-
-			this.partidaActual = partida;
-
-			System.out.println("Partida finalizada:");
-			System.out.println(" - ID: " + partida.getId());
-			System.out.println(" - Iniciada: " + partida.isIniciada());
-			System.out.println(" - Finalizada: " + partida.isFinalizada());
-			System.out.println(" - Fecha Inicio: " + partida.getFechaInicio());
-			System.out.println(" - Código Hash: " + partida.getCodigoHash());
-
-			showMessage("Éxito", "La partida " + partida.getId() + " fue finalizada correctamente.");
+			territoriosList = gson.fromJson(json, new TypeToken<List<TerritorioDTO>>() {
+			}.getType());
 
 		} catch (Exception e) {
-			showMessage("Error", "No se pudo finalizar la partida: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	public void finalizarYDescargar() {
-		try {
-			finalizarPartidaForzada();
-
-			descargarZipFinal();
-
-			JugadorDTO anfitrion = cargarDatosAnfitrion();
-			if (anfitrion == null) {
-				showMessage("Error", "No se pudo obtener los datos del anfitrión.");
-				return;
-			}
-
-			enviarCorreoFinal(anfitrion.getCorreo());
-
-		} catch (Exception e) {
-			showMessage("Error", "Ocurrió un error al finalizar la partida: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	public void enviarCorreoFinal(String email) {
-		try {
-			if (partidaActual == null || partidaActual.getId() == null) {
-				showMessage("Error", "No hay partida activa o válida.");
-				return;
-			}
-
-			Long partidaId = partidaActual.getId();
-			System.out.println("➡ Enviando correo final de la partida: " + partidaId + " al email: " + email);
-			String url = BASE_URL + "/enviar-final/" + partidaId + "?email="
-					+ URLEncoder.encode(email, StandardCharsets.UTF_8);
-			String response = HttpClientUtil.post(url, null);
-
-			if (response == null || response.trim().isEmpty()) {
-				showMessage("Error", "No se recibió respuesta del servidor.");
-				return;
-			}
-
-			showMessage("Éxito", "Correo enviado correctamente al email: " + email);
-			System.out.println("Respuesta del servidor: " + response);
-
-		} catch (Exception e) {
-			showMessage("Error", "No se pudo enviar el correo: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	public void descargarZipFinal() {
-		try {
-			if (partidaActual == null) {
-				showMessage("Error", "No hay partida activa.");
-				return;
-			}
-
-			Long partidaId = partidaActual.getId();
-			System.out.println("➡ Descargando ZIP final de la partida: " + partidaId);
-
-			String url = BASE_URL + "/descargar-final/" + partidaId;
-
-			byte[] zipBytes = HttpClientUtil.getBytes(url);
-
-			if (zipBytes == null || zipBytes.length == 0) {
-				showMessage("Error", "No se recibió el archivo ZIP.");
-				return;
-			}
-
-			Path path = Paths.get(System.getProperty("user.home") + "\\Downloads\\Resultados_" + partidaId + ".zip");
-			Files.write(path, zipBytes);
-
-			showMessage("Éxito", "Archivo ZIP descargado correctamente en: " + path.toString());
-
-		} catch (Exception e) {
-			showMessage("Error", "No se pudo descargar el ZIP: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -876,6 +774,142 @@ public class PartidaBean implements Serializable {
 
 	public void setNombreJugador(String nombreJugador) {
 		this.nombreJugador = nombreJugador;
+	}
+
+	public List<TerritorioDTO> getTerritoriosList() {
+		return territoriosList;
+	}
+
+	public void setTerritoriosList(List<TerritorioDTO> territoriosList) {
+		this.territoriosList = territoriosList;
+	}
+
+	public Long getTerritorioSeleccionadoId2() {
+		return territorioSeleccionadoId2;
+	}
+
+	public void setTerritorioSeleccionadoId2(Long territorioSeleccionadoId2) {
+		this.territorioSeleccionadoId2 = territorioSeleccionadoId2;
+	}
+
+
+	public void finalizarPartidaForzada() {
+		try {
+			if (partidaActual == null) {
+				showMessage("Error", "No hay partida activa.");
+				return;
+			}
+
+			Long partidaId = partidaActual.getId();
+			System.out.println("➡ Finalizando forzadamente la partida: " + partidaId);
+
+			String url = BASE_URL + "/partida/" + partidaId + "/finalizar-forzada";
+			String response = HttpClientUtil.put(url, null);
+
+			if (response == null || response.trim().isEmpty()) {
+				showMessage("Error", "Respuesta vacía del servidor.");
+				return;
+			}
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.registerModule(new JavaTimeModule());
+			mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+			Partida partida = mapper.readValue(response, Partida.class);
+
+			this.partidaActual = partida;
+
+			System.out.println("Partida finalizada:");
+			System.out.println(" - ID: " + partida.getId());
+			System.out.println(" - Iniciada: " + partida.isIniciada());
+			System.out.println(" - Finalizada: " + partida.isFinalizada());
+			System.out.println(" - Fecha Inicio: " + partida.getFechaInicio());
+			System.out.println(" - Código Hash: " + partida.getCodigoHash());
+
+			showMessage("Éxito", "La partida " + partida.getId() + " fue finalizada correctamente.");
+
+		} catch (Exception e) {
+			showMessage("Error", "No se pudo finalizar la partida: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public void finalizarYDescargar() {
+		try {
+			finalizarPartidaForzada();
+			descargarZipFinal();
+			JugadorDTO anfitrion = cargarDatosAnfitrion(); // Cambia Jugador por JugadorDTO
+			if (anfitrion == null) {
+				showMessage("Error", "No se pudo obtener los datos del anfitrión.");
+				return;
+			}
+			// Asegúrate de que el correo no sea null
+			if (anfitrion.getCorreo() == null || anfitrion.getCorreo().trim().isEmpty()) {
+				showMessage("Error", "El correo del anfitrión no está disponible.");
+				return;
+			}
+			enviarCorreoFinal(anfitrion.getCorreo());
+		} catch (Exception e) {
+			showMessage("Error", "Ocurrió un error al finalizar la partida: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public void enviarCorreoFinal(String email) {
+		try {
+			if (partidaActual == null || partidaActual.getId() == null) {
+				showMessage("Error", "No hay partida activa o válida.");
+				return;
+			}
+			if (email == null || email.trim().isEmpty()) {
+				showMessage("Error", "El correo del anfitrión no está disponible.");
+				return;
+			}
+			Long partidaId = partidaActual.getId();
+			System.out.println("➡ Enviando correo final de la partida: " + partidaId + " al email: " + email);
+			String url = BASE_URLEMAIL + "" + "/enviar-final/" + partidaId + "?email="
+					+ URLEncoder.encode(email, StandardCharsets.UTF_8);
+			String response = HttpClientUtil.post(url, null);
+			if (response == null || response.trim().isEmpty()) {
+				showMessage("Error", "No se recibió respuesta del servidor.");
+				return;
+			}
+			showMessage("Éxito", "Correo enviado correctamente al email: " + email);
+			System.out.println("Respuesta del servidor: " + response);
+		} catch (Exception e) {
+			showMessage("Error", "No se pudo enviar el correo: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public void descargarZipFinal() {
+		try {
+			if (partidaActual == null) {
+				showMessage("Error", "No hay partida activa.");
+				return;
+			}
+
+			Long partidaId = partidaActual.getId();
+			System.out.println("➡ Descargando ZIP final de la partida: " + partidaId);
+
+			String url = BASE_URL + "/descargar-final/" + partidaId;
+
+			byte[] zipBytes = HttpClientUtil.getBytes(url);
+
+			if (zipBytes == null || zipBytes.length == 0) {
+				showMessage("Error", "No se recibió el archivo ZIP.");
+				return;
+			}
+
+			Path path = Paths.get(System.getProperty("user.home") + "\\Downloads\\Resultados_" + partidaId + ".zip");
+			Files.write(path, zipBytes);
+
+			showMessage("Éxito", "Archivo ZIP descargado correctamente en: " + path.toString());
+
+		} catch (Exception e) {
+			showMessage("Error", "No se pudo descargar el ZIP: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }
