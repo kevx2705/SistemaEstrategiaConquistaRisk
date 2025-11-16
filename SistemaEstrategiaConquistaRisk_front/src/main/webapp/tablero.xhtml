@@ -347,13 +347,11 @@
 
 			<h1></h1>
 
-			<p:panel id="faseTerritoriosPanel" header="Refuerzos"
+			<p:panel id="faseTerritoriosPanel" header="Selección de Territorios"
 				widgetVar="faseTerritorios" style="display: block;"
 				styleClass="panel-risk"
 				rendered="#{not partidabean.territoriosDisponiblesVacio}">
-				<!-- Spinner para seleccionar cuántas tropas reforzar -->
-				<p:spinner id="spinnerTropas" value="3" min="1" max="10"
-					style="margin: 10px 0;" />
+
 				<p:messages id="mensajes" autoUpdate="true" />
 				<p:selectOneMenu id="territoriosJugadorRefuerzos"
 					value="#{partidabean.territorioSeleccionadoId}">
@@ -373,10 +371,13 @@
 				widgetVar="refuerzosPanel" style="display: block;"
 				styleClass="panel-risk"
 				>
-				
+								<!-- Spinner para seleccionar cuántas tropas reforzar -->
+				<!-- InputNumber para seleccionar cuántas tropas reforzar -->
+<div class="field col-12 md:col-4">
+    <p:inputNumber id="spinnerTropas" value="3" minValue="1" maxValue="10" decimalPlaces="0"
+        style="width: 100%; " />
+</div>
 <!-- 				rendered="#{partidabean.territoriosDisponiblesVacio}" -->
-				<p:messages id="mensajesRefuerzos" autoUpdate="true" />
-				<p:outputLabel value="No hay territorios disponibles para reclamar." />
 				<!-- ID único para este selectOneMenu -->
 				<p:selectOneMenu id="territoriosJugadorRefuerzosVacio"
 					value="#{partidabean.territorioSeleccionadoId}">
