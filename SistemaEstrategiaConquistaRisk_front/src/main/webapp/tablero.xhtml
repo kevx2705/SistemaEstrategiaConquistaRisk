@@ -401,21 +401,15 @@
 									<f:selectItems
 										value="#{partidabean.territoriosDisponiblesList}" var="t"
 										itemLabel="#{t.nombre}" itemValue="#{t.id}" />
-									<p:ajax
-										listener="#{partidabean.reclamarTerritorioSeleccionado}"
-										update="mensajes" />
 								</p:selectOneMenu>
 
 								<br />
 								<br />
 
 								<p:commandButton value="Reclamar"
-									actionListener="#{partidabean.reclamarTerritorio(
-                     partidabean.partidaActual.id,
-                     partidabean.jugadorActualId,
-                     partidabean.territorioSeleccionadoId
-                 )}"
-									update="gameForm" process="@form" />
+									action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
+									update="gameForm" process="@this" />
+
 
 							</p:panel>
 

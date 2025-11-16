@@ -242,55 +242,56 @@ public class PartidaBean implements Serializable {
 	 * @param jugadorId    ID del jugador que reclama el territorio.
 	 * @param territorioId ID del territorio a reclamar.
 	 */
-	public void reclamarTerritorio(Long partidaId, Long jugadorId, Long territorioId) {
-		try {
-			
-			if (partidaId == null || jugadorId == null || territorioId == null) {
-				showMessage("Error", "Datos incompletos para reclamar el territorio.");
-				return;
-			}
-			Long anfitrionId = obtenerAnfitrion(partidaId);
-			Long jugadorActualId = obtenerJugadorActual(partidaId);
-			this.jugadorActualId = jugadorActualId = obtenerJugadorActual(partidaId);
-			if (jugadorActualId == null) {
-				showMessage("Error", "No se pudo obtener el jugador actual de la partida.");
-				return;
-			}
-			if (!jugadorActualId.equals(jugadorId) && !anfitrionId.equals(jugadorId)) {
-				showMessage("Error", "Solo el anfitrión o el jugador actual pueden reclamar territorios.");
-				return;
-			}
-			String url = BASE_URL + "/" + partidaId + "/reclamar"
-			           + "?jugadorId=" + jugadorId
-			           + "&territorioId=" + territorioId;
+	public void reclamarTerritorio(Long territorioId) {
+	    try {
+	        if (partidaActual == null) {
+	            showMessage("Error", "No hay partida activa.");
+	            return;
+	        }
 
-			String response = HttpClientUtil.post(url, null);
-			if (response.contains("\"status\":200")) {
-				showMessage("Éxito", "Territorio reclamado con éxito.");
-			} else if (response.contains("\"status\":400")) {
-				showMessage("Error", "Solicitud inválida. Verifica los datos.");
-			} else if (response.contains("\"status\":403")) {
-				showMessage("Error", "No tienes permiso para reclamar este territorio.");
-			} else if (response.contains("\"status\":404")) {
-				showMessage("Error", "Partida, jugador o territorio no encontrado.");
-			} else if (response.contains("\"status\":500")) {
-				showMessage("Error", "Error interno del servidor al reclamar el territorio.");
-			} else {
-				showMessage("Error", "No se pudo reclamar el territorio: " + response);
-			}
-		} catch (Exception e) {
-			showMessage("Error", "No se pudo reclamar el territorio: " + e.getMessage());
-			e.printStackTrace();
-		}
+	        Long partidaId = partidaActual.getId();
+	        Long jugadorActualId = obtenerJugadorActual(partidaId);
+
+	        if (jugadorActualId == null) {
+	            showMessage("Error", "No se pudo obtener el jugador actual.");
+	            return;
+	        }
+
+	        // Debug real
+	        System.out.println("➡ Jugador actual (backend): " + jugadorActualId);
+	        System.out.println("➡ Territorio que quiero reclamar: " + territorioId);
+
+	        String url = BASE_URL + "/" + partidaId + "/reclamar"
+	                + "?jugadorId=" + jugadorActualId
+	                + "&territorioId=" + territorioId;
+
+	        String response = HttpClientUtil.post(url, null);
+
+	        // No revises status manualmente. Solo revisa errores controlados.
+	        if (response.contains("Territorio ya asignado")) {
+	            showMessage("Error", "Este territorio ya fue reclamado.");
+	        } else if (response.contains("No es el turno de este jugador")) {
+	            showMessage("Error", "Debes esperar tu turno.");
+	        } else if (response.contains("Territorio no encontrado")) {
+	            showMessage("Error", "Territorio inválido.");
+	        } else {
+	            showMessage("Éxito", "Territorio reclamado.");
+	            cargarTerritoriosDisponibles();
+	        }
+
+	    } catch (Exception e) {
+	        showMessage("Error", "No se pudo reclamar: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
+
 
 	/**
 	 * Reclama el territorio actualmente seleccionado para el jugador actual.
 	 */
 	public void reclamarTerritorioSeleccionado() {
 		System.out.println("Territorio seleccionado: " + territorioSeleccionadoId);
-		Long jugadorId = UsuarioActual.getUsuarioActual().getId();
-		reclamarTerritorio(partidaActual.getId(), jugadorId, territorioSeleccionadoId);
+		reclamarTerritorio(territorioSeleccionadoId);
 	}
 
 	/**
@@ -523,8 +524,7 @@ public class PartidaBean implements Serializable {
 	public void setTerritorioSeleccionadoId(Long territorioSeleccionadoId) {
 		this.territorioSeleccionadoId = territorioSeleccionadoId;
 		if (territorioSeleccionadoId != null && partidaActual != null) {
-			Long jugadorId = UsuarioActual.getUsuarioActual().getId();
-			reclamarTerritorio(partidaActual.getId(), jugadorId, territorioSeleccionadoId);
+			reclamarTerritorio(territorioSeleccionadoId);
 		}
 	}
 
