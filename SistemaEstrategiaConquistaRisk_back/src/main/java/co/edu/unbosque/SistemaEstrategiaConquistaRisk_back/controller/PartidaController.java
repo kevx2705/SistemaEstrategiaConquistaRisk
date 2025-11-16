@@ -80,7 +80,20 @@ public class PartidaController {
 		partidaService.reclamarTerritorio(id, jugadorId, territorioId);
 		return ResponseEntity.ok().build();
 	}
+	
+	/**
+	 * Obtiene la lista de jugadores de una partida específica.
+	 *
+	 * @param partidaId Identificador de la partida.
+	 * @return ResponseEntity con la lista enlazada de jugadores en formato DTO.
+	 */
+	@GetMapping("/{partidaId}/jugadores")
+	public ResponseEntity<MyLinkedList<JugadorDTO>> obtenerJugadoresPartida(@PathVariable Long partidaId) {
+	    MyLinkedList<JugadorDTO> jugadores = partidaService.obtenerJugadoresPorPartida(partidaId);
+	    return ResponseEntity.ok(jugadores);
+	}
 
+	
 	/**
 	 * Inicia la fase de refuerzo en una partida.
 	 *
