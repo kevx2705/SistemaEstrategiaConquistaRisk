@@ -385,13 +385,41 @@
 
 							<h1></h1>
 
-							<p:panel id="faseTerritoriosPanel" header="Refuerzos"
-								widgetVar="faseTerritorios" style="display: block;"
+
+							<p:panel id="faseTerritoriosSecPanel" header="Territorios"
+								widgetVar="faseTerritoriosSec" style="display:block;"
 								styleClass="panel-risk">
 
-								<!-- Spinner para seleccionar cuántas tropas reforzar -->
+
+
+								<p:selectOneMenu id="territoriosJugador"
+									value="#{partidabean.territorioSeleccionadoId}">
+									<f:selectItem itemLabel="Selecciona un territorio" itemValue="" />
+									<f:selectItems
+										value="#{partidabean.territoriosDisponiblesList}" var="t"
+										itemLabel="#{t.nombre}" itemValue="#{t.id}" />
+								</p:selectOneMenu>
+
+								<br />
+								<br />
+
+								<p:commandButton value="Seleccionar"
+									action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
+									update="gameForm"
+									onclick="cambiarFase('territorios'); return false;" />
+
+
+							</p:panel>
+
+
+							<p:panel id="faseTerritoriosPanel" header="Refuerzos"
+								widgetVar="faseTerritorios" style="display:none;"
+								styleClass="panel-risk">
+
+
 								<p:spinner id="spinnerTropas" value="3" min="1" max="10"
-									style="margin: 10px 0;" />
+									size="3" style="margin: 10px 0;" />
+
 
 								<p:messages id="mensajes" autoUpdate="true" />
 
@@ -408,7 +436,10 @@
 
 								<p:commandButton value="Reclamar"
 									action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
-									update="gameForm" process="@this" />
+									update="gameForm" process="@form" />
+
+								<p:commandButton value="Continuar a fase 1 >"
+									onclick="cambiarFase('ataque'); return false;" />
 
 
 							</p:panel>
@@ -459,7 +490,7 @@
 								<br></br>
 								<br></br>
 								<p:commandButton value="Terminar turno"
-									onclick="cambiarFase('territorios'); return false;" />
+									onclick="cambiarFase('territoriosSec'); return false;" />
 							</p:panel>
 
 							<p:dialog id="dicePanel" header="Dados de ataque y defensa"
@@ -532,11 +563,14 @@
 			}
 
 			function cambiarFase(fase) {
+				document.getElementById('gameForm:faseTerritoriosSecPanel').style.display = 'none';
 				document.getElementById('gameForm:faseTerritoriosPanel').style.display = 'none';
 				document.getElementById('gameForm:faseAtaquePanel').style.display = 'none';
 				document.getElementById('gameForm:faseMovimientoPanel').style.display = 'none';
 
-				if (fase === 'territorios') {
+				if (fase === 'territoriosSec') {
+					document.getElementById('gameForm:faseTerritoriosSecPanel').style.display = 'block';
+				} else if (fase === 'territorios') {
 					document.getElementById('gameForm:faseTerritoriosPanel').style.display = 'block';
 				} else if (fase === 'ataque') {
 					document.getElementById('gameForm:faseAtaquePanel').style.display = 'block';
