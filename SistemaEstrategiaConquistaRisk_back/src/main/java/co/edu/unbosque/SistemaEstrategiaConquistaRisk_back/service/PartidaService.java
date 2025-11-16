@@ -1210,6 +1210,29 @@ public class PartidaService {
 
 		return territoriosJugador;
 	}
+	
+	public JugadorDTO obtenerJugadorConCorreo(Long partidaId) {
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("La partida no existe"));
+
+	    MyLinkedList<JugadorDTO> jugadores = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(),
+	            new TypeToken<MyLinkedList<JugadorDTO>>() {}.getType());
+
+	    if (jugadores == null || jugadores.getFirst() == null)
+	        throw new RuntimeException("No hay jugadores en la partida");
+
+	    Node<JugadorDTO> nodo = jugadores.getFirst();
+	    // Buscar jugador con correo
+	    while (nodo != null) {
+	        if (nodo.getInfo().getCorreo() != null && !nodo.getInfo().getCorreo().isEmpty()) {
+	            return nodo.getInfo();
+	        }
+	        nodo = nodo.getNext();
+	    }
+
+	    throw new RuntimeException("No se encontró jugador con correo");
+	}
+
 
 	@Transactional(readOnly = true)
 	public MyLinkedList<TerritorioDTO> obtenerTodosLosTerritoriosDisponibles(Long partidaId) {

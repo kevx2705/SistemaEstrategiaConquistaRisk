@@ -7,6 +7,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.google.gson.reflect.TypeToken;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.*;
@@ -408,23 +411,23 @@ public class PartidaController {
 		}
 	}
 
-	@GetMapping("/{partidaId}/anfitrion/datos")
-	public ResponseEntity<JugadorDTO> obtenerDatosAnfitrion(@PathVariable Long partidaId) {
-		try {
-			Long anfitrionId = partidaService.obtenerIdAnfitrion(partidaId);
-			if (anfitrionId == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			}
+	@GetMapping("/{partidaId}/jugador-con-correo")
+	public ResponseEntity<String> obtenerCorreoJugadorConCorreo(@PathVariable Long partidaId) {
+	    try {
+	        // Llama al servicio que devuelve el JugadorDTO con correo
+	        JugadorDTO jugadorConCorreo = partidaService.obtenerJugadorConCorreo(partidaId);
+	        
+	        if (jugadorConCorreo.getCorreo() == null || jugadorConCorreo.getCorreo().isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        }
 
-			JugadorDTO anfitrion = partidaService.obtenerJugadorDePartida(partidaId, anfitrionId);
-			return ResponseEntity.ok(anfitrion);
-
-		} catch (RuntimeException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
+	        return ResponseEntity.ok(jugadorConCorreo.getCorreo());
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	    }
 	}
+
+
 
 	@GetMapping("/{partidaId}/jugadores/{jugadorId}/territorios")
 	public ResponseEntity<List<TerritorioDTO>> getTerritoriosDeJugador(@PathVariable Long partidaId,
