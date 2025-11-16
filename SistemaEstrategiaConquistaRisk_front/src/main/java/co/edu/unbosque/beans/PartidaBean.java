@@ -195,10 +195,35 @@ public class PartidaBean implements Serializable {
 			inicializarJuego();
 			irAlTablero();
 			cargarTerritoriosDisponibles();
+			obtenerJugadoresDePartida(partidaActual.getId());
 			System.out.println(territoriosDisponiblesList);
 
 		} catch (Exception e) {
 			showMessage("Error", "No se pudo crear la partida: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	public void obtenerJugadoresDePartida(Long partidaId) {
+		try {
+			if (partidaId == null) {
+				showMessage("Error", "ID de partida no válido.");
+				return;
+			}
+			
+			String url = BASE_URL + "/" + partidaId + "/jugadores";
+			
+			String response = HttpClientUtil.get(url);
+			
+			if (response.contains("Partida no encontrada")) {
+				showMessage("Error", "La partida no existe.");
+			} else if (response.contains("Error al obtener jugadores")) {
+				showMessage("Error", "No se pudieron obtener los jugadores.");
+			} else {
+				MyLinkedList<JugadorDTO> jugadores = parsearJugadoresDesdeJson(response);
+				mostrarJugadoresEnUI(jugadores);
+			}
+		} catch (Exception e) {
+			showMessage("Error", "No se pudieron obtener los jugadores: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -229,6 +254,15 @@ public class PartidaBean implements Serializable {
 
 	public Jugador getJugador5() {
 		return jugadoresEnPartida.size() > 4 ? jugadoresEnPartida.get(4) : null;
+	}
+	
+
+	private MyLinkedList<JugadorDTO> parsearJugadoresDesdeJson(String jsonResponse) {
+	    return new MyLinkedList<>();
+	}
+
+	private void mostrarJugadoresEnUI(MyLinkedList<JugadorDTO> jugadores) {
+	    System.out.println("Jugadores obtenidos: " + jugadores);
 	}
 
 	/**

@@ -273,7 +273,7 @@ public class PartidaService {
 	            break;
 	        }
 	    }
-
+	    
 	    // Territorio no existe
 	    if (territorioElegido == null) {
 	        throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado.");
