@@ -23,7 +23,8 @@
 	height: 15px;
 	border-radius: 50%;
 }
-</style><div class="risk-background">
+</style>
+		<div class="risk-background">
 			<div class="game-wrapper">
 				<div class="game-columns">
 					<div class="left-column">
@@ -268,8 +269,7 @@
 								</p>
 								<p>
 									<strong>Dueño:</strong>
-									<h:outputText
-										value="#{partidabean.territorioSeleccionado.idJugador}" />
+									<h:outputText value="#{partidabean.nombreJugador}" />
 								</p>
 								<p>
 									<strong>Tropas:</strong>
@@ -424,6 +424,15 @@
 							<button class="btn-show-players"
 								onclick="PF('playersDialog').show()">Ver jugadores en
 								partida</button>
+
+							<h:form id="formFinalizar">
+								<h:commandButton value="Finalizar Partida"
+									action="#{partidabean.finalizarYDescargar}"
+									styleClass="btn-show-players">
+									<f:ajax execute="@form" render="@form" />
+								</h:commandButton>
+							</h:form>
+
 
 						</div>
 					</div>

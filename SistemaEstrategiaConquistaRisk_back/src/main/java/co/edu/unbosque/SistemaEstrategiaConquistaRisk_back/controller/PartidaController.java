@@ -379,6 +379,28 @@ public class PartidaController {
 
 		return ResponseEntity.ok(listaNormal);
 	}
-	
+	  @GetMapping("/{partidaId}/territorios/{territorioId}")
+	    public ResponseEntity<TerritorioDTO> obtenerTerritorioPorId(
+	            @PathVariable Long partidaId,
+	            @PathVariable Long territorioId) {
+
+	        try {
+	            TerritorioDTO territorio = partidaService.obtenerTerritorioPorId(partidaId, territorioId);
+	            return ResponseEntity.ok(territorio);
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        }
+	    }
+	  @GetMapping("/{partidaId}/jugadores/{jugadorId}")
+	    public ResponseEntity<JugadorDTO> getJugadorDePartida(
+	            @PathVariable Long partidaId,
+	            @PathVariable Long jugadorId) {
+	        try {
+	            JugadorDTO jugador = partidaService.obtenerJugadorDePartida(partidaId, jugadorId);
+	            return ResponseEntity.ok(jugador);
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        }
+	    }
 
 }

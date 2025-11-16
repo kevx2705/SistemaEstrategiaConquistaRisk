@@ -14,8 +14,11 @@ import org.primefaces.PrimeFaces;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 
+import co.edu.unbosque.estructures.JsonUtil;
 import co.edu.unbosque.estructures.MyLinkedList;
 import co.edu.unbosque.estructures.Node;
 import co.edu.unbosque.model.Carta;
@@ -23,10 +26,15 @@ import co.edu.unbosque.model.Jugador;
 import co.edu.unbosque.model.Partida;
 import co.edu.unbosque.model.UsuarioActual;
 import co.edu.unbosque.model.persistence.JugadorDTO;
+import co.edu.unbosque.model.persistence.PartidaDTO;
 import co.edu.unbosque.model.persistence.TerritorioDTO;
 import co.edu.unbosque.util.HttpClientUtil;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Bean de sesión que gestiona la creación, inicialización y acciones de una
@@ -86,9 +94,9 @@ public class PartidaBean implements Serializable {
 	private List<TerritorioDTO> territoriosDisponiblesList;
 	private Long jugadorActualId;
 	private JugadorDTO jugadorActualDTO;
-	private Gson gson =  new Gson();
+	private Gson gson = new Gson();
 	private List<JugadorDTO> jugadores;
-
+	private String nombreJugador;
 
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
@@ -207,49 +215,47 @@ public class PartidaBean implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void cargarJugadoresDePartida() {
-	    try {
-	        if (partidaActual == null) {
-	            showMessage("Error", "No hay partida activa.");
-	            return;
-	        }
+		try {
+			if (partidaActual == null) {
+				showMessage("Error", "No hay partida activa.");
+				return;
+			}
 
-	        Long partidaId = partidaActual.getId();
+			Long partidaId = partidaActual.getId();
 
-	        System.out.println("➡ Cargando jugadores de la partida: " + partidaId);
+			System.out.println("➡ Cargando jugadores de la partida: " + partidaId);
 
-	        String url = BASE_URL + "/" + partidaId + "/jugadores";
-	        String response = HttpClientUtil.get(url);
+			String url = BASE_URL + "/" + partidaId + "/jugadores";
+			String response = HttpClientUtil.get(url);
 
-	        if (response == null || response.trim().isEmpty()) {
-	            showMessage("Error", "Respuesta vacía del servidor.");
-	            return;
-	        }
+			if (response == null || response.trim().isEmpty()) {
+				showMessage("Error", "Respuesta vacía del servidor.");
+				return;
+			}
 
-	        ObjectMapper mapper = new ObjectMapper();
-	        List<JugadorDTO> lista = mapper.readValue(response,
-	                new TypeReference<List<JugadorDTO>>() {});
+			ObjectMapper mapper = new ObjectMapper();
+			List<JugadorDTO> lista = mapper.readValue(response, new TypeReference<List<JugadorDTO>>() {
+			});
 
-	        jugadores = lista;
+			jugadores = lista;
 
-	        System.out.println("Jugadores recibidos:");
-	        for (JugadorDTO j : jugadores) {
-	            System.out.println(" - ID: " + j.getId() +
-	                               " | Usuario: " + j.getNombre() +
-	                               " | Tropas Disponibles: " + j.getTropasDisponibles() +
-	                               " | Territorios Controlados: " + j.getTerritoriosControlados() +
-	                               " | Color: " + j.getColor());
-	        }
+			System.out.println("Jugadores recibidos:");
+			for (JugadorDTO j : jugadores) {
+				System.out.println(" - ID: " + j.getId() + " | Usuario: " + j.getNombre() + " | Tropas Disponibles: "
+						+ j.getTropasDisponibles() + " | Territorios Controlados: " + j.getTerritoriosControlados()
+						+ " | Color: " + j.getColor());
+			}
 
-	        showMessage("Éxito", "Jugadores cargados correctamente.");
+			showMessage("Éxito", "Jugadores cargados correctamente.");
 
-	    } catch (Exception e) {
-	        showMessage("Error", "No se pudo cargar jugadores: " + e.getMessage());
-	        e.printStackTrace();
-	    }
+		} catch (Exception e) {
+			showMessage("Error", "No se pudo cargar jugadores: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
-	
+
 	public List<Jugador> getJugadoresParaFront() {
 		List<Jugador> lista = new ArrayList<>();
 		for (int i = 0; i < jugadoresEnPartida.size(); i++) {
@@ -259,33 +265,35 @@ public class PartidaBean implements Serializable {
 	}
 
 	public JugadorDTO getJugador1() {
-	    return jugadores != null && jugadores.size() > 0 ? jugadores.get(0) : null;
+		return jugadores != null && jugadores.size() > 0 ? jugadores.get(0) : null;
 	}
 
 	public JugadorDTO getJugador2() {
-	    return jugadores != null && jugadores.size() > 1 ? jugadores.get(1) : null;
+		return jugadores != null && jugadores.size() > 1 ? jugadores.get(1) : null;
 	}
 
 	public JugadorDTO getJugador3() {
-	    return jugadores != null && jugadores.size() > 2 ? jugadores.get(2) : null;
+		return jugadores != null && jugadores.size() > 2 ? jugadores.get(2) : null;
 	}
 
 	public JugadorDTO getJugador4() {
-	    return jugadores != null && jugadores.size() > 3 ? jugadores.get(3) : null;
+		return jugadores != null && jugadores.size() > 3 ? jugadores.get(3) : null;
 	}
+
 	public JugadorDTO getJugador5() {
 		return jugadores != null && jugadores.size() > 4 ? jugadores.get(4) : null;
 	}
+
 	public JugadorDTO getJugador6() {
 		return jugadores != null && jugadores.size() > 5 ? jugadores.get(5) : null;
 	}
 
 	private MyLinkedList<JugadorDTO> parsearJugadoresDesdeJson(String jsonResponse) {
-	    return new MyLinkedList<>();
+		return new MyLinkedList<>();
 	}
 
 	private void mostrarJugadoresEnUI(MyLinkedList<JugadorDTO> jugadores) {
-	    System.out.println("Jugadores obtenidos: " + jugadores);
+		System.out.println("Jugadores obtenidos: " + jugadores);
 	}
 
 	/**
@@ -337,20 +345,21 @@ public class PartidaBean implements Serializable {
 			e.printStackTrace();
 		}
 	}
+
 	public void cargarJugadorActual() {
-	    try {
-	        Long jugadorId = obtenerJugadorActual(partidaActual.getId());
+		try {
+			Long jugadorId = obtenerJugadorActual(partidaActual.getId());
 
-	        String url = "http://localhost:8081/jugadores/"+jugadorId+"/obtenerjugadorporid";
-	        String json = HttpClientUtil.get(url);
+			String url = "http://localhost:8081/jugadores/" + jugadorId + "/obtenerjugadorporid";
+			String json = HttpClientUtil.get(url);
 
-	        jugadorActualDTO = gson.fromJson(json, JugadorDTO.class);
-	        System.out.println("id jugador actualdto"+jugadorActualDTO.getId());
-	        System.out.println("nombre jugador actual dto"+jugadorActualDTO.getNombre());
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        showMessage("Error", "No se pudo obtener el jugador actual");
-	    }
+			jugadorActualDTO = gson.fromJson(json, JugadorDTO.class);
+			System.out.println("id jugador actualdto" + jugadorActualDTO.getId());
+			System.out.println("nombre jugador actual dto" + jugadorActualDTO.getNombre());
+		} catch (Exception e) {
+			e.printStackTrace();
+			showMessage("Error", "No se pudo obtener el jugador actual");
+		}
 	}
 
 	/**
@@ -412,9 +421,9 @@ public class PartidaBean implements Serializable {
 	}
 
 	public void cargarTerritoriosDisponibles() {
-		
+
 		try {
-			
+
 			if (partidaActual == null) {
 				showMessage("Error", "No hay partida activa");
 				return;
@@ -437,6 +446,85 @@ public class PartidaBean implements Serializable {
 			e.printStackTrace();
 		}
 	}
+	public void finalizarPartidaForzada() {
+	    try {
+	        if (partidaActual == null) {
+	            showMessage("Error", "No hay partida activa.");
+	            return;
+	        }
+
+	        Long partidaId = partidaActual.getId();
+	        System.out.println("➡ Finalizando forzadamente la partida: " + partidaId);
+
+	        String url = BASE_URL + "/partida/" + partidaId + "/finalizar-forzada";
+	        String response = HttpClientUtil.put(url, null); 
+
+	        if (response == null || response.trim().isEmpty()) {
+	            showMessage("Error", "Respuesta vacía del servidor.");
+	            return;
+	        }
+
+	        // Configuración de ObjectMapper para LocalDateTime
+	        ObjectMapper mapper = new ObjectMapper();
+	        mapper.registerModule(new JavaTimeModule());
+	        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+	        // Convertir respuesta JSON a PartidaDTO
+	        Partida partida = mapper.readValue(response, Partida.class);
+
+	        // Actualizar partida actual si quieres reflejar cambios
+	        this.partidaActual = partida;
+
+	        System.out.println("Partida finalizada:");
+	        System.out.println(" - ID: " + partida.getId());
+	        System.out.println(" - Iniciada: " + partida.isIniciada());
+	        System.out.println(" - Finalizada: " + partida.isFinalizada());
+	        System.out.println(" - Fecha Inicio: " + partida.getFechaInicio());
+	        System.out.println(" - Código Hash: " + partida.getCodigoHash());
+
+	        showMessage("Éxito", "La partida " + partida.getId() + " fue finalizada correctamente.");
+
+	    } catch (Exception e) {
+	        showMessage("Error", "No se pudo finalizar la partida: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+	
+	public void finalizarYDescargar() {
+	    finalizarPartidaForzada(); 
+	    descargarZipFinal();       
+	}
+
+	public void descargarZipFinal() {
+	    try {
+	        if (partidaActual == null) {
+	            showMessage("Error", "No hay partida activa.");
+	            return;
+	        }
+
+	        Long partidaId = partidaActual.getId();
+	        System.out.println("➡ Descargando ZIP final de la partida: " + partidaId);
+
+	        String url = BASE_URL + "/descargar-final/" + partidaId;
+
+	        byte[] zipBytes = HttpClientUtil.getBytes(url);
+
+	        if (zipBytes == null || zipBytes.length == 0) {
+	            showMessage("Error", "No se recibió el archivo ZIP.");
+	            return;
+	        }
+
+	        Path path = Paths.get(System.getProperty("user.home") + "/Resultados_" + partidaId + ".zip");
+	        Files.write(path, zipBytes);
+
+	        showMessage("Éxito", "Archivo ZIP descargado correctamente en: " + path.toString());
+
+	    } catch (Exception e) {
+	        showMessage("Error", "No se pudo descargar el ZIP: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+
 	public void cargarTerritorioPorId(Long territorioId) {
 	    try {
 	        if (partidaActual == null) {
@@ -445,13 +533,23 @@ public class PartidaBean implements Serializable {
 	        }
 
 	        Long partidaId = partidaActual.getId();
-	        String url = "http://localhost:8081/api/partidas/" + partidaId + "/territorios/" + territorioId;
+	        String url = BASE_URL + "/" + partidaId + "/territorios/" + territorioId;
 	        String json = HttpClientUtil.get(url);
 
 	        territorioSeleccionado = gson.fromJson(json, TerritorioDTO.class);
 	        System.out.println("Territorio cargado: " + territorioSeleccionado.getNombre());
 
-	        // Mostrar diálogo si usas PrimeFaces
+	        // Verificar si tiene propietario
+	        if (territorioSeleccionado.getIdJugador() == null || territorioSeleccionado.getIdJugador() == 0) {
+	            nombreJugador = "Sin dueño";
+	        } else {
+	        	String url2 = BASE_URL + "/" + partidaId + "/jugadores/" + territorioSeleccionado.getIdJugador();
+	            String json2 = HttpClientUtil.get(url2);
+	            JugadorDTO j = gson.fromJson(json2, JugadorDTO.class);
+	            nombreJugador = j.getNombre();
+	        }
+
+	        // Mostrar diálogo
 	        PrimeFaces.current().executeScript("PF('territoryDialog').show();");
 
 	    } catch (Exception e) {
@@ -569,7 +667,6 @@ public class PartidaBean implements Serializable {
 	public boolean isPartidaIniciada() {
 		return partidaIniciada;
 	}
-	
 
 	/**
 	 * Establece si la partida ha sido iniciada.
@@ -675,6 +772,14 @@ public class PartidaBean implements Serializable {
 
 	public void setJugadorActualDTO(JugadorDTO jugadorActualDTO) {
 		this.jugadorActualDTO = jugadorActualDTO;
+	}
+
+	public String getNombreJugador() {
+		return nombreJugador;
+	}
+
+	public void setNombreJugador(String nombreJugador) {
+		this.nombreJugador = nombreJugador;
 	}
 
 }

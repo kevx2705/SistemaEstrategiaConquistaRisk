@@ -1173,22 +1173,18 @@ public class PartidaService {
 
 	@Transactional(readOnly = true)
 	public TerritorioDTO obtenerTerritorioPorId(Long partidaId, Long territorioId) {
-		// Buscar la partida
 		Partida partida = partidaRepository.findById(partidaId)
 				.orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
 
-		// Leer el JSON de territorios
 		String territoriosJSON = partida.getTerritoriosJSON();
 		if (territoriosJSON == null || territoriosJSON.isEmpty()) {
 			throw new RuntimeException("❌ La partida no tiene territorios cargados.");
 		}
 
-		// Convertir JSON a MyLinkedList<TerritorioDTO>
 		Type tipoLista = new TypeToken<MyLinkedList<TerritorioDTO>>() {
 		}.getType();
 		MyLinkedList<TerritorioDTO> territorios = gson.fromJson(territoriosJSON, tipoLista);
 
-		// Buscar el territorio por ID
 		for (int i = 0; i < territorios.size(); i++) {
 			TerritorioDTO t = territorios.getPos(i).getInfo();
 			if (t.getId().equals(territorioId)) {
@@ -1198,5 +1194,23 @@ public class PartidaService {
 
 		throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado en la partida.");
 	}
+	@Transactional(readOnly = true)
+	public JugadorDTO obtenerJugadorDePartida(Long partidaId, Long jugadorId) {
+	    Partida partida = partidaRepository.findById(partidaId)
+	            .orElseThrow(() -> new RuntimeException("❌ No existe la partida con ID: " + partidaId));
+
+	    Type tipoLista = new TypeToken<MyLinkedList<JugadorDTO>>() {}.getType();
+	    MyLinkedList<JugadorDTO> jugadores = gson.fromJson(partida.getJugadoresOrdenTurnoJSON(), tipoLista);
+
+	    for (int i = 0; i < jugadores.size(); i++) {
+	        JugadorDTO j = jugadores.getPos(i).getInfo();
+	        if (j.getId().equals(jugadorId)) {
+	            return j;
+	        }
+	    }
+
+	    throw new RuntimeException("❌ Jugador con ID " + jugadorId + " no encontrado en la partida.");
+	}
+
 
 }

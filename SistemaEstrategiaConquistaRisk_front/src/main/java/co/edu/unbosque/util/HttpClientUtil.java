@@ -75,4 +75,42 @@ public class HttpClientUtil {
     public HttpClientUtil() {
         // Constructor intencionalmente vacío.
     }
+    
+    public static String put(String url, String jsonBody) throws IOException, InterruptedException {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json");
+
+        if (jsonBody != null) {
+            requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(jsonBody));
+        } else {
+            requestBuilder.PUT(HttpRequest.BodyPublishers.noBody());
+        }
+
+        HttpRequest request = requestBuilder.build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            return response.body();
+        } else {
+            throw new IOException(response.body());
+        }
+    }
+    
+    public static byte[] getBytes(String url) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
+
+        if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            return response.body();
+        } else {
+            throw new IOException("Error al descargar ZIP: " + response.statusCode());
+        }
+    }
+
+
 }
