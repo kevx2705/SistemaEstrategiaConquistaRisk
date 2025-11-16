@@ -69,8 +69,9 @@ public class JugadorDTO {
         this.activo = activo;
         this.cartas = cartas;
     }
+    
 
-    /**
+	/**
      * Obtiene el correo electrónico del jugador.
      *
      * @return El correo electrónico del jugador.

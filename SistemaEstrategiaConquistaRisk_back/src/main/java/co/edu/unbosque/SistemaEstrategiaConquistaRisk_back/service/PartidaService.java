@@ -285,9 +285,8 @@ public class PartidaService {
 
 	    System.out.println("✔ Territorios cargados: " + territorios.size());
 
-	    TerritorioDTO territorioElegido = null;
-
 	    // Buscar territorio
+	    TerritorioDTO territorioElegido = null;
 	    for (int i = 0; i < territorios.size(); i++) {
 	        TerritorioDTO t = territorios.getPos(i).getInfo();
 	        if (t.getId().equals(territorioId)) {
@@ -295,15 +294,11 @@ public class PartidaService {
 	            break;
 	        }
 	    }
-	    
-	    // Territorio no existe
+
 	    if (territorioElegido == null) {
 	        throw new RuntimeException("❌ Territorio con ID " + territorioId + " no encontrado.");
 	    }
 
-	    System.out.println("✔ Territorio encontrado. Jugador asignado actual: " + territorioElegido.getIdJugador());
-
-	    // Ya reclamado
 	    if (!territorioElegido.getIdJugador().equals(0L)) {
 	        throw new RuntimeException("❌ El territorio ya está asignado a un jugador.");
 	    }
@@ -311,28 +306,37 @@ public class PartidaService {
 	    // Reclamar territorio
 	    territorioElegido.setIdJugador(jugadorId);
 	    territorioElegido.setTropas(1);
-
 	    System.out.println("✔ Territorio reclamado exitosamente.");
 
-	    // Actualizar jugador
+	    // Actualizar jugador en tabla
 	    jugadorService.quitarTropas(jugadorId, 1);
 	    jugadorService.agregarTerritorio(jugadorId);
-
 	    System.out.println("✔ Tropas actualizadas y territorio agregado al jugador.");
 
 	    // Cambiar turno
 	    Long siguiente = obtenerSiguienteJugador(ordenJugadores, jugadorId);
 	    partida.setJugadorActualId(siguiente);
-
 	    System.out.println("✔ Siguiente jugador: " + siguiente);
 
-	    // Guardar cambios
+	    // --- Actualizar JSON de territorios ---
 	    partida.setTerritoriosJSON(gson.toJson(territorios));
-	    partidaRepository.save(partida);
 
+	    // --- Actualizar JSON de jugadores COMPLETO ---
+	    MyLinkedList<Jugador> jugadoresActualizados = new MyLinkedList<>();
+	    for (int i = 0; i < ordenJugadores.size(); i++) {
+	        Long id = ordenJugadores.getPos(i).getInfo();
+	        Jugador j = jugadorService.getJugadorById(id); // Obtener todos los datos actuales de la tabla
+	        jugadoresActualizados.add(j); // Guardamos la entidad completa
+	    }
+	    // Serializar todos los campos del jugador
+	    partida.setJugadoresOrdenTurnoJSON(gson.toJson(jugadoresActualizados));
+
+	    // Guardar partida
+	    partidaRepository.save(partida);
 	    System.out.println("✔ Cambios guardados en la partida.");
 	    System.out.println("=== Reclamo de territorio finalizado ===");
 	}
+
 
 
 	/**

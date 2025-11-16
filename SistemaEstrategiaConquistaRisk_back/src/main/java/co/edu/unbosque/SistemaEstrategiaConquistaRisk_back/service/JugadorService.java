@@ -1,6 +1,7 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service;
 
 import java.util.Optional;
+import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.PartidaRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.repository.JugadorRep
  */
 @Service
 public class JugadorService {
+
 
     @Autowired
     private JugadorRepository jugadorRepo;
@@ -92,7 +94,11 @@ public class JugadorService {
         }
         return 1;
     }
-
+    
+    public Jugador getJugadorById(Long jugadorId) {
+        return jugadorRepo.findById(jugadorId)
+                .orElseThrow(() -> new RuntimeException("❌ No existe el jugador con ID: " + jugadorId));
+    }
     /**
      * Actualiza los datos de un jugador por su identificador.
      *
