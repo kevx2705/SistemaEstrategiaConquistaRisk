@@ -6,11 +6,24 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-
 <ui:composition template="template/template.xhtml">
-	<ui:define name="content">
 
-		<div class="risk-background">
+	<ui:define name="content">
+		<style>
+.territory-point .ui-button-text {
+	display: none; /* Oculta el texto del botón */
+}
+
+.territory-point {
+	position: absolute;
+	background-color: red;
+	border: none;
+	cursor: pointer;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+}
+</style><div class="risk-background">
 			<div class="game-wrapper">
 				<div class="game-columns">
 					<div class="left-column">
@@ -24,6 +37,7 @@
 									action="#{partidabean.cargarTerritorioPorId(1)}"
 									update=":territoryDialog"
 									oncomplete="PF('territoryDialog').show()" />
+
 								<p:commandButton styleClass="territory-point"
 									style="top: 340px; left: 175px;"
 									action="#{partidabean.cargarTerritorioPorId(2)}"
@@ -241,9 +255,10 @@
 
 
 
-						<p:dialog id="territoryDialog" widgetVar="territoryDialog" modal="true"
-							header="Acciones en territorio" styleClass="dialog-risk"
-							responsive="true" closable="true" width="400">
+						<p:dialog id="territoryDialog" widgetVar="territoryDialog"
+							modal="true" header="Acciones en territorio"
+							styleClass="dialog-risk" responsive="true" closable="true"
+							width="400">
 
 							<div class="territory-info">
 								<p>

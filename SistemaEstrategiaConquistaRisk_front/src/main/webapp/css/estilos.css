@@ -6,6 +6,19 @@ html, body {
 	padding: 0;
 	font-family: 'Segoe UI', sans-serif;
 }
+.territory-point .ui-button-text {
+    display: none !important; /* Oculta cualquier texto dentro del botón */
+}
+
+.territory-point {
+    position: absolute !important;
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    border: none !important;
+    background-color: red !important;
+}
 
 .risk-background {
 	background-image: url("../assets/fondoRisk.png");
