@@ -1,5 +1,6 @@
 package co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.service;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import co.edu.unbosque.SistemaEstrategiaConquistaRisk_back.dto.TerritorioDTO;
@@ -20,6 +21,8 @@ public class TerritorioService {
 
     @Autowired
     private TerritorioRepository territorioRepository;
+    @Autowired
+    private ModelMapper modelMapper;
     /**
      * Constructor por defecto de la clase {@code TerritorioService}.
      * Inicializa una instancia del servicio para gestionar territorios.
@@ -47,6 +50,11 @@ public class TerritorioService {
         }
         return listaDTO;
     }
+    public TerritorioDTO obtenerTerritorioDTO(Long id) {
+        Territorio t = territorioRepository.findById(id).orElse(null);
+        return t != null ? modelMapper.map(t, TerritorioDTO.class) : null;
+    }
+
 
     /**
      * Verifica si un jugador controla todos los territorios de un continente.

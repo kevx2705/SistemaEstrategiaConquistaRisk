@@ -45,6 +45,16 @@ public class TerritorioController {
     public ResponseEntity<MyLinkedList<TerritorioDTO>> listar() {
         return ResponseEntity.ok(territorioService.obtenerTodos());
     }
+    @GetMapping("/{id}/obtenerterritorioporid")
+    public ResponseEntity<TerritorioDTO> obtenerTerritorio(@PathVariable Long id) {
+        TerritorioDTO territorio = territorioService.obtenerTerritorioDTO(id);
+
+        if (territorio == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(territorio);
+    }
 
     /**
      * Asigna un jugador como propietario de un territorio.
