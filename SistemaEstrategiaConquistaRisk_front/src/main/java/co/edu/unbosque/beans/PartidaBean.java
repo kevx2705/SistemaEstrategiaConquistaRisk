@@ -331,38 +331,40 @@ public class PartidaBean implements Serializable {
 	}
 
 	public void atacarTropas() {
-		try {
-			if (territorioOrigenAtaqueId == null || territorioObjetivoAtaqueId == null || tropasAAtacar <= 0) {
-				showMessage("Error",
-						"Debes seleccionar territorio origen, territorio objetivo y una cantidad válida de tropas para atacar.");
-				return;
-			}
+	    try {
+	        if (territorioOrigenAtaqueId == null || territorioObjetivoAtaqueId == null || tropasAAtacar <= 0) {
+	            showMessage("Error", "Debes seleccionar territorio origen, territorio objetivo y una cantidad válida de tropas para atacar.");
+	            return;
+	        }
 
-			if (partidaActual == null || jugadorActualDTO == null) {
-				showMessage("Error", "No hay partida o jugador actual.");
-				return;
-			}
+	        if (partidaActual == null || jugadorActualDTO == null) {
+	            showMessage("Error", "No hay partida o jugador actual.");
+	            return;
+	        }
 
-			String url = BASE_URL + "/" + partidaActual.getId() + "/atacar" + "?atacanteId=" + jugadorActualDTO.getId()
-					+ "&territorioAtacanteId=" + territorioOrigenAtaqueId + "&territorioDefensorId="
-					+ territorioObjetivoAtaqueId;
+	        String url = BASE_URL + "/" + partidaActual.getId()
+	                + "/atacar"
+	                + "?atacanteId=" + jugadorActualDTO.getId()
+	                + "&territorioAtacanteId=" + territorioOrigenAtaqueId
+	                + "&territorioDefensorId=" + territorioObjetivoAtaqueId;
 
-			String response = HttpClientUtil.post(url, null);
+	        String response = HttpClientUtil.post(url, null);
 
-			showMessage("Éxito", "Ataque realizado correctamente.");
 
-			cargarTerritoriosJugador();
-			cargarJugadorActual();
+	        showMessage("Éxito", "Ataque realizado correctamente.");
 
-			tropasAAtacar = 0;
-			territorioOrigenAtaqueId = null;
-			territorioObjetivoAtaqueId = null;
-			territoriosObjetivoList = new ArrayList<>();
+	        cargarTerritoriosJugador();
+	        cargarJugadorActual();
 
-		} catch (Exception e) {
-			showMessage("Error", "No se pudo realizar el ataque: " + e.getMessage());
-			e.printStackTrace();
-		}
+	        tropasAAtacar = 0;
+	        territorioOrigenAtaqueId = null;
+	        territorioObjetivoAtaqueId = null;
+	        territoriosObjetivoList = new ArrayList<>();
+
+	    } catch (Exception e) {
+	        showMessage("Error", "No se pudo realizar el ataque: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 
 	public void cargarTerritoriosObjetivo() {
