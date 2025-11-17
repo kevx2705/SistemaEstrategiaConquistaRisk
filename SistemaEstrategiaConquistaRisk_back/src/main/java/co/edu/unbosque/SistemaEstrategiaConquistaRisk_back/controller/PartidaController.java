@@ -168,45 +168,40 @@ public class PartidaController {
 
 	@PostMapping("/{partidaId}/fase-refuerzo/iniciar")
 	public ResponseEntity<?> iniciarFaseRefuerzo(@PathVariable Long partidaId) {
-	    try {
-	        Partida partidaActualizada = partidaService.iniciarFaseRefuerzo(partidaId);
-	        return ResponseEntity.ok(partidaActualizada); // devolvemos la partida actualizada
-	    } catch (RuntimeException e) {
-	        return ResponseEntity.badRequest().body(e.getMessage());
-	    }
+		try {
+			Partida partidaActualizada = partidaService.iniciarFaseRefuerzo(partidaId);
+			return ResponseEntity.ok(partidaActualizada); // devolvemos la partida actualizada
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 
+	/**
+	 * Coloca tropas en un territorio específico.
+	 */
+	@PostMapping("/fase-refuerzo/colocar-tropas")
+	public ResponseEntity<?> colocarTropas(@RequestParam Long partidaId, @RequestParam Long jugadorId,
+			@RequestParam String nombreTerritorio, @RequestParam int cantidad) {
 
-	    /**
-	     * Coloca tropas en un territorio específico.
-	     */
-	 @PostMapping("/fase-refuerzo/colocar-tropas")
-	    public ResponseEntity<?> colocarTropas(
-	            @RequestParam Long partidaId,
-	            @RequestParam Long jugadorId,
-	            @RequestParam String nombreTerritorio,
-	            @RequestParam int cantidad) {
+		try {
+			// Obtener la partida desde el service
+			Partida partida = partidaService.obtenerPartidaPorId(partidaId);
+			if (partida == null) {
+				return ResponseEntity.badRequest().body("No existe la partida");
+			}
 
-	        try {
-	            // Obtener la partida desde el service
-	            Partida partida = partidaService.obtenerPartidaPorId(partidaId);
-	            if (partida == null) {
-	                return ResponseEntity.badRequest().body("No existe la partida");
-	            }
+			// Coloca las tropas
+			partidaService.colocarTropa(partida, jugadorId, nombreTerritorio, cantidad);
 
-	            // Coloca las tropas
-	            partidaService.colocarTropa(partida, jugadorId, nombreTerritorio, cantidad);
+			// Devuelve la partida actualizada
+			partida = partidaService.obtenerPartidaPorId(partidaId);
+			return ResponseEntity.ok(partida);
 
-	            // Devuelve la partida actualizada
-	            partida = partidaService.obtenerPartidaPorId(partidaId);
-	            return ResponseEntity.ok(partida);
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 
-	        } catch (RuntimeException e) {
-	            return ResponseEntity.badRequest().body(e.getMessage());
-	        }
-	    }
-
-	
 	/**
 	 * Realiza un ataque entre territorios en una partida.
 	 *
@@ -247,7 +242,8 @@ public class PartidaController {
 	 */
 	@PostMapping("/{id}/mover-tropas")
 	public ResponseEntity<Void> moverTropas(@PathVariable Long id, @RequestParam Long jugadorId,
-			@RequestParam String origen, @RequestParam String destino, @RequestParam int cantidad) {
+			@RequestParam Long origen, @RequestParam Long destino, @RequestParam int cantidad) {
+
 		partidaService.moverTropasFase3(id, jugadorId, origen, destino, cantidad);
 		return ResponseEntity.ok().build();
 	}
@@ -413,21 +409,19 @@ public class PartidaController {
 
 	@GetMapping("/{partidaId}/jugador-con-correo")
 	public ResponseEntity<String> obtenerCorreoJugadorConCorreo(@PathVariable Long partidaId) {
-	    try {
-	        // Llama al servicio que devuelve el JugadorDTO con correo
-	        JugadorDTO jugadorConCorreo = partidaService.obtenerJugadorConCorreo(partidaId);
-	        
-	        if (jugadorConCorreo.getCorreo() == null || jugadorConCorreo.getCorreo().isEmpty()) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        }
+		try {
+			// Llama al servicio que devuelve el JugadorDTO con correo
+			JugadorDTO jugadorConCorreo = partidaService.obtenerJugadorConCorreo(partidaId);
 
-	        return ResponseEntity.ok(jugadorConCorreo.getCorreo());
-	    } catch (RuntimeException e) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	    }
+			if (jugadorConCorreo.getCorreo() == null || jugadorConCorreo.getCorreo().isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+
+			return ResponseEntity.ok(jugadorConCorreo.getCorreo());
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
 	}
-
-
 
 	@GetMapping("/{partidaId}/jugadores/{jugadorId}/territorios")
 	public ResponseEntity<List<TerritorioDTO>> getTerritoriosDeJugador(@PathVariable Long partidaId,
@@ -442,6 +436,40 @@ public class PartidaController {
 		}
 
 		return ResponseEntity.ok(territoriosList);
+	}
+
+	@GetMapping("/{partidaId}/jugadores/{jugadorId}/territorios-adyacentes-aliados")
+	public ResponseEntity<List<TerritorioDTO>> obtenerTerritoriosAdyacentesAliados(@PathVariable Long partidaId,
+			@PathVariable Long jugadorId, @RequestParam Long territorioOrigenId) {
+
+		MyLinkedList<TerritorioDTO> lista = partidaService.obtenerTerritoriosAdyacentesAliados(partidaId, jugadorId,
+				territorioOrigenId);
+
+		java.util.List<TerritorioDTO> listaNormal = new java.util.ArrayList<>();
+		Node<TerritorioDTO> current = lista.getFirst();
+		while (current != null) {
+			listaNormal.add(current.getInfo());
+			current = current.getNext();
+		}
+
+		return ResponseEntity.ok(listaNormal);
+	}
+
+	@GetMapping("/{partidaId}/jugadores/{jugadorId}/territorios-adyacentes-atacables")
+	public ResponseEntity<List<TerritorioDTO>> obtenerTerritoriosAdyacentesAtacables(@PathVariable Long partidaId,
+			@PathVariable Long jugadorId, @RequestParam Long territorioOrigenId) {
+
+		MyLinkedList<TerritorioDTO> lista = partidaService.obtenerTerritoriosAdyacentesAtacables(partidaId, jugadorId,
+				territorioOrigenId);
+
+		List<TerritorioDTO> listaNormal = new ArrayList<>();
+		Node<TerritorioDTO> current = lista.getFirst();
+		while (current != null) {
+			listaNormal.add(current.getInfo());
+			current = current.getNext();
+		}
+
+		return ResponseEntity.ok(listaNormal);
 	}
 
 }

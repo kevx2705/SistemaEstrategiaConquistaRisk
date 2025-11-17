@@ -396,18 +396,64 @@
 							</h:form>
 						</p:dialog>
 						<div>
-							<h1></h1>
-							<button class="btn-show-players"
-								onclick="PF('playersDialog').show()">Ver jugadores en
-								partida</button>
-							<h:form id="formFinalizar">
-								<h:commandButton value="Finalizar Partida"
-									action="#{partidabean.finalizarYDescargar}"
-									styleClass="btn-show-players">
-									<f:ajax execute="@form" render="@form" />
-								</h:commandButton>
-							</h:form>
-						</div>
+    <h1></h1>
+
+    <button class="btn-show-players"
+        onclick="PF('playersDialog').show()">Ver jugadores en partida</button>
+
+    <h:form id="formFinalizar">
+        <h:commandButton value="Finalizar Partida"
+            action="#{partidabean.finalizarYDescargar}"
+            styleClass="btn-show-players">
+            <f:ajax execute="@form" render="@form" />
+        </h:commandButton>
+    </h:form>
+
+    <!-- PANEL NUEVO QUE ME PEDISTE -->
+    <p:panel id="moverTropasPanel" header="Mover Tropas"
+        widgetVar="moverTropasPanel" styleClass="panel-risk" style="margin-top:15px;">
+
+       <h:form id="formMoverTropas">
+
+    <!-- ORIGEN -->
+    <div class="field col-12 md:col-6">
+        <p:selectOneMenu id="origenMovimiento"
+            value="#{partidabean.territorioOrigenMovimientoId}">
+            <f:selectItem itemLabel="Selecciona territorio origen" itemValue="" />
+            <f:selectItems value="#{partidabean.territoriosList}" var="t"
+                itemLabel="#{t.nombre}" itemValue="#{t.id}" />
+        </p:selectOneMenu>
+    </div>
+
+    <!-- DESTINO corregido -->
+    <div class="field col-12 md:col-6" style="margin-top:10px;">
+       <p:selectOneMenu id="destinoMovimiento"
+                 value="#{partidabean.territorioDestinoMovimientoId}">
+    <f:selectItem itemLabel="Selecciona territorio destino" itemValue="" />
+
+    <!-- Solo se muestran los adyacentes aliados -->
+    <f:selectItems value="#{partidabean.territoriosMovimientoDestinoList}"
+                   var="t"
+                   itemLabel="#{t.nombre}"
+                   itemValue="#{t.id}" />
+</p:selectOneMenu>
+    </div>
+
+    <!-- CANTIDAD -->
+    <div class="field col-12 md:col-4" style="margin-top:10px;">
+        <p:inputNumber value="#{partidabean.tropasAMover}"
+            minValue="1" decimalPlaces="0" style="width:100%;" />
+    </div>
+
+    <p:commandButton value="Mover Tropas"
+        action="#{partidabean.moverTropas}"
+        update="@form gameForm"
+        process="@form"
+        style="margin-top:15px;" />
+</h:form>
+    </p:panel>
+</div>
+
 					</div>
 					<div class="right-column">
 						<h:form id="gameForm">
@@ -493,7 +539,7 @@
 								<br />
 								<p:commandButton value="Reclamar"
 									action="#{partidabean.reclamarTerritorio(partidabean.territorioSeleccionadoId)}"
-									update="gameForm" process="@form" />
+									update="gameForm" process="@all" />
 							</p:panel>
 
 							<!-- Panel que se muestra cuando la lista está vacía -->
@@ -518,7 +564,7 @@
 								<br />
 								<p:commandButton value="Reforzar"
 									action="#{partidabean.colocarTropasRefuerzo}"
-									update="gameForm" process="@form" />
+									update="gameForm" process="@all" />
 							</p:panel>
 
 
