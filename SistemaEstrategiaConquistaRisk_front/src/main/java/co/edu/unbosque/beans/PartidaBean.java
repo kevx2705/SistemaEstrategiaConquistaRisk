@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 /**
  * Bean de sesión que gestiona la creación, inicialización y acciones de una
  * partida. Permite crear partidas, reclamar territorios y navegar al tablero de
@@ -111,7 +112,6 @@ public class PartidaBean implements Serializable {
 	private Long territorioDestinoMovimientoId;
 	private int tropasAMover;
 	private List<TerritorioDTO> territoriosMovimientoDestinoList;
-
 
 	/**
 	 * Instancia de ObjectMapper para manejar la serialización y deserialización de
